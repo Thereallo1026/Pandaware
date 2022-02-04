@@ -1,0 +1,80 @@
+package dev.africa.pandaware.manager.command;
+
+import dev.africa.pandaware.api.command.Command;
+import dev.africa.pandaware.api.interfaces.Initializable;
+import dev.africa.pandaware.impl.command.client.ShortcutCommand;
+import dev.africa.pandaware.impl.container.Container;
+import dev.africa.pandaware.utils.client.Printer;
+import dev.africa.pandaware.impl.command.client.BindCommand;
+import dev.africa.pandaware.impl.command.client.ConfigCommand;
+import dev.africa.pandaware.impl.command.client.HelpCommand;
+import dev.africa.pandaware.impl.command.player.VClipCommand;
+import dev.africa.pandaware.impl.event.player.ChatEvent;
+import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Getter
+public class CommandManager extends Container<Command> implements Initializable {
+    @Override
+    public void init() {
+        this.addCommands(
+                new BindCommand(),
+                new HelpCommand(),
+                new ConfigCommand(),
+                new ShortcutCommand(),
+
+                new VClipCommand()
+        );
+    }
+
+    public void handleCommands(ChatEvent event) {
+        String message = event.getMessage();
+
+        if (message.startsWith(".")) {
+            event.cancel();
+
+            Command command = null;
+            String[] arguments = message.split(" ");
+            String replace = arguments[0].replaceFirst(".", "");
+
+            for (Command c : this.getItems()) {
+
+                if (this.arrayContainsIgnoreCase(
+                        Arrays.stream(c.getAliases()).collect(Collectors.toList()),
+                        replace) || replace.equalsIgnoreCase(c.getName())) {
+                    command = c;
+                    break;
+                }
+            }
+
+            if (command != null) {
+                try {
+                    command.process(arguments);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Printer.chat("§cFailed to process §7" + command.getName() + " §ccommand");
+                    Printer.chat("§cStacktrace: " + e.getMessage());
+
+                    command.onError(arguments, e.getMessage());
+                }
+            } else {
+                Printer.chat("§cCommand does not exist");
+            }
+        }
+    }
+
+    private boolean arrayContainsIgnoreCase(List<String> listIn, String stringIn) {
+        return listIn.stream().anyMatch(stringIn::equalsIgnoreCase);
+    }
+
+    private void addCommands(Command... commands) {
+        for (Command command : commands) {
+            if (!this.getItems().contains(command)) {
+                this.getItems().add(command);
+            }
+        }
+    }
+}
