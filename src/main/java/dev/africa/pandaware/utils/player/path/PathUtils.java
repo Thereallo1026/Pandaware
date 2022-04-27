@@ -18,10 +18,10 @@ public class PathUtils implements MinecraftInstance {
     public boolean canPassThrow(BlockPos pos) {
         Block block = mc.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ())).getBlock();
 
-        return (block.getBlockState().getBaseState() != null && 
+        return (block.getBlockState().getBaseState() != null &&
                 (block.getBlockState().getBaseState() == Material.air ||
-                block.getBlockState().getBaseState() == Material.plants ||
-                block.getBlockState().getBaseState() == Material.vine) ||
+                        block.getBlockState().getBaseState() == Material.plants ||
+                        block.getBlockState().getBaseState() == Material.vine) ||
                 block == Blocks.ladder || block == Blocks.water ||
                 block == Blocks.flowing_water || block == Blocks.wall_sign ||
                 block != Blocks.farmland || block == Blocks.standing_sign);

@@ -103,16 +103,6 @@ public class RotationUtils implements MinecraftInstance {
         return new Vec2f(yaw, pitch >= 90 ? 90 : pitch <= -90 ? -90 : pitch);
     }
 
-    @AllArgsConstructor
-    public enum RotationAt {
-        HEAD("Head"),
-        CHEST("Chest"),
-        LEGS("Legs"),
-        FEET("Feet");
-
-        private String label;
-    }
-
     public double getYawRotationDifference(EntityLivingBase target) {
         if (Math.abs(getRotations(target, RotationAt.CHEST).getX() - mc.thePlayer.rotationYaw) % 360.0f > 180.0f) {
             return 360.0f - Math.abs(getRotations(target, RotationAt.CHEST).getX() - mc.thePlayer.rotationYaw) % 360.0f;
@@ -173,7 +163,6 @@ public class RotationUtils implements MinecraftInstance {
                 yawToEntity = Math.toDegrees(-Math.atan(deltaX / deltaZ));
             }
         }
-
         float yawChangeToEntity = MathHelper.wrapAngleTo180_float(-(mc.thePlayer.rotationYaw - (float) yawToEntity));
         float pitchChangeToEntity = -MathHelper.wrapAngleTo180_float(mc.thePlayer.rotationPitch - (float) pitchToEntity);
 
@@ -211,5 +200,15 @@ public class RotationUtils implements MinecraftInstance {
 
     public float getAngleDifference(final float a, final float b) {
         return ((((a - b) % 360F) + 540F) % 360F) - 180F;
+    }
+
+    @AllArgsConstructor
+    public enum RotationAt {
+        HEAD("Head"),
+        CHEST("Chest"),
+        LEGS("Legs"),
+        FEET("Feet");
+
+        private String label;
     }
 }

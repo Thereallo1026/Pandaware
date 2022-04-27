@@ -3,10 +3,10 @@ package dev.africa.pandaware.impl.module.render;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
+import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
@@ -15,6 +15,7 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.math.MathUtils;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
@@ -24,6 +25,8 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 
 import java.awt.*;
 import java.util.Comparator;
@@ -37,12 +40,13 @@ public class HUDModule extends Module {
     private final EnumSetting<ColorMode> colorMode = new EnumSetting<>("Color mode", ColorMode.PANDAWARE);
 
     private final BooleanSetting arraylist = new BooleanSetting("Arraylist", true);
-    private final BooleanSetting label = new BooleanSetting("Label", true);
-    private final BooleanSetting informations = new BooleanSetting("Informations", true);
-    private final BooleanSetting notifications = new BooleanSetting("Notifications", true);
+    private final BooleanSetting watermark = new BooleanSetting("Watermark", true);
+    private final BooleanSetting label = new BooleanSetting("Show Labels", true, this.arraylist::getValue);
+    private final BooleanSetting informations = new BooleanSetting("Information", true);
     private final BooleanSetting customFont = new BooleanSetting("Custom font", true);
     private final BooleanSetting arraylistLine = new BooleanSetting("Arraylist line", true,
             this.arraylist::getValue);
+    private final BooleanSetting borderlessFullscreen = new BooleanSetting("Borderless Fulscreen", true);
 
     private final NumberSetting colorTime = new NumberSetting("Color time",
             10000, 100, 3000, 1, () -> this.colorMode.getValue() == ColorMode.PANDAWARE
@@ -54,8 +58,8 @@ public class HUDModule extends Module {
             20, 1, 4, 1, () -> this.colorMode.getValue() == ColorMode.PANDAWARE
             || this.colorMode.getValue() == ColorMode.SHADE);
 
-    private final NumberSetting scoreboardPosition = new NumberSetting("Scoreboard position",
-            1000, 0, 297, 1);
+    public final NumberSetting scoreboardPosition = new NumberSetting("Scoreboard position",
+            400, 0, 200, 1);
 
     private final NumberSetting arrayBackgroundAlpha = new NumberSetting("Arraylist background alpha",
             255, 0, 100, 1, this.arraylist::getValue);
@@ -70,6 +74,8 @@ public class HUDModule extends Module {
             = new ColorSetting("Second color", UISettings.DEFAULT_SECOND_COLOR,
             () -> this.colorMode.getValue() == ColorMode.SHADE);
 
+    private boolean lastFullscreen;
+
     public HUDModule() {
         this.toggle(true);
 
@@ -77,9 +83,10 @@ public class HUDModule extends Module {
                 this.colorMode,
                 this.arraylist,
                 this.label,
-                this.notifications,
+                this.watermark,
                 this.informations,
                 this.customFont,
+                this.borderlessFullscreen,
                 this.arraylistLine,
                 this.colorTime,
                 this.colorIndexTime,
@@ -104,8 +111,8 @@ public class HUDModule extends Module {
                     this.setColors(this.getColor(1));
                 }
 
-                if (this.label.getValue()) {
-                    this.renderLabel();
+                if (this.watermark.getValue()) {
+                    this.renderWatermark();
                 }
 
                 if (this.informations.getValue()) {
@@ -121,15 +128,38 @@ public class HUDModule extends Module {
                     this.setColors(this.getColor(1));
                 }
 
-                if (this.notifications.getValue()) {
-                    Client.getInstance().getNotificationManager().renderNotifications(event.getResolution());
-                }
                 GlStateManager.popMatrix();
                 break;
         }
     };
 
-    void renderLabel() {
+    @EventHandler
+    EventCallback<TickEvent> onTick = event -> {
+        boolean fullScreenNow = mc.isFullScreen();
+
+        if (this.lastFullscreen != fullScreenNow && this.borderlessFullscreen.getValue()) {
+            try {
+                if (fullScreenNow) {
+                    System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+                    Display.setDisplayMode(Display.getDesktopDisplayMode());
+                    Display.setLocation(0, 0);
+                    Display.setFullscreen(false);
+                    Display.setResizable(false);
+                } else {
+                    System.setProperty("org.lwjgl.opengl.Window.undecorated", "false");
+                    Display.setDisplayMode(new DisplayMode(mc.displayWidth, mc.displayHeight));
+                    Display.setResizable(true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+
+            this.lastFullscreen = fullScreenNow;
+        }
+    };
+
+    void renderWatermark() {
         Fonts.getInstance().getProductSansVeryBig().drawStringWithShadow(
                 Client.getInstance().getManifest().getClientName(),
                 2, 2, UISettings.CURRENT_COLOR.getRGB()
@@ -143,7 +173,7 @@ public class HUDModule extends Module {
 
     void renderArraylist(RenderEvent event) {
         List<Module> modules = Client.getInstance().getModuleManager()
-                .getMap().keySet().stream()
+                .getMap().values().stream()
                 .filter(module -> {
                     Easing easing = !module.getData().isEnabled() ? Easing.CUBIC_IN : Easing.CUBIC_OUT;
                     if (module.getData().isEnabled()) {
@@ -226,10 +256,7 @@ public class HUDModule extends Module {
                 this.customFont.getValue() ? -2.5 : -2) : 0, 0);
 
         double y = event.getResolution().getScaledHeight() - 11;
-        String text = String.format("§f%s §7- §f%s §7| §f%s",
-                Client.getInstance().getManifest().getUsername(),
-                Client.getInstance().getManifest().getUserId(),
-                Client.getInstance().getManifest().getClientVersion());
+        String text = "§7BPS: §f" + MathUtils.roundToDecimal(MovementUtils.getBps(), 2);
         String latencyText = "§7Ping: §f" + PlayerUtils.getPing(mc.thePlayer);
 
         double informationX;
@@ -258,6 +285,7 @@ public class HUDModule extends Module {
                     MathUtils.roundToDecimal(mc.thePlayer.posZ, 1));
             Fonts.getInstance().getProductSansMedium().drawStringWithShadow(text, 1, y - 12,
                     UISettings.CURRENT_COLOR.getRGB());
+
         } else {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, (mc.currentScreen instanceof GuiChat) ? -12 : 0, 0);
@@ -285,7 +313,7 @@ public class HUDModule extends Module {
     }
 
     String getModuleName(Module module) {
-        return module.getData().getName() + (module.getSuffix() != null ? " §f" + module.getSuffix() : "");
+        return module.getData().getName() + (module.getSuffix() != null && this.label.getValue() ? " §f" + module.getSuffix() : "");
     }
 
     Color getColor(int index) {

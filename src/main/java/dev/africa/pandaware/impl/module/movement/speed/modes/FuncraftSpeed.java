@@ -47,7 +47,7 @@ public class FuncraftSpeed extends ModuleMode<SpeedModule> {
                     this.moveSpeed = MovementUtils.getBaseMoveSpeed() * 1.6;
                     break;
                 case 1:
-                    mc.timer.timerSpeed = 1.5F;
+                    mc.timer.timerSpeed = 1.3F;
 
                     double motion = 0.41F;
                     motion += PlayerUtils.getJumpBoostMotion();

@@ -2,15 +2,16 @@ package dev.africa.pandaware.impl.module.player;
 
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
+import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.enchantment.Enchantment;
@@ -28,27 +29,30 @@ public class AutoArmorModule extends Module {
     private final int[] helmet = new int[]{310, 306, 314, 302, 298};
     private final int[] leggings = new int[]{312, 308, 316, 304, 300};
     private final TimeHelper timer = new TimeHelper();
-    private final NumberSetting delay = new NumberSetting("Delay", 1000, 0, 80);
+    public final EnumSetting<EquipMode> equipMode = new EnumSetting<>("Mode", EquipMode.NORMAL);
+    private final NumberSetting delay = new NumberSetting("Delay", 1000, 0, 75, 1);
     private final NumberSetting randomMax = new NumberSetting("Random Max", 1000, 0, 50);
     private final NumberSetting randomMin = new NumberSetting("Random Min", 1000, 0, 0);
     private final BooleanSetting random = new BooleanSetting("Randomization", false);
-    private final BooleanSetting openInventory = new BooleanSetting("Open Inventory", false);
     private double maxValue = -1.0D;
-    private double mv;
     protected long delayVal;
     private int item = -1;
     private int num = 5;
 
-    public static long lastCycle;
+    public long lastCycle;
 
     public AutoArmorModule() {
-        registerSettings(delay, randomMax, randomMin, random, openInventory);
+        registerSettings(equipMode, delay, randomMax, randomMin, random);
     }
 
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
-        if (this.openInventory.getValue() && !(mc.currentScreen instanceof GuiInventory))
+        if (equipMode.getValue() == EquipMode.OPEN && !(mc.currentScreen instanceof GuiInventory))
             return;
+
+        if (equipMode.getValue() == EquipMode.FAKE && (mc.isMoveMoving() || mc.gameSettings.keyBindJump.pressed || !mc.thePlayer.isUsingItem()))
+            return;
+
         delayVal = delay.getValue().intValue() +
                 (random.getValue() ? RandomUtils.nextInt(randomMin.getValue().intValue(), randomMax.getValue().intValue()) : 0);
         if (!mc.thePlayer.capabilities.isCreativeMode) {
@@ -57,9 +61,11 @@ public class AutoArmorModule extends Module {
                 this.item = -1;
 
                 for (int i = 9; i < 45; ++i) {
+                    ItemStack is = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
                     if (mc.thePlayer.inventoryContainer.getSlot(i).getStack() != null && this.canEquip(mc.thePlayer.inventoryContainer.getSlot(i).getStack()) != -1 && this.canEquip(mc.thePlayer.inventoryContainer.getSlot(i).getStack()) == this.num) {
                         lastCycle = System.currentTimeMillis();
-                        this.change(this.num, i);
+                        getBestArmor();
+                        if (shouldDrop(is, i)) drop(i);
                     }
                 }
 
@@ -122,20 +128,19 @@ public class AutoArmorModule extends Module {
                 return 5;
             }
         }
-
         return -1;
     }
 
-    private void change(int numy, int i) {
-        this.mv = this.maxValue == -1.0D ? (mc.thePlayer.inventoryContainer.getSlot(numy).getStack() != null ? this.getProtValue(mc.thePlayer.inventoryContainer.getSlot(numy).getStack()) : this.maxValue) : this.maxValue;
-        if (this.mv <= this.getProtValue(mc.thePlayer.inventoryContainer.getSlot(i).getStack()) && this.mv != this.getProtValue(mc.thePlayer.inventoryContainer.getSlot(i).getStack())) {
-            this.item = i;
-            this.maxValue = this.getProtValue(mc.thePlayer.inventoryContainer.getSlot(i).getStack());
-        }
-
+    public boolean shouldDrop(ItemStack stack, int slot) {
+        return timer.reach(this.delayVal + 10) && stack.getItem() instanceof ItemArmor;
     }
 
-    private double getProtValue(ItemStack stack) {
+    public void drop(int slot) {
+        mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, slot, 1, 4, mc.thePlayer);
+        lastCycle = System.currentTimeMillis();
+    }
+
+    private float getProtValue(ItemStack stack) {
         float prot = 0;
         if ((stack.getItem() instanceof ItemArmor)) {
             ItemArmor armor = (ItemArmor) stack.getItem();
@@ -147,5 +152,69 @@ public class AutoArmorModule extends Module {
             prot += EnchantmentHelper.getEnchantmentLevel(Enchantment.projectileProtection.effectId, stack) / 100d;
         }
         return prot;
+    }
+
+    private boolean isBestArmor(ItemStack stack, int type) {
+        float prot = getProtValue(stack);
+        String strType = "";
+        if (type == 1) {
+            strType = "helmet";
+        } else if (type == 2) {
+            strType = "chestplate";
+        } else if (type == 3) {
+            strType = "leggings";
+        } else if (type == 4) {
+            strType = "boots";
+        }
+        if (!stack.getUnlocalizedName().contains(strType)) {
+            return false;
+        }
+        for (int i = 5; i < 45; i++) {
+            if (mc.thePlayer.inventoryContainer.getSlot(i).getHasStack()) {
+                ItemStack is = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
+                if (getProtValue(is) > prot && is.getUnlocalizedName().contains(strType))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public void shiftClick(int slot) {
+        mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, slot, 0, 1, mc.thePlayer);
+        lastCycle = System.currentTimeMillis();
+    }
+
+    private void getBestArmor() {
+        for (int type = 1; type < 5; type++) {
+            if (mc.thePlayer.inventoryContainer.getSlot(4 + type).getHasStack()) {
+                ItemStack is = mc.thePlayer.inventoryContainer.getSlot(4 + type).getStack();
+                if (isBestArmor(is, type)) {
+                    continue;
+                } else {
+                    drop(4 + type);
+                }
+            }
+            for (int i = 9; i < 45; i++) {
+                if (mc.thePlayer.inventoryContainer.getSlot(i).getHasStack()) {
+                    ItemStack is = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
+                    if (isBestArmor(is, type) && getProtValue(is) > 0) {
+                        shiftClick(i);
+                        timer.reset();
+                        if (delay.getValue().longValue() > 0)
+                            return;
+                    }
+                }
+            }
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum EquipMode {
+        NORMAL("Normal"),
+        OPEN("Open"),
+        FAKE("Silent");
+
+        private String label;
     }
 }

@@ -1,10 +1,10 @@
 package dev.africa.pandaware.impl.module.player.nofall;
 
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.module.player.nofall.modes.*;
+import dev.africa.pandaware.utils.player.PlayerUtils;
 
 @ModuleInfo(name = "No Fall", category = Category.PLAYER)
 public class NoFallModule extends Module {
@@ -22,7 +22,8 @@ public class NoFallModule extends Module {
     }
 
     public boolean canFall() {
-        return mc.thePlayer.isEntityAlive() && mc.theWorld != null && !mc.thePlayer.isInWater() && !mc.thePlayer.isInLava();
+        return mc.thePlayer.isEntityAlive() && mc.theWorld != null && !mc.thePlayer.isInWater() && !mc.thePlayer.isInLava()
+                && PlayerUtils.isBlockUnderNoCollisions();
     }
 
     @Override

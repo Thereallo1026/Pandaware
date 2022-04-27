@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class ColorUtils {
@@ -54,4 +55,9 @@ public class ColorUtils {
 
         GL11.glColor4f(red, green, blue, alpha);
     }
+
+    public String stripColorCodes(String input) {
+        return STRIP_COLOR_PATTERN.matcher(input).replaceAll("");
+    }
+    private final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)§[0-9A-FK-ORX]");
 }

@@ -2,14 +2,11 @@ package dev.africa.pandaware.manager.command;
 
 import dev.africa.pandaware.api.command.Command;
 import dev.africa.pandaware.api.interfaces.Initializable;
-import dev.africa.pandaware.impl.command.client.ShortcutCommand;
+import dev.africa.pandaware.impl.command.client.*;
+import dev.africa.pandaware.impl.command.player.*;
 import dev.africa.pandaware.impl.container.Container;
-import dev.africa.pandaware.utils.client.Printer;
-import dev.africa.pandaware.impl.command.client.BindCommand;
-import dev.africa.pandaware.impl.command.client.ConfigCommand;
-import dev.africa.pandaware.impl.command.client.HelpCommand;
-import dev.africa.pandaware.impl.command.player.VClipCommand;
 import dev.africa.pandaware.impl.event.player.ChatEvent;
+import dev.africa.pandaware.utils.client.Printer;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -25,6 +22,7 @@ public class CommandManager extends Container<Command> implements Initializable 
                 new HelpCommand(),
                 new ConfigCommand(),
                 new ShortcutCommand(),
+                new ToggleCommand(),
 
                 new VClipCommand()
         );

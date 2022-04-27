@@ -2,7 +2,6 @@ package dev.africa.pandaware.impl.module.player;
 
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;

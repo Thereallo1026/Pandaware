@@ -1,6 +1,8 @@
 package net.minecraft.client.renderer.tileentity;
 
 import java.util.Calendar;
+
+import dev.africa.pandaware.utils.math.random.RandomUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.client.model.ModelChest;
@@ -182,14 +184,15 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer<TileEntit
 
             f = 1.0F - f;
             f = 1.0F - f * f * f;
-            modelchest.chestLid.rotateAngleX = -(f * (float)Math.PI / 2.0F);
+            modelchest.chestLid.offsetY = 0.01f;
+            modelchest.chestLid.rotateAngleX = -(f * (float)Math.PI / 2.0F * RandomUtils.nextFloat(-0.1f, 0.1f));
             modelchest.renderAll();
             GlStateManager.disableRescaleNormal();
             GlStateManager.popMatrix();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-            if (destroyStage >= 0)
-            {
+
+            if (destroyStage >= 0) {
                 GlStateManager.matrixMode(5890);
                 GlStateManager.popMatrix();
                 GlStateManager.matrixMode(5888);

@@ -25,7 +25,7 @@ public class Start {
         }
 
         Main.main(concat(new String[]{
-                "--version", "Iron",
+                "--version", "Pandaware",
                 "--accessToken", "0",
                 "--assetIndex", "1.8",
                 "--userProperties", "{}",

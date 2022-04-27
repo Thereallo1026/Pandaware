@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.sadware</groupId>
+    <groupId>dev.africa</groupId>
     <artifactId>Pandaware</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -18,6 +18,10 @@
         <repository>
             <id>minecraft</id>
             <url>https://libraries.minecraft.net/</url>
+        </repository>
+        <repository>
+            <id>Sparky</id>
+            <url>https://nexus.sparky.ac/repository/Sparky/</url>
         </repository>
     </repositories>
 
@@ -182,13 +186,11 @@
         </dependency>
         <!-- END Minecraft libraries -->
 
-        <!-- START Iron libraries-->
+        <!-- START Pandaware libraries-->
         <dependency>
-            <groupId>com.viaversion</groupId>
-            <artifactId>viaversion</artifactId>
-            <version>4.1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/offline/ViaVersion-4.1.0.jar</systemPath>
+            <groupId>us.myles</groupId>
+            <artifactId>ViaVersion-gay</artifactId>
+            <version>69</version>
         </dependency>
         <dependency>
             <groupId>com.viaversion</groupId>
@@ -225,11 +227,16 @@
             <version>20210307</version>
         </dependency>
         <dependency>
+            <groupId>javazoom</groupId>
+            <artifactId>jlayer</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
             <version>1.0.2</version>
         </dependency>
-        <!-- END Iron libraries-->
+        <!-- END Pandaware libraries-->
     </dependencies>
 
 </project>

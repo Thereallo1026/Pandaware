@@ -83,7 +83,7 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
     public void createButtons() {
         this.buttonList.add(new GuiButton(9, this.width / 2 + 4 + 76 * 2, this.height - 28, 75, 20, "Copy IGN"));
 
-        this.buttonList.add(ViaMCP.getInstance().guiProtocolSlider);
+        this.buttonList.add(ViaMCP.getInstance().asyncSlider);
 
         this.buttonList.add(this.btnEditServer = new GuiButton(7, this.width / 2 - 154, this.height - 28, 70, 20, I18n.format("selectServer.edit", new Object[0])));
         this.buttonList.add(this.btnDeleteServer = new GuiButton(2, this.width / 2 - 74, this.height - 28, 70, 20, I18n.format("selectServer.delete", new Object[0])));
@@ -291,9 +291,6 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        ViaMCP.getInstance().guiProtocolSlider.update(this.width / 2 + 4 + 45, 10,
-                "Via -> §3" + ProtocolVersion.getProtocol(ViaMCP.getInstance().getVersion()).getName());
-
         this.hoveringText = null;
         this.drawDefaultBackground();
         this.serverListSelector.drawScreen(mouseX, mouseY, partialTicks);

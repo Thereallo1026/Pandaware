@@ -1,38 +1,45 @@
 package dev.africa.pandaware.switcher.platform;
 
-import dev.africa.pandaware.switcher.ViaMCP;
-import dev.africa.pandaware.switcher.handler.CommonTransformer;
 import com.viaversion.viaversion.api.platform.ViaInjector;
 import com.viaversion.viaversion.libs.gson.JsonObject;
+import dev.africa.pandaware.switcher.ViaMCP;
+import dev.africa.pandaware.switcher.handler.CommonTransformer;
 
-public class MCPViaInjector implements ViaInjector {
+public class MCPViaInjector implements ViaInjector
+{
     @Override
-    public void inject() {
+    public void inject()
+    {
         // In a nutshell, this is not forge
     }
 
     @Override
-    public void uninject() {
+    public void uninject()
+    {
         // Update! Still not forge!
     }
 
     @Override
-    public int getServerProtocolVersion() {
+    public int getServerProtocolVersion()
+    {
         return ViaMCP.PROTOCOL_VERSION;
     }
 
     @Override
-    public String getEncoderName() {
+    public String getEncoderName()
+    {
         return CommonTransformer.HANDLER_ENCODER_NAME;
     }
 
     @Override
-    public String getDecoderName() {
+    public String getDecoderName()
+    {
         return CommonTransformer.HANDLER_DECODER_NAME;
     }
 
     @Override
-    public JsonObject getDump() {
+    public JsonObject getDump()
+    {
         JsonObject obj = new JsonObject();
         return obj;
     }

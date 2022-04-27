@@ -5,6 +5,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
+import dev.africa.pandaware.impl.module.misc.StreamerModule;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -131,6 +133,22 @@ public class GuiIngame extends Gui {
         int j = scaledresolution.getScaledHeight();
         this.mc.entityRenderer.setupOverlayRendering();
         GlStateManager.enableBlend();
+        GlStateManager.pushAttribAndMatrix();
+
+        GlStateManager.enableAlpha();
+
+        Vec2i mousePos = new Vec2i(
+                Mouse.getX() * scaledresolution.getScaledWidth() / mc.displayWidth,
+                scaledresolution.getScaledHeight() - Mouse.getY() *
+                        scaledresolution.getScaledHeight() / mc.displayHeight - 1);
+
+        Client.getInstance().getEventDispatcher().dispatch(new RenderEvent(partialTicks,
+                scaledresolution, mousePos, RenderEvent.Type.RENDER_2D));
+
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.popAttribAndMatrix();
 
         if (Config.isVignetteEnabled()) {
             this.renderVignette(this.mc.thePlayer.getBrightness(partialTicks), scaledresolution);
@@ -219,23 +237,6 @@ public class GuiIngame extends Gui {
 
         if (this.mc.gameSettings.showDebugInfo) {
             this.overlayDebug.renderDebugInfo(scaledresolution);
-        } else {
-            GlStateManager.pushAttribAndMatrix();
-
-            GlStateManager.enableAlpha();
-
-            Vec2i mousePos = new Vec2i(
-                    Mouse.getX() * scaledresolution.getScaledWidth() / mc.displayWidth,
-                    scaledresolution.getScaledHeight() - Mouse.getY() *
-                            scaledresolution.getScaledHeight() / mc.displayHeight - 1);
-
-            Client.getInstance().getEventDispatcher().dispatch(new RenderEvent(partialTicks,
-                    scaledresolution, mousePos, RenderEvent.Type.RENDER_2D));
-
-            GlStateManager.enableAlpha();
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableCull();
-            GlStateManager.popAttribAndMatrix();
         }
 
         if (this.recordPlayingUpFor > 0) {
@@ -307,12 +308,17 @@ public class GuiIngame extends Gui {
         ScoreObjective scoreobjective = null;
         ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(this.mc.thePlayer.getName());
 
-        if (scoreplayerteam != null) {
-            int i1 = scoreplayerteam.getChatFormat().getColorIndex();
+        try {
+            if (scoreplayerteam != null) {
+                int i1 = scoreplayerteam.getChatFormat().getColorIndex();
 
-            if (i1 >= 0) {
-                scoreobjective = scoreboard.getObjectiveInDisplaySlot(3 + i1);
+                if (i1 >= 0) {
+                    scoreobjective = scoreboard.getObjectiveInDisplaySlot(3 + i1);
+                }
             }
+        }
+        catch (Exception e1) {
+            e1.printStackTrace();
         }
 
         ScoreObjective scoreobjective1 = scoreobjective != null ? scoreobjective : scoreboard.getObjectiveInDisplaySlot(1);
@@ -527,8 +533,10 @@ public class GuiIngame extends Gui {
             i = Math.max(i, this.getFontRenderer().getStringWidth(s));
         }
 
+        HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+
         int i1 = collection.size() * this.getFontRenderer().FONT_HEIGHT;
-        int j1 = p_180475_2_.getScaledHeight() / 2 + i1 / 3;
+        int j1 = p_180475_2_.getScaledHeight() / 2 + i1 / 3 + hud.scoreboardPosition.getValue().intValue();
         int k1 = 3;
         int l1 = p_180475_2_.getScaledWidth() - i - k1;
         int j = 0;
@@ -541,8 +549,14 @@ public class GuiIngame extends Gui {
             int k = j1 - j * this.getFontRenderer().FONT_HEIGHT;
             int l = p_180475_2_.getScaledWidth() - k1 + 2;
             drawRect(l1 - 2, k, l, k + this.getFontRenderer().FONT_HEIGHT, 1342177280);
-            this.getFontRenderer().drawString(s1, l1, k, 553648127);
-            this.getFontRenderer().drawString(s2, l - this.getFontRenderer().getStringWidth(s2), k, 553648127);
+            if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled() &&
+                    score1.getScorePoints() != collection.size()) {
+                this.getFontRenderer().drawString(s1, l1, k, 553648127);
+                this.getFontRenderer().drawString(s2, l - this.getFontRenderer().getStringWidth(s2), k, 553648127);
+            } else if (!Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
+                this.getFontRenderer().drawString(s1, l1, k, 553648127);
+                this.getFontRenderer().drawString(s2, l - this.getFontRenderer().getStringWidth(s2), k, 553648127);
+            }
 
             if (j == collection.size()) {
                 String s3 = p_180475_1_.getDisplayName();

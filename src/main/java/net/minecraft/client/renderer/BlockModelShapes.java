@@ -3,6 +3,8 @@ package net.minecraft.client.renderer;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockCactus;
@@ -56,6 +58,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
+@Getter
 public class BlockModelShapes
 {
     private final Map<IBlockState, IBakedModel> bakedModelStore = Maps.<IBlockState, IBakedModel>newIdentityHashMap();

@@ -1,8 +1,10 @@
 package dev.africa.pandaware.impl.font.renderer;
 
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.module.misc.StreamerModule;
 import dev.africa.pandaware.utils.render.ColorUtils;
 import lombok.AllArgsConstructor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.BufferUtils;
@@ -211,9 +213,24 @@ public class TTFFontRenderer {
     }
 
     private void renderString(String text, double x, double y, int color, boolean shadow) {
-
         if (text.length() <= 0) {
             return;
+        }
+
+        final Minecraft mc = Minecraft.getMinecraft();
+
+        StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
+
+        if (mc != null && mc.thePlayer != null && mc.theWorld != null && mc.thePlayer.getName() != null && text.length() > 1) {
+            if (streamerModule.getData().isEnabled()) {
+                text = text.replaceAll(mc.thePlayer.getName(), "Legit Player");
+            }
+
+            if (streamerModule.getData().isEnabled() && mc.theWorld != null) {
+                for (final String s : streamerModule.getPLAYERS()) {
+                    text = text.replaceAll(s, "Player");
+                }
+            }
         }
 
         GlStateManager.pushAttribAndMatrix();

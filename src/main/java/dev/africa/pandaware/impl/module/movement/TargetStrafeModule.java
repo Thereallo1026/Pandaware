@@ -3,21 +3,19 @@ package dev.africa.pandaware.impl.module.movement;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.module.combat.KillAuraModule;
+import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
+import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.player.RotationUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
-import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
-import dev.africa.pandaware.impl.module.movement.longjump.LongJumpModule;
-import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.GameSettings;
@@ -37,6 +35,7 @@ public class TargetStrafeModule extends Module {
 
     private final NumberSetting lineWidth = new NumberSetting("Line Width", 3, 0.1, 1.8).setSaveConfig(false);
     private final NumberSetting radius = new NumberSetting("Radius", 3, 0, 1.6).setSaveConfig(false);
+    private final NumberSetting slowdown = new NumberSetting("Slowdown", 1, 0.1, 1);
 
     private final BooleanSetting pressSpaceOnly = new BooleanSetting("Press Space Only", false).setSaveConfig(false);
     private final BooleanSetting checkVoid = new BooleanSetting("Check Void", false);
@@ -45,6 +44,7 @@ public class TargetStrafeModule extends Module {
         this.registerSettings(
                 this.lineWidth,
                 this.radius,
+                this.slowdown,
                 this.pressSpaceOnly,
                 this.checkVoid
         );
@@ -70,24 +70,22 @@ public class TargetStrafeModule extends Module {
     };
 
     public MoveEvent editMovement(double x, double y, double z) {
-        double movementSpeed = Math.sqrt(x * x + z * z);
+        double movementSpeed = Math.sqrt(x * x + z * z) * slowdown.getValue().doubleValue();
         boolean modulesEnabled = Client.getInstance().getModuleManager()
-                .getByClass(LongJumpModule.class).getData().isEnabled() ||
-                Client.getInstance().getModuleManager()
                         .getByClass(FlightModule.class).getData().isEnabled() ||
                 Client.getInstance().getModuleManager()
                         .getByClass(SpeedModule.class).getData().isEnabled();
 
         if (this.canStrafe && mc.isMoveMoving() && modulesEnabled && this.shouldStrafe) {
-            if ((!this.checkVoid.getValue() || PlayerUtils.isBlockUnder()) &&
-                    !mc.thePlayer.isInWater() && !mc.thePlayer.isInLava() && !mc.thePlayer.isOnLadder()) {
+            if ((!this.checkVoid.getValue() || PlayerUtils.isBlockUnder()) && !PlayerUtils.inLiquid() &&
+                    !mc.thePlayer.isOnLadder()) {
                 strafing = true;
 
                 float strafeYaw;
                 double strafeSpeed;
                 double strafeForward;
 
-                if (mc.thePlayer.isCollidedHorizontally) {
+                if (mc.thePlayer.isCollidedHorizontally || !PlayerUtils.isBlockUnder()) {
                     if (this.moveDirection == -1) {
                         this.moveDirection = 1;
                     } else if (this.moveDirection == 1) {

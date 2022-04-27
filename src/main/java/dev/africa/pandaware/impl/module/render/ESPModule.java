@@ -3,7 +3,6 @@ package dev.africa.pandaware.impl.module.render;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
@@ -13,19 +12,24 @@ import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.module.combat.KillAuraModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
+import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
-import dev.africa.pandaware.impl.ui.shader.FramebufferShader;
-import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.impl.ui.shader.impl.GlowShader;
+import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.Config;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -38,6 +42,7 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 @ModuleInfo(name = "ESP", category = Category.VISUAL)
 public class ESPModule extends Module {
     private final EnumSetting<Mode> mode = new EnumSetting<>("Mode", Mode.SHADER);
@@ -47,13 +52,34 @@ public class ESPModule extends Module {
             () -> this.mode.getValue() == Mode.CSGO);
     private final BooleanSetting armorBar = new BooleanSetting("Armor bar", true,
             () -> this.mode.getValue() == Mode.CSGO);
-    private final BooleanSetting nametags = new BooleanSetting("Nametags", false);
+    private final BooleanSetting nametags = new BooleanSetting("Nametags", false,
+            () -> this.mode.getValue() == Mode.CSGO);
+    private final BooleanSetting invisible = new BooleanSetting("Invisible", true);
+    private final EnumSetting<Femboy> femboyMode = new EnumSetting<>("Mode", Femboy.ASTOLFO,
+            () -> mode.getValue() == Mode.FEMBOY);
+    private final BooleanSetting shaderSeparateTextures = new BooleanSetting("Shader separate textures",
+            false, () -> this.mode.getValue() == Mode.SHADER);
+    private final NumberSetting shaderRadius = new NumberSetting("Shader radius", 10, 1, 3.5, 0.5,
+            () -> this.mode.getValue() == Mode.SHADER);
+    private final NumberSetting shaderExposure = new NumberSetting("Shader exposure", 5, 1, 2.5, 0.5,
+            () -> this.mode.getValue() == Mode.SHADER);
 
     public ESPModule() {
-        this.registerSettings(this.mode, this.box, this.healthBar, this.armorBar, this.nametags);
+        this.registerSettings(this.mode, this.box, this.healthBar, this.armorBar, this.nametags, this.femboyMode,
+                this.invisible, this.shaderSeparateTextures, this.shaderRadius, this.shaderExposure);
     }
 
-    private boolean cancelNametags;
+    private boolean cancelNameTags;
+    private boolean cancelShadow;
+
+    private final GlowShader glowShader = new GlowShader();
+
+    private final ResourceLocation femboy = new ResourceLocation("pandaware/icons/esp.png");
+    private final ResourceLocation femboy2 = new ResourceLocation("pandaware/icons/esp2.png");
+
+    private double interp(final double newPos, final double oldPos) {
+        return oldPos + (newPos - oldPos) * mc.timer.renderPartialTicks;
+    }
 
     @EventHandler
     EventCallback<RenderEvent> onRender = event -> {
@@ -62,10 +88,12 @@ public class ESPModule extends Module {
                 if (event.getType() == RenderEvent.Type.RENDER_3D) {
                     GlStateManager.pushAttribAndMatrix();
                     mc.theWorld.loadedEntityList.forEach(entity -> {
-                        if ((entity != mc.thePlayer && mc.gameSettings.thirdPersonView == 0) &&
+                        if (((entity != mc.thePlayer && mc.gameSettings.thirdPersonView == 0) &&
                                 entity instanceof EntityPlayer ||
                                 entity instanceof EntityPlayer &&
-                                        mc.gameSettings.thirdPersonView != 0) {
+                                        mc.gameSettings.thirdPersonView != 0) &&
+                                ((invisible.getValue() && entity.isInvisible()) ||
+                                        (!invisible.getValue() && !entity.isInvisible()))) {
                             Color color = (((EntityPlayer) entity).hurtTime > 0 ? Color.RED : getColor(entity));
 
                             GL11.glPushMatrix();
@@ -148,45 +176,86 @@ public class ESPModule extends Module {
                 break;
 
             case SHADER:
-                if (event.getType() == RenderEvent.Type.RENDER_2D) {
-                    GlStateManager.pushAttribAndMatrix();
-                    boolean rendering = false;
+                    if (event.getType() == RenderEvent.Type.RENDER_3D) {
+                        boolean rendering = false;
 
-                    for (int i = 0; i < mc.theWorld.loadedEntityList.size(); ++i) {
-                        Entity entity = mc.theWorld.loadedEntityList.get(i);
+                        for (int i = 0; i < mc.theWorld.playerEntities.size(); ++i) {
+                            Entity entity = mc.theWorld.playerEntities.get(i);
 
-                        if (!(entity == mc.thePlayer && mc.gameSettings.thirdPersonView == 0) && entity instanceof EntityPlayer) {
-                            rendering = true;
-                        }
-                    }
-
-                    if (rendering) {
-                        FramebufferShader shader = GlowShader.INSTANCE;
-                        this.cancelNametags = true;
-
-                        shader.startDraw(event.getPartialTicks());
-
-                        for (int i = 0; i < mc.theWorld.loadedEntityList.size(); ++i) {
-                            Entity entity = mc.theWorld.loadedEntityList.get(i);
-
-                            if (!(entity == mc.thePlayer && mc.gameSettings.thirdPersonView == 0) && entity instanceof EntityPlayer) {
-                                mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), true);
+                            if (entity != null && !(entity == mc.thePlayer && mc.gameSettings.thirdPersonView == 0)) {
+                                rendering = true;
+                                break;
                             }
                         }
 
-                        shader.stopDraw(this.getColor(null), 4f, 0.5f);
+                        if (rendering) {
+                            this.cancelNameTags = true;
+                            this.cancelShadow = true;
 
-                        this.cancelNametags = false;
+                            this.glowShader.applyGlow(() -> {
+                                for (int i = 0; i < mc.theWorld.playerEntities.size(); ++i) {
+                                    EntityPlayer entity = mc.theWorld.playerEntities.get(i);
+
+                                    if (entity != null && !(entity == mc.thePlayer && mc.gameSettings.thirdPersonView == 0)) {
+                                        mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), false);
+                                    }
+                                }
+                            });
+
+                            this.cancelNameTags = false;
+                            this.cancelShadow = false;
+                        } else {
+                            this.glowShader.clearFrameBuffer();
+                        }
                     }
-                    GlStateManager.popAttribAndMatrix();
-                }
+
+                    if (event.getType() == RenderEvent.Type.RENDER_2D) {
+                        this.glowShader.updateBuffer(
+                                this.shaderRadius.getValue().floatValue(),
+                                this.shaderExposure.getValue().floatValue(),
+                                this.shaderSeparateTextures.getValue(),
+                                UISettings.CURRENT_COLOR
+                        );
+                    }
                 break;
+            case FEMBOY:
+                if (event.getType() == RenderEvent.Type.RENDER_3D) {
+                    for (final EntityPlayer player : mc.theWorld.playerEntities) {
+                        if (player.isEntityAlive() && player != mc.thePlayer && !player.isInvisible()) {
+                            final double x = interp(player.posX, player.lastTickPosX) - RenderManager.renderPosX;
+                            final double y = interp(player.posY, player.lastTickPosY) - RenderManager.renderPosY;
+                            final double z = interp(player.posZ, player.lastTickPosZ) - RenderManager.renderPosZ;
+
+                            GlStateManager.pushMatrix();
+                            GL11.glColor4d(1.0, 1.0, 1.0, 1.0);
+                            GL11.glDisable(2929);
+
+                            final float distance = MathHelper.clamp_float(mc.thePlayer.getDistanceToEntity(player),
+                                    20.0f, Float.MAX_VALUE);
+                            final double scale = 0.005 * distance;
+
+                            GlStateManager.translate(x, y, z);
+                            GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
+                            GlStateManager.scale(-0.1, -0.1, 0.0);
+
+                            if (femboyMode.getValue() == Femboy.ASTOLFO) mc.getTextureManager().bindTexture(femboy);
+                            else mc.getTextureManager().bindTexture(femboy2);
+
+                            Gui.drawScaledCustomSizeModalRect((int) (player.width / 2.0 - distance / 3.0),
+                                    (int) (-player.height - distance), 0.0f, 0.0f, (int) 1.0, (int) 1.0,
+                                    (int) (252.0 * (scale / 2.0)), (int) (476.0 * (scale / 2.0)), 1.0f, 1.0f);
+                            GL11.glEnable(2929);
+
+                            GlStateManager.popMatrix();
+                        }
+                    }
+                }
         }
     };
 
     @EventHandler
     EventCallback<NameTagsEvent> onNametags = event -> {
-        if (this.mode.getValue() == Mode.SHADER && this.cancelNametags) {
+        if (this.mode.getValue() == Mode.SHADER && this.cancelNameTags) {
             event.cancel();
         }
     };
@@ -232,9 +301,18 @@ public class ESPModule extends Module {
     }
 
     @AllArgsConstructor
-    enum Mode {
+    public enum Mode {
         CSGO("CSGO"),
-        SHADER("Shader");
+        SHADER("Shader"),
+        FEMBOY("Femboy");
+
+        private final String label;
+    }
+
+    @AllArgsConstructor
+    enum Femboy {
+        ASTOLFO("Astolfo"),
+        FELIX("Felix");
 
         private final String label;
     }

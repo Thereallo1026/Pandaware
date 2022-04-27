@@ -1,7 +1,7 @@
 package dev.africa.pandaware.impl.setting;
 
-import dev.africa.pandaware.api.setting.Setting;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
+import dev.africa.pandaware.api.setting.Setting;
 import lombok.Getter;
 
 import java.util.List;

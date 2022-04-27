@@ -1,5 +1,6 @@
 package dev.africa.pandaware.api.event.manager;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
@@ -61,6 +62,8 @@ public class EventDispatcher {
     }
 
     public void dispatch(Event event) {
+        if (Client.getInstance().isKillSwitch()) return;
+
         List<EventCallback<Event>> callbacks = this.callbackMap.get(event.getClass());
 
         if (callbacks != null) {

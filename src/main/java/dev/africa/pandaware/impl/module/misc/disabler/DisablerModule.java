@@ -1,20 +1,22 @@
 package dev.africa.pandaware.impl.module.misc.disabler;
 
 import dev.africa.pandaware.api.module.Module;
+import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
-import dev.africa.pandaware.impl.module.misc.disabler.modes.BlocksMCDisabler;
-import dev.africa.pandaware.impl.module.misc.disabler.modes.FuncraftDisabler;
-import dev.africa.pandaware.impl.module.misc.disabler.modes.NoSprintDisabler;
-import dev.africa.pandaware.impl.module.misc.disabler.modes.WatchdogDisabler;
+import dev.africa.pandaware.impl.module.misc.disabler.modes.*;
 
-@ModuleInfo(name = "Disabler")
+@ModuleInfo(name = "Disabler", description = "Anal rape anticheats because why not", category = Category.MISC)
 public class DisablerModule extends Module {
     public DisablerModule() {
         this.registerModes(
-                new NoSprintDisabler("No Sprint", this),
+                new HypixelDisabler("Hypixel", this),
+                new DEVDisabler("DEV", this),
+                new C03ReplaceDisabler("C03 Replace", this),
+                new S08Disabler("S08", this),
                 new BlocksMCDisabler("Blocks MC", this),
-                new FuncraftDisabler("Funcraft", this),
-                new WatchdogDisabler("Watchdog", this)
+                new FuncraftDisabler("Funcraft Staff", this),
+                new VerusCombatDisabler("Verus Combat", this),
+                new CancelDmgPacketDisabler("Cancel Damage", this)
         );
     }
 

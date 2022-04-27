@@ -1,8 +1,8 @@
 package dev.africa.pandaware.switcher.gui;
 
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.switcher.protocols.ProtocolCollection;
-import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;

@@ -48,6 +48,8 @@ public class AnimationsModule extends Module {
         EXHIBITION("Exhibition"),
         EXHIBITION2("Exhibition2"),
         SLIDE("Slide"),
+        SLIDE2("Slide2"),
+        PULL("Pull"),
         SWANG("Swang"),
         SWANK("Swank");
 

@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.module.player.ChestStealerModule;
+import dev.africa.pandaware.impl.module.render.TracersModule;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -804,7 +805,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         this.hurtCameraEffect(partialTicks);
 
-        if (this.mc.gameSettings.viewBobbing) {
+        if (this.mc.gameSettings.viewBobbing && !Client.getInstance().getModuleManager().getByClass(TracersModule.class)
+                .getData().isEnabled()) {
             this.setupViewBobbing(partialTicks);
         }
 
@@ -1284,6 +1286,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             Client.getInstance().getEventDispatcher().dispatch(new RenderEvent(
                     p_181560_1_, scaledResolution, mousePos, RenderEvent.Type.RENDER_SCREEN));
+            Client.getInstance().getNotificationManager().renderNotifications(scaledResolution);
         }
 
         this.frameFinish();

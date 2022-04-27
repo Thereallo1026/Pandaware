@@ -28,11 +28,11 @@ public class SentinelSpeed extends ModuleMode<SpeedModule> {
                             0.62 : 0.48) + speedAmplifier);
                 } else {
                     if (mc.thePlayer.getAirTicks() == 3) {
-                        mc.thePlayer.motionY = -0.1;
+                        mc.thePlayer.motionY -= 0.1;
                     }
 
                     if (mc.thePlayer.getAirTicks() == 4) {
-//                        mc.thePlayer.motionY = 0.0;
+                        mc.thePlayer.motionY = 0.0;
                     }
 
                     if (mc.thePlayer.getAirTicks() == 4) {

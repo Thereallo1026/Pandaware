@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+
+import dev.africa.pandaware.utils.client.PatcherUtils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.StitcherException;
 import net.minecraft.client.resources.IResource;
@@ -481,6 +483,8 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
 
                 Config.getMinecraft().getTextureManager().bindTexture(locationBlocksTexture);
             }
+
+            PatcherUtils.patchTextureMap();
 
             Reflector.callVoid(Reflector.ForgeHooksClient_onTextureStitchedPost, new Object[] {this});
             this.updateIconGrid(stitcher.getCurrentWidth(), stitcher.getCurrentHeight());

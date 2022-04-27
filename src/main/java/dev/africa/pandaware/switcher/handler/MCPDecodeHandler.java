@@ -13,7 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @ChannelHandler.Sharable
-public class MCPDecodeHandler extends MessageToMessageDecoder<ByteBuf> {
+public class MCPDecodeHandler extends MessageToMessageDecoder<ByteBuf>
+{
     private final UserConnection info;
     private boolean handledCompression;
     private boolean skipDoubleTransform;
@@ -28,54 +29,66 @@ public class MCPDecodeHandler extends MessageToMessageDecoder<ByteBuf> {
 
     // https://github.com/ViaVersion/ViaVersion/blob/master/velocity/src/main/java/us/myles/ViaVersion/velocity/handlers/VelocityDecodeHandler.java
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf bytebuf, List<Object> out) throws Exception {
-        if (skipDoubleTransform) {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf bytebuf, List<Object> out) throws Exception
+    {
+        if (skipDoubleTransform)
+        {
             skipDoubleTransform = false;
             out.add(bytebuf.retain());
             return;
         }
 
-        if (!info.checkIncomingPacket()) {
+        if (!info.checkIncomingPacket())
+        {
             throw CancelDecoderException.generate(null);
         }
 
-        if (!info.shouldTransformPacket()) {
+        if (!info.shouldTransformPacket())
+        {
             out.add(bytebuf.retain());
             return;
         }
 
         ByteBuf transformedBuf = ctx.alloc().buffer().writeBytes(bytebuf);
 
-        try {
+        try
+        {
             boolean needsCompress = handleCompressionOrder(ctx, transformedBuf);
 
             info.transformIncoming(transformedBuf, CancelDecoderException::generate);
 
-            if (needsCompress) {
+            if (needsCompress)
+            {
                 CommonTransformer.compress(ctx, transformedBuf);
                 skipDoubleTransform = true;
             }
 
             out.add(transformedBuf.retain());
-        } finally {
+        }
+        finally
+        {
             transformedBuf.release();
         }
     }
 
-    private boolean handleCompressionOrder(ChannelHandlerContext ctx, ByteBuf buf) throws InvocationTargetException {
-        if (handledCompression) {
+    private boolean handleCompressionOrder(ChannelHandlerContext ctx, ByteBuf buf) throws InvocationTargetException
+    {
+        if (handledCompression)
+        {
             return false;
         }
 
         int decoderIndex = ctx.pipeline().names().indexOf("decompress");
 
-        if (decoderIndex == -1) {
+        if (decoderIndex == -1)
+        {
             return false;
         }
 
         handledCompression = true;
 
-        if (decoderIndex > ctx.pipeline().names().indexOf("via-decoder")) {
+        if (decoderIndex > ctx.pipeline().names().indexOf("via-decoder"))
+        {
             // Need to decompress this packet due to bad order
             CommonTransformer.decompress(ctx, buf);
             ChannelHandler encoder = ctx.pipeline().get("via-encoder");
@@ -91,8 +104,10 @@ public class MCPDecodeHandler extends MessageToMessageDecoder<ByteBuf> {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (PipelineUtil.containsCause(cause, CancelCodecException.class)) {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+    {
+        if (PipelineUtil.containsCause(cause, CancelCodecException.class))
+        {
             return;
         }
         super.exceptionCaught(ctx, cause);

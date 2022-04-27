@@ -391,9 +391,9 @@ public abstract class Container
         }
         else if (mode == 2 && clickedButton >= 0 && clickedButton < 9)
         {
-            Slot slot5 = (Slot)this.inventorySlots.get(slotId);
+            Slot slot5 = this.inventorySlots.get(slotId);
 
-            if (slot5.canTakeStack(playerIn))
+            if (slot5 != null && slot5.canTakeStack(playerIn))
             {
                 ItemStack itemstack7 = inventoryplayer.getStackInSlot(clickedButton);
                 boolean flag = itemstack7 == null || slot5.inventory == inventoryplayer && slot5.isItemValid(itemstack7);

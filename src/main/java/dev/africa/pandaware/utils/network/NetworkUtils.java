@@ -1,15 +1,20 @@
 package dev.africa.pandaware.utils.network;
 
+import dev.africa.pandaware.utils.client.Printer;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.client.C19PacketResourcePackStatus;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
+
+import static dev.africa.pandaware.api.interfaces.MinecraftInstance.mc;
 
 @UtilityClass
 public class NetworkUtils {
@@ -124,5 +129,39 @@ public class NetworkUtils {
         }
 
         return response;
+    }
+
+    public boolean isResourcePackValid(NetworkManager networkManager, String url, String hash) {
+        try {
+            URI uri = new URI(url);
+            String scheme = uri.getScheme();
+
+            if (!scheme.equals("http") && !scheme.equals("https") && !scheme.equals("level")) {
+                networkManager.sendPacket(new C19PacketResourcePackStatus(hash,
+                        C19PacketResourcePackStatus.Action.FAILED_DOWNLOAD));
+
+                throw new URISyntaxException(url, "Wrong protocol");
+            }
+
+            url = URLDecoder.decode(url.substring("level://".length()), StandardCharsets.UTF_8.toString());
+
+            if (scheme.equals("level") && (url.contains("..") || !url.endsWith("/resources.zip"))) {
+                if (mc.getCurrentServerData() != null && (!mc.getCurrentServerData().serverIP.endsWith("mineland.net") ||
+                        !mc.getCurrentServerData().serverIP.endsWith("join-ml.com")) &&
+                        !(mc.currentScreen instanceof GuiMultiplayer)) { // We do this bc mineland likes touching files more than tenebrous likes touching kids
+                    Printer.chat("§c§lThe current server has attempted to access §7" + url);
+                }
+
+                throw new URISyntaxException(url, "Invalid levelstorage resourcepack path");
+            }
+
+            return true;
+        } catch (URISyntaxException e) {
+            return false;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

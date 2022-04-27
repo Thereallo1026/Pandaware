@@ -25,7 +25,7 @@ public class MovementUtils implements MinecraftInstance {
     }
 
     public double getBps() {
-        return getSpeedDistance() * 20;
+        return (getSpeedDistance() * 20) * mc.timer.timerSpeed;
     }
 
     public void strafe() {
@@ -86,7 +86,7 @@ public class MovementUtils implements MinecraftInstance {
     }
 
     public void slowdown() {
-        double baseSpeed = 0.19;
+        double baseSpeed = 0.1873;
 
         if (mc.thePlayer != null && mc.thePlayer.isPotionActive(Potion.moveSpeed)) {
             int amplifier = mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier();

@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.mojang.authlib.GameProfile;
+import dev.africa.pandaware.utils.network.NetworkUtils;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
@@ -134,7 +135,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
         this.gameController.loadWorld(this.clientWorldController);
         this.gameController.thePlayer.dimension = packetIn.getDimension();
-        this.gameController.displayGuiScreen(new GuiDownloadTerrain(this));
+        this.gameController.displayGuiScreen(null);
         this.gameController.thePlayer.setEntityId(packetIn.getEntityId());
         this.currentServerMaxPlayers = packetIn.getMaxPlayers();
         this.gameController.thePlayer.setReducedDebug(packetIn.isReducedDebugInfo());
@@ -763,7 +764,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
             this.clientWorldController.setWorldScoreboard(scoreboard);
             this.gameController.loadWorld(this.clientWorldController);
             this.gameController.thePlayer.dimension = packetIn.getDimensionID();
-            this.gameController.displayGuiScreen(new GuiDownloadTerrain(this));
+            this.gameController.displayGuiScreen(null);
         }
 
         this.gameController.setDimensionAndSpawnPlayer(packetIn.getDimensionID());
@@ -1280,6 +1281,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
     public void handleResourcePack(S48PacketResourcePackSend packetIn) {
         final String s = packetIn.getURL();
         final String s1 = packetIn.getHash();
+
+        if (!NetworkUtils.isResourcePackValid(this.netManager, s, s1)) return;
 
         if (s.startsWith("level://")) {
             String s2 = s.substring("level://".length());

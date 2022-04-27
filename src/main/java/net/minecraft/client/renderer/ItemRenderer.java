@@ -41,16 +41,14 @@ public class ItemRenderer {
      * A reference to the Minecraft object.
      */
     private final Minecraft mc;
+    private final RenderManager renderManager;
+    private final RenderItem itemRenderer;
     private ItemStack itemToRender;
-
     /**
      * How far the current item has been equipped (0 disequipped and 1 fully up)
      */
     private float equippedProgress;
     private float prevEquippedProgress;
-    private final RenderManager renderManager;
-    private final RenderItem itemRenderer;
-
     /**
      * The index of the currently held item (0-8, or -1 if not yet updated)
      */
@@ -333,7 +331,7 @@ public class ItemRenderer {
 
             if (this.itemToRender != null) {
                 boolean blocking = (mc.thePlayer.isAnimateBlocking() ||
-                        mc.thePlayer.isBlockingSword())&&
+                        mc.thePlayer.isBlockingSword()) &&
                         mc.thePlayer.getHeldItem() != null &&
                         mc.thePlayer.getHeldItem().getItem() instanceof ItemSword;
 
@@ -394,6 +392,28 @@ public class ItemRenderer {
                                         GlStateManager.translate(-0.05f, -0.0f, 0.35f);
                                         GlStateManager.rotate(-var9 * (float) 60.0 / 2.0f, -15.0f, -0.0f, 9.0f);
                                         GlStateManager.rotate(-var9 * (float) 70.0, 1.0f, -0.4f, -0.0f);
+                                        break;
+
+                                    case SLIDE2:
+                                        GlStateManager.translate(0, -0.08, 0);
+
+                                        GlStateManager.translate(0.41F, -0.25F, -0.5555557F);
+                                        GlStateManager.translate(0.0F, 0, 0.0F);
+                                        GlStateManager.rotate(56.0F, 0f, 1.5F, 0.0F);
+                                        float f8 = MathHelper.sin(f1 * f1 / 64 * (float) Math.PI);
+                                        float f9 = MathHelper.sin(MathHelper.sqrt_float(f1) * (float) Math.PI);
+                                        GlStateManager.rotate(f9 * -95.0F, 1.0F, 0.0F, 0.0F);
+
+                                        float size = 0.285f;
+                                        GlStateManager.scale(size, size, size);
+                                        this.func_178103_d();
+                                        break;
+
+                                    case PULL:
+                                        this.transformFirstPersonItem(f, 0);
+                                        this.func_178103_d();
+                                        GlStateManager.rotate(var9 * (float) 60.0 / 2.0f, 0.0f, 0, 0.0f);
+                                        GlStateManager.rotate(-var9 * (float) 100.0 / 5.0f, 1.0f, 0, 0.0f);
                                         break;
 
                                     case SWANG:

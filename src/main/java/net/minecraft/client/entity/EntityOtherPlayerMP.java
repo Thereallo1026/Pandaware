@@ -111,6 +111,11 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
 
         this.prevCameraYaw = this.cameraYaw;
         this.updateArmSwingProgress();
+
+        if (true) {
+            return;
+        }
+
         float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
         float f = (float)Math.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
 

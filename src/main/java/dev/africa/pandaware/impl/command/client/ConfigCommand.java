@@ -93,11 +93,17 @@ public class ConfigCommand extends Command {
                     }
                     break;
                 }
+
+                case "RELOAD": {
+                    Client.getInstance().getConfigManager().discoverConfigs();
+                    Printer.chat("§aReloaded all configs");
+                    break;
+                }
             }
         } else {
             this.sendInvalidArgumentsMessage(
                     "load", "save", "delete", "remove",
-                    "list", "folder"
+                    "list", "folder", "reload"
             );
         }
     }

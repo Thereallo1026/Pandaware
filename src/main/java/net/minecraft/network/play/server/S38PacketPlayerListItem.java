@@ -6,6 +6,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import java.io.IOException;
 import java.util.List;
+
+import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -15,7 +17,8 @@ import net.minecraft.world.WorldSettings;
 
 public class S38PacketPlayerListItem implements Packet<INetHandlerPlayClient>
 {
-    private S38PacketPlayerListItem.Action action;
+    @Getter
+    public S38PacketPlayerListItem.Action action;
     private final List<S38PacketPlayerListItem.AddPlayerData> players = Lists.<S38PacketPlayerListItem.AddPlayerData>newArrayList();
 
     public S38PacketPlayerListItem()
@@ -50,70 +53,66 @@ public class S38PacketPlayerListItem implements Packet<INetHandlerPlayClient>
         this.action = (S38PacketPlayerListItem.Action)buf.readEnumValue(S38PacketPlayerListItem.Action.class);
         int i = buf.readVarIntFromBuffer();
 
-        for (int j = 0; j < i; ++j)
-        {
-            GameProfile gameprofile = null;
-            int k = 0;
-            WorldSettings.GameType worldsettings$gametype = null;
-            IChatComponent ichatcomponent = null;
+        for (int j = 0; j < i; ++j) {
+            try {
+                GameProfile gameprofile = null;
+                int k = 0;
+                WorldSettings.GameType worldsettings$gametype = null;
+                IChatComponent ichatcomponent = null;
 
-            switch (this.action)
-            {
-                case ADD_PLAYER:
-                    gameprofile = new GameProfile(buf.readUuid(), buf.readStringFromBuffer(16));
-                    int l = buf.readVarIntFromBuffer();
-                    int i1 = 0;
+                switch (this.action) {
+                    case ADD_PLAYER:
+                        gameprofile = new GameProfile(buf.readUuid(), buf.readStringFromBuffer(16));
+                        int l = buf.readVarIntFromBuffer();
+                        int i1 = 0;
 
-                    for (; i1 < l; ++i1)
-                    {
-                        String s = buf.readStringFromBuffer(32767);
-                        String s1 = buf.readStringFromBuffer(32767);
+                        for (; i1 < l; ++i1) {
+                            String s = buf.readStringFromBuffer(32767);
+                            String s1 = buf.readStringFromBuffer(32767);
 
-                        if (buf.readBoolean())
-                        {
-                            gameprofile.getProperties().put(s, new Property(s, s1, buf.readStringFromBuffer(32767)));
+                            if (buf.readBoolean()) {
+                                gameprofile.getProperties().put(s, new Property(s, s1, buf.readStringFromBuffer(32767)));
+                            } else {
+                                gameprofile.getProperties().put(s, new Property(s, s1));
+                            }
                         }
-                        else
-                        {
-                            gameprofile.getProperties().put(s, new Property(s, s1));
+
+                        worldsettings$gametype = WorldSettings.GameType.getByID(buf.readVarIntFromBuffer());
+                        k = buf.readVarIntFromBuffer();
+
+                        if (buf.readBoolean()) {
+                            ichatcomponent = buf.readChatComponent();
                         }
-                    }
 
-                    worldsettings$gametype = WorldSettings.GameType.getByID(buf.readVarIntFromBuffer());
-                    k = buf.readVarIntFromBuffer();
+                        break;
 
-                    if (buf.readBoolean())
-                    {
-                        ichatcomponent = buf.readChatComponent();
-                    }
+                    case UPDATE_GAME_MODE:
+                        gameprofile = new GameProfile(buf.readUuid(), (String) null);
+                        worldsettings$gametype = WorldSettings.GameType.getByID(buf.readVarIntFromBuffer());
+                        break;
 
-                    break;
+                    case UPDATE_LATENCY:
+                        gameprofile = new GameProfile(buf.readUuid(), (String) null);
+                        k = buf.readVarIntFromBuffer();
+                        break;
 
-                case UPDATE_GAME_MODE:
-                    gameprofile = new GameProfile(buf.readUuid(), (String)null);
-                    worldsettings$gametype = WorldSettings.GameType.getByID(buf.readVarIntFromBuffer());
-                    break;
+                    case UPDATE_DISPLAY_NAME:
+                        gameprofile = new GameProfile(buf.readUuid(), (String) null);
 
-                case UPDATE_LATENCY:
-                    gameprofile = new GameProfile(buf.readUuid(), (String)null);
-                    k = buf.readVarIntFromBuffer();
-                    break;
+                        if (buf.readBoolean()) {
+                            ichatcomponent = buf.readChatComponent();
+                        }
 
-                case UPDATE_DISPLAY_NAME:
-                    gameprofile = new GameProfile(buf.readUuid(), (String)null);
+                        break;
 
-                    if (buf.readBoolean())
-                    {
-                        ichatcomponent = buf.readChatComponent();
-                    }
+                    case REMOVE_PLAYER:
+                        gameprofile = new GameProfile(buf.readUuid(), (String) null);
+                }
 
-                    break;
-
-                case REMOVE_PLAYER:
-                    gameprofile = new GameProfile(buf.readUuid(), (String)null);
+                this.players.add(new S38PacketPlayerListItem.AddPlayerData(gameprofile, k, worldsettings$gametype, ichatcomponent));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            this.players.add(new S38PacketPlayerListItem.AddPlayerData(gameprofile, k, worldsettings$gametype, ichatcomponent));
         }
     }
 

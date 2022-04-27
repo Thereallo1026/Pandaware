@@ -5,7 +5,6 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
@@ -18,12 +17,12 @@ import dev.africa.pandaware.impl.setting.NumberRangeSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.math.TimeHelper;
-import dev.africa.pandaware.utils.network.ProtocolUtils;
-import dev.africa.pandaware.utils.player.RotationUtils;
-import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
+import dev.africa.pandaware.utils.network.ProtocolUtils;
+import dev.africa.pandaware.utils.player.RotationUtils;
 import dev.africa.pandaware.utils.player.path.PathUtils;
+import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.entity.Entity;
@@ -62,7 +61,7 @@ public class TPAuraModule extends Module {
     public final NumberSetting range
             = new NumberSetting("Range", 200, 1, 100);
     private final NumberRangeSetting aps =
-            new NumberRangeSetting("APS", 20, 0, 9, 11, 0.5);
+            new NumberRangeSetting("APS", 20, 0.5, 9, 11, 0.5);
 
     private final BooleanSetting players = new BooleanSetting("Players", true);
     private final BooleanSetting mobs = new BooleanSetting("Mobs", false);
@@ -196,16 +195,13 @@ public class TPAuraModule extends Module {
                             EntityLivingBase entity = entitiesIterator.next();
 
                             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer
-                                    .C04PacketPlayerPosition(entity.posX, entity.posY, entity.posZ, true));
+                                    .C04PacketPlayerPosition(entity.posX, entity.posY, entity.posZ, entity.onGround));
 
                             List<Vec3> list = new ArrayList<>();
-                            list.add(new Vec3(entity.posX, entity.posY, entity.posZ));
+                            list.add(new Vec3(entity.posX, entity.posY + 1, entity.posZ));
 
                             this.target = entity;
                             this.attack(entity, list);
-
-                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer
-                                    .C04PacketPlayerPosition(event.getX(), event.getY(), event.getZ(), true));
                         }
                         break;
                     }

@@ -2,11 +2,11 @@ package dev.africa.pandaware.impl.ui.notification;
 
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.font.Fonts;
+import dev.africa.pandaware.impl.font.renderer.TTFFontRenderer;
 import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.StencilUtils;
-import dev.africa.pandaware.impl.font.renderer.TTFFontRenderer;
 import dev.africa.pandaware.utils.render.animator.Animator;
 import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.Getter;
@@ -155,7 +155,7 @@ public class Notification {
 
     //GETS ICON FROM PICKED CATEGORY
     private String getIcon() {
-        String path = Client.getInstance().getManifest().getClientName() + "/icons/notification/", icon = "";
+        String path = Client.getInstance().getManifest().getClientName().toLowerCase() + "/icons/notification/", icon = "";
 
         switch (type) {
             case WARNING:

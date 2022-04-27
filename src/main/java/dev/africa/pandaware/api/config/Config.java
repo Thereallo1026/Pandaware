@@ -32,7 +32,7 @@ public class Config {
 
             JsonObject configObject = new JsonObject();
 
-            Client.getInstance().getModuleManager().getMap().keySet().stream().filter(module ->
+            Client.getInstance().getModuleManager().getMap().values().stream().filter(module ->
                     module.getData().getCategory() != Category.VISUAL || clientConfig).forEach(module -> {
                 JsonObject moduleObject = new JsonObject();
 
@@ -79,7 +79,7 @@ public class Config {
             String json = FileUtils.readFromFile(this.file);
             JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
-            Client.getInstance().getModuleManager().getMap().keySet().stream().filter(module ->
+            Client.getInstance().getModuleManager().getMap().values().stream().filter(module ->
                     module.getData().getCategory() != Category.VISUAL || clientConfig).forEach(module -> {
                 JsonObject moduleObject = jsonObject.getAsJsonObject(module.getData().getName());
 

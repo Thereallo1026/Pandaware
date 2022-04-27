@@ -11,7 +11,6 @@ import dev.africa.pandaware.impl.ui.clickgui.module.ModuleElement;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.render.RenderUtils;
-import dev.africa.pandaware.utils.render.StencilUtils;
 import lombok.Getter;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;

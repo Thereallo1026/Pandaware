@@ -13,6 +13,9 @@ import dev.africa.pandaware.utils.render.animator.Easing;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnumElement extends Element<EnumSetting> {
     public EnumElement(Module module, ModuleMode<?> moduleMode, EnumSetting setting) {
@@ -41,8 +44,13 @@ public class EnumElement extends Element<EnumSetting> {
 
         Enum max = this.getLongest(this.getSetting());
 
-        this.width = (int) Fonts.getInstance().getProductSansMedium().getStringWidth(this.getSetting().getLabel(max));
-        this.width = Math.max(70, width);
+        if (max == null) {
+            return;
+        }
+
+        this.width = (int) Fonts.getInstance().getProductSansMedium().getStringWidth(
+                this.getSetting().getLabel(max)) + 5;
+        this.width = Math.max(95, width);
 
         this.clone = this.getPosition().copy();
         this.clone.setY(this.clone.getY() - 4);
@@ -56,8 +64,8 @@ public class EnumElement extends Element<EnumSetting> {
         RenderUtils.drawRoundedRectOutline(this.clone.getX(), this.clone.getY(), this.width, this.height, 3,
                 new Color(255, 255, 255, 255));
 
-        Fonts.getInstance().getProductSansMedium().drawCenteredString(this.getSetting().getLabel(this.getSetting().getValue()),
-                this.clone.getX() + (63 / 2) + 4, this.clone.getY() + 3, -1);
+        Fonts.getInstance().getProductSansMedium().drawCenteredStringWithShadow(this.getSetting().getLabel(this.getSetting().getValue()),
+                this.clone.getX() + (this.width / 2), this.clone.getY() + 3, -1);
 
         this.getSize().setY((int) (this.getSize().getY() + (this.height - 15)));
 
@@ -67,9 +75,9 @@ public class EnumElement extends Element<EnumSetting> {
                 String label = this.getSetting().getLabel(value);
 
                 if ((this.height + this.getPosition().getY() - 15) >= (this.clone.getY() + 3 + 15 + add)) {
-                    Fonts.getInstance().getProductSansMedium().drawCenteredString(
+                    Fonts.getInstance().getProductSansMedium().drawCenteredStringWithShadow(
                             (value.equals(this.getSetting().getValue()) ? "§l" : "") + label,
-                            this.clone.getX() + (63 / 2) + 4, this.clone.getY() + 3 + 15 + add, -1);
+                            this.clone.getX() + (this.width / 2), this.clone.getY() + 3 + 15 + add, -1);
                 }
 
                 add += 15;
@@ -106,8 +114,11 @@ public class EnumElement extends Element<EnumSetting> {
     }
 
     Enum getLongest(EnumSetting setting) {
-        return Arrays.stream(setting.getValues())
-                .reduce((a, b) -> setting.getLabel(a).length() > setting.getLabel(a).length() ? a : b)
+        List<Enum> enumList = Arrays.stream(setting.getValues()).collect(Collectors.toList());
+        Enum maxMode = enumList.stream().max(Comparator.comparingDouble(mode ->
+                        Fonts.getInstance().getProductSansMedium().getStringWidth(setting.getLabel(mode))))
                 .orElse(null);
+
+        return maxMode;
     }
 }

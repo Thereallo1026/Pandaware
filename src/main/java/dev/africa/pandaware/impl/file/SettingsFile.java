@@ -21,6 +21,13 @@ public class SettingsFile extends FileObject {
 
         jsonObject.addProperty("firstLaunch", false);
 
+        jsonObject.addProperty("femboyPositionXXX", Client.getInstance().getClickGUI().getFemboyPosition().getX());
+        jsonObject.addProperty("femboyPositionYYY", Client.getInstance().getClickGUI().getFemboyPosition().getY());
+
+        if (Client.getInstance().getSocketHandler().getIrcName() != null) {
+            jsonObject.addProperty("ircName", Client.getInstance().getSocketHandler().getIrcName());
+        }
+
         FileUtils.writeToFile(this.getGson().toJson(jsonObject), this.getFile());
     }
 
@@ -29,5 +36,12 @@ public class SettingsFile extends FileObject {
         JsonObject jsonParser = JsonParser.parseReader(new FileReader(this.getFile())).getAsJsonObject();
 
         Client.getInstance().setFirstLaunch(jsonParser.get("firstLaunch").getAsBoolean());
+
+        Client.getInstance().getClickGUI().getFemboyPosition().setX(jsonParser.get("femboyPositionXXX").getAsInt());
+        Client.getInstance().getClickGUI().getFemboyPosition().setY(jsonParser.get("femboyPositionYYY").getAsInt());
+
+        if (jsonParser.has("ircName")) {
+            Client.getInstance().getSocketHandler().setIrcNameAndStart(jsonParser.get("ircName").getAsString());
+        }
     }
 }

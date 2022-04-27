@@ -331,7 +331,7 @@ public abstract class EntityLivingBase extends Entity {
 
         this.prevCameraPitch = this.cameraPitch;
 
-        if (this.hurtTime > 0) {
+        if (this.hurtTime >= 0) {
             --this.hurtTime;
         }
 

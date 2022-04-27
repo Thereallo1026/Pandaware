@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -412,5 +413,40 @@ public class RenderUtils implements MinecraftInstance {
         drawRect(x, y, x + width, y1, borderColor);
         drawRect(x1 - width, y, x1, y1, borderColor);
         drawRect(x + width, y1 - width, x1 - width, y1, borderColor);
+    }
+    public void bindFrameBuffer(double x, double y, double width, double height, Framebuffer framebuffer) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, framebuffer.framebufferTexture);
+        drawQuad(x, y, width, height);
+    }
+
+    public void drawQuad(double x, double y, double width, double height) {
+        GL11.glBegin(GL11.GL_QUADS);
+
+        GL11.glTexCoord2d(0, 1);
+        GL11.glVertex2d(x, y);
+
+        GL11.glTexCoord2d(0, 0);
+        GL11.glVertex2d(x, y + height);
+
+        GL11.glTexCoord2d(1, 0);
+        GL11.glVertex2d(x + width, y + height);
+
+        GL11.glTexCoord2d(1, 1);
+        GL11.glVertex2d(x + width, y);
+
+        GL11.glEnd();
+    }
+
+    public Framebuffer createFrameBuffer(Framebuffer framebuffer) {
+        if (framebuffer == null || framebuffer.framebufferWidth != mc.displayWidth
+                || framebuffer.framebufferHeight != mc.displayHeight) {
+            if (framebuffer != null) {
+                framebuffer.deleteFramebuffer();
+            }
+
+            return new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+        }
+
+        return framebuffer;
     }
 }

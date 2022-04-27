@@ -101,8 +101,9 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
             } else {
                 modelplayer.heldItemRight = 1;
 
-                boolean shouldAnimate = (Minecraft.getMinecraft().thePlayer.isAnimateBlocking()
-                        || Minecraft.getMinecraft().thePlayer.isBlockingSword() || clientPlayer.getItemInUseCount() > 0);
+                boolean shouldAnimate = ((Minecraft.getMinecraft().thePlayer.isAnimateBlocking()
+                        || Minecraft.getMinecraft().thePlayer.isBlockingSword()) && clientPlayer == Minecraft.getMinecraft().thePlayer
+                        || clientPlayer.getItemInUseCount() > 0);
 
                 if (shouldAnimate) {
                     EnumAction enumaction = itemstack.getItemUseAction();

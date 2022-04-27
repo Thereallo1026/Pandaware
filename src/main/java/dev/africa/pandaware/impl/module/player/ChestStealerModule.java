@@ -3,7 +3,6 @@ package dev.africa.pandaware.impl.module.player;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
@@ -25,7 +24,7 @@ import net.minecraft.potion.PotionEffect;
 import java.util.regex.Pattern;
 
 @Getter
-@ModuleInfo(name = "Chest Stealer", category = Category.PLAYER)
+@ModuleInfo(name = "Chest Stealer", shortcut = {"stealer, becomeblackman"}, category = Category.PLAYER)
 public class ChestStealerModule extends Module {
     private final TimeHelper timer = new TimeHelper();
     private final NumberSetting delay = new NumberSetting("Delay", 1000, 0, 80);

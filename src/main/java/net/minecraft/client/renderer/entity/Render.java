@@ -1,5 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
+import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.module.render.ESPModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -340,7 +342,11 @@ public abstract class Render<T extends Entity> implements IEntityRenderer
                 double d0 = this.renderManager.getDistanceToCamera(entityIn.posX, entityIn.posY, entityIn.posZ);
                 float f = (float)((1.0D - d0 / 256.0D) * (double)this.shadowOpaque);
 
-                if (f > 0.0F)
+                ESPModule esp = Client.getInstance().getModuleManager().getByClass(ESPModule.class);
+                boolean shouldRender = !esp.getData().isEnabled() || esp.getMode().getValue() == ESPModule.Mode.SHADER &&
+                        !esp.isCancelShadow() || esp.getMode().getValue() != ESPModule.Mode.SHADER;
+
+                if (f > 0.0F && shouldRender)
                 {
                     this.renderShadow(entityIn, x, y, z, f, partialTicks);
                 }

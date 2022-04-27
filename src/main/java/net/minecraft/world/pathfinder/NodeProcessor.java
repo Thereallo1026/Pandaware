@@ -28,8 +28,8 @@ public abstract class NodeProcessor
      *  {@link net.minecraft.world.pathfinder.WalkNodeProcessor WalkNodeProcessor} uses this to change its field {@link
      * net.minecraft.world.pathfinder.WalkNodeProcessor#avoidsWater avoidsWater}
      */
-    public void postProcess()
-    {
+    public void postProcess() {
+        this.blockaccess = null;
     }
 
     /**

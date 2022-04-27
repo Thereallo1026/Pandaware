@@ -1,10 +1,10 @@
 package dev.africa.pandaware.impl.ui.clickgui.setting.impl;
 
-import dev.africa.pandaware.impl.ui.clickgui.setting.api.Element;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import dev.africa.pandaware.impl.ui.clickgui.setting.api.Element;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
@@ -32,7 +32,7 @@ public class NumberElement extends Element<NumberSetting> {
                 -1
         );
 
-        String text = String.valueOf(MathUtils.roundToDecimal(this.getSetting().getValue().doubleValue(), 1));
+        String text = String.valueOf(MathUtils.roundToDecimal(this.getSetting().getValue().doubleValue(), 2));
         Fonts.getInstance().getProductSansSmall().drawString(
                 text,
                 this.getPosition().getX() + this.getSize().getX() - 6 -

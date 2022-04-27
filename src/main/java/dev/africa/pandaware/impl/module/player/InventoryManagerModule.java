@@ -3,16 +3,17 @@ package dev.africa.pandaware.impl.module.player;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
+import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
+import lombok.AllArgsConstructor;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.enchantment.Enchantment;
@@ -22,56 +23,33 @@ import net.minecraft.item.*;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-@ModuleInfo(name = "Inventory Manager", category = Category.PLAYER)
+@ModuleInfo(name = "Inv Manager", shortcut = {"manager", "cleaner", "shitdropper"}, category = Category.PLAYER)
 public class InventoryManagerModule extends Module {
 
-    private static final int BLOCK_CAP = 1024, WEAPON_SLOT = 36, PICKAXE_SLOT = 37, AXE_SLOT = 38, SHOVEL_SLOT = 39;
+    private static final int WEAPON_SLOT = 36, PICKAXE_SLOT = 37, AXE_SLOT = 38, SHOVEL_SLOT = 39, BLOCKS_SLOT = 44;
     private final TimeHelper timer = new TimeHelper();
 
-    private final NumberSetting delay = new NumberSetting("Delay", 1000, 0, 81);
+    private final EnumSetting<CleanMode> cleanMode = new EnumSetting<>("Mode", CleanMode.NORMAL);
+    private final NumberSetting delay = new NumberSetting("Delay", 1000, 0, 75, 1);
     private final NumberSetting randomMax = new NumberSetting("Random Max", 1000, 0, 50);
     private final NumberSetting randomMin = new NumberSetting("Random Min", 1000, 0, 0);
+    private final NumberSetting blockCap = new NumberSetting("Block Cap", 1024, 64, 512);
     private final BooleanSetting random = new BooleanSetting("Randomization", false);
     private final BooleanSetting archery = new BooleanSetting("Clean Bows-Arrows", true);
     private final BooleanSetting food = new BooleanSetting("Clean food", true);
     private final BooleanSetting sword = new BooleanSetting("Prefer swords", true);
     private final BooleanSetting keepEmpty = new BooleanSetting("Keep Empty", false);
-    private final BooleanSetting openInventory = new BooleanSetting("Open Inventory", false);
 
     public long lastClean;
-
-    public InventoryManagerModule() {
-        this.registerSettings(this.delay, this.randomMax, this.randomMin, this.random,
-                this.archery, this.food, this.sword, this.keepEmpty, this.openInventory);
-    }
-
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
+        AutoArmorModule autoArmor = Client.getInstance().getModuleManager().getByClass(AutoArmorModule.class);
         final long time = delay.getValue().intValue() + (random.getValue() ? RandomUtils.nextInt(randomMin.getValue().intValue(), randomMax.getValue().intValue()) : 0);
-        final AutoArmorModule autoArmor = Client.getInstance().getModuleManager().getByClass(AutoArmorModule.class);
-        final long autoArmorDelay = autoArmor.delayVal;
 
-        if (timer.reach(autoArmorDelay) && autoArmor.getData().isEnabled()) {
-            if (!autoArmor.getOpenInventory().getValue() || mc.currentScreen instanceof GuiInventory) {
-                if (mc.currentScreen == null || mc.currentScreen instanceof GuiInventory || mc.currentScreen instanceof GuiChat) {
-                    getBestArmor();
-                }
-            }
-        }
-        if (autoArmor.getData().isEnabled()) {
-            for (int type = 1; type < 5; type++) {
-                if (mc.thePlayer.inventoryContainer.getSlot(4 + type).getHasStack()) {
-                    ItemStack is = mc.thePlayer.inventoryContainer.getSlot(4 + type).getStack();
-                    if (!isBestArmor(is, type)) {
-                        return;
-                    }
-                } else if (invContainsType(type - 1)) {
-                    return;
-                }
-            }
-        }
+        if (this.cleanMode.getValue() == CleanMode.OPEN && !(mc.currentScreen instanceof GuiInventory))
+            return;
 
-        if (this.openInventory.getValue() && !(mc.currentScreen instanceof GuiInventory))
+        if (this.cleanMode.getValue() == CleanMode.FAKE && (mc.isMoveMoving() || mc.gameSettings.keyBindJump.pressed))
             return;
 
         if (mc.currentScreen == null || mc.currentScreen instanceof GuiInventory || mc.currentScreen instanceof GuiChat) {
@@ -112,9 +90,9 @@ public class InventoryManagerModule extends Module {
         }
     };
 
-    public void shiftClick(int slot) {
-        mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, slot, 0, 1, mc.thePlayer);
-        lastClean = System.currentTimeMillis();
+    public InventoryManagerModule() {
+        this.registerSettings(this.cleanMode, this.delay, this.randomMax, this.randomMin, this.random,
+                this.archery, this.food, this.sword, this.keepEmpty);
     }
 
     public void swap(int slot1, int hotbarSlot) {
@@ -173,6 +151,9 @@ public class InventoryManagerModule extends Module {
         if (stack.getDisplayName().toLowerCase().contains("(right click)")) {
             return false;
         }
+        if (stack.getDisplayName().toLowerCase().contains("profil")) {
+            return false;
+        }
         if (stack.getDisplayName().toLowerCase().contains("§k||")) {
             return false;
         }
@@ -182,21 +163,8 @@ public class InventoryManagerModule extends Module {
                 (slot == SHOVEL_SLOT && isBestShovel(mc.thePlayer.inventoryContainer.getSlot(SHOVEL_SLOT).getStack()) && SHOVEL_SLOT >= 0)) {
             return false;
         }
-        if (stack.getItem() instanceof ItemArmor) {
-            for (int type = 1; type < 5; type++) {
-                if (mc.thePlayer.inventoryContainer.getSlot(4 + type).getHasStack()) {
-                    ItemStack is = mc.thePlayer.inventoryContainer.getSlot(4 + type).getStack();
-                    if (isBestArmor(is, type)) {
-                        continue;
-                    }
-                }
-                if (isBestArmor(stack, type)) {
-                    return false;
-                }
-            }
-        }
         if (stack.getItem() instanceof ItemBlock &&
-                (getBlockCount() > BLOCK_CAP ||
+                (getBlockCount() > blockCap.getValue().intValue() ||
                         BlockUtils.INVALID_BLOCKS.contains(((ItemBlock) stack.getItem()).getBlock()))) {
             return true;
         }
@@ -205,15 +173,22 @@ public class InventoryManagerModule extends Module {
             return isBadPotion(stack);
         }
 
-        if (stack.getItem() instanceof ItemFood && food.getValue() && !(stack.getItem() instanceof ItemAppleGold)) {
+        if (stack.getItem() instanceof ItemArmor)
+            return false;
+
+        if (stack.getItem() instanceof ItemFood && food.getValue() && !(stack.getItem() instanceof ItemAppleGold || stack.getItem() instanceof ItemFood)) {
             return true;
         }
 
-        if (stack.getItem() instanceof ItemHoe || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemArmor) {
+        if (stack.getItem() instanceof ItemHoe || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemSword) {
             return true;
         }
 
         if ((stack.getItem() instanceof ItemBow || itemName.contains("arrow")) && archery.getValue()) {
+            return true;
+        }
+
+        if (stack.getItem() instanceof ItemDoublePlant) {
             return true;
         }
 
@@ -241,11 +216,15 @@ public class InventoryManagerModule extends Module {
                 (itemName.contains("anvil")) ||
                 (itemName.contains("torch")) ||
                 (itemName.contains("seeds")) ||
+                (itemName.contains("beacon")) ||
+                (itemName.contains("flower")) ||
                 (itemName.contains("leather")) ||
                 (itemName.contains("reeds")) ||
                 (itemName.contains("skull")) ||
                 (itemName.contains("record")) ||
                 (itemName.contains("snowball")) ||
+                (itemName.contains("slab")) ||
+                (itemName.contains("stair")) ||
                 (itemName.contains("piston"));
     }
 
@@ -425,83 +404,12 @@ public class InventoryManagerModule extends Module {
         return false;
     }
 
-    private boolean invContainsType(int type) {
+    @AllArgsConstructor
+    private enum CleanMode {
+        NORMAL("Normal"),
+        OPEN("Open"),
+        FAKE("Silent");
 
-        for (int i = 9; i < 45; i++) {
-            if (mc.thePlayer.inventoryContainer.getSlot(i).getHasStack()) {
-                ItemStack is = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
-                Item item = is.getItem();
-                if (item instanceof ItemArmor) {
-                    ItemArmor armor = (ItemArmor) item;
-                    if (type == armor.armorType) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private void getBestArmor() {
-        for (int type = 1; type < 5; type++) {
-            if (mc.thePlayer.inventoryContainer.getSlot(4 + type).getHasStack()) {
-                ItemStack is = mc.thePlayer.inventoryContainer.getSlot(4 + type).getStack();
-                if (isBestArmor(is, type)) {
-                    continue;
-                } else {
-                    drop(4 + type);
-                }
-            }
-            for (int i = 9; i < 45; i++) {
-                if (mc.thePlayer.inventoryContainer.getSlot(i).getHasStack()) {
-                    ItemStack is = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
-                    if (isBestArmor(is, type) && getProtection(is) > 0) {
-                        shiftClick(i);
-                        timer.reset();
-                        if (delay.getValue().longValue() > 0)
-                            return;
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean isBestArmor(ItemStack stack, int type) {
-        float prot = getProtection(stack);
-        String strType = "";
-        if (type == 1) {
-            strType = "helmet";
-        } else if (type == 2) {
-            strType = "chestplate";
-        } else if (type == 3) {
-            strType = "leggings";
-        } else if (type == 4) {
-            strType = "boots";
-        }
-        if (!stack.getUnlocalizedName().contains(strType)) {
-            return false;
-        }
-        for (int i = 5; i < 45; i++) {
-            if (mc.thePlayer.inventoryContainer.getSlot(i).getHasStack()) {
-                ItemStack is = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
-                if (getProtection(is) > prot && is.getUnlocalizedName().contains(strType))
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    private float getProtection(ItemStack stack) {
-        float prot = 0;
-        if ((stack.getItem() instanceof ItemArmor)) {
-            ItemArmor armor = (ItemArmor) stack.getItem();
-            prot += armor.damageReduceAmount + (100 - armor.damageReduceAmount) * EnchantmentHelper.getEnchantmentLevel(Enchantment.protection.effectId, stack) * 0.0075D;
-            prot += EnchantmentHelper.getEnchantmentLevel(Enchantment.blastProtection.effectId, stack) / 100d;
-            prot += EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId, stack) / 100d;
-            prot += EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack) / 100d;
-            prot += EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, stack) / 50d;
-            prot += EnchantmentHelper.getEnchantmentLevel(Enchantment.projectileProtection.effectId, stack) / 100d;
-        }
-        return prot;
+        private String label;
     }
 }

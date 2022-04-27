@@ -1,12 +1,11 @@
 package dev.africa.pandaware.impl.module.combat.criticals.modes;
 
-import dev.africa.pandaware.api.event.interfaces.EventCallback;
-import dev.africa.pandaware.api.event.interfaces.EventHandler;
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
-import dev.africa.pandaware.impl.event.player.JumpEvent;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.module.combat.criticals.CriticalsModule;
 import dev.africa.pandaware.impl.module.combat.criticals.ICriticalsMode;
+import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 
 public class VerusCriticals extends ModuleMode<CriticalsModule> implements ICriticalsMode {
@@ -21,16 +20,9 @@ public class VerusCriticals extends ModuleMode<CriticalsModule> implements ICrit
         this.stage = 0;
     }
 
-    @EventHandler
-    EventCallback<JumpEvent> onJump = event -> {
-        if (this.getParent().isShouldCritical()) {
-            event.cancel();
-            mc.gameSettings.keyBindJump.pressed = false;
-        }
-    };
-
     @Override
     public void handle(MotionEvent event, int ticksExisted) {
+        if (Client.getInstance().getModuleManager().getByClass(FlightModule.class).getData().isEnabled()) return;
         double yGround = mc.thePlayer.posY % 0.015625;
         if (this.isOnGround() && yGround >= 0 && yGround < .1 && !PlayerUtils.isBlockAbove(1)) {
 

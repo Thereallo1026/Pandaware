@@ -10,28 +10,37 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class CommonTransformer {
+public class CommonTransformer
+{
     public static final String HANDLER_DECODER_NAME = "via-decoder";
     public static final String HANDLER_ENCODER_NAME = "via-encoder";
 
-    public static void decompress(ChannelHandlerContext ctx, ByteBuf buf) throws InvocationTargetException {
+    public static void decompress(ChannelHandlerContext ctx, ByteBuf buf) throws InvocationTargetException
+    {
         ChannelHandler handler = ctx.pipeline().get("decompress");
         ByteBuf decompressed = handler instanceof MessageToMessageDecoder ? (ByteBuf) PipelineUtil.callDecode((MessageToMessageDecoder<?>) handler, ctx, buf).get(0) : (ByteBuf) PipelineUtil.callDecode((ByteToMessageDecoder) handler, ctx, buf).get(0);
 
-        try {
+        try
+        {
             buf.clear().writeBytes(decompressed);
-        } finally {
+        }
+        finally
+        {
             decompressed.release();
         }
     }
 
-    public static void compress(ChannelHandlerContext ctx, ByteBuf buf) throws Exception {
+    public static void compress(ChannelHandlerContext ctx, ByteBuf buf) throws Exception
+    {
         ByteBuf compressed = ctx.alloc().buffer();
 
-        try {
+        try
+        {
             PipelineUtil.callEncode((MessageToByteEncoder<?>) ctx.pipeline().get("compress"), ctx, buf, compressed);
             buf.clear().writeBytes(compressed);
-        } finally {
+        }
+        finally
+        {
             compressed.release();
         }
     }

@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
+import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
@@ -14,6 +15,9 @@ import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.potion.Potion;
 
 public class FuncraftFlight extends ModuleMode<FlightModule> {
+    private final NumberSetting timer = new NumberSetting("Timer", 5, 1, 1.3, 0.1);
+    private final NumberSetting timerTicks = new NumberSetting("Timer ticks", 250, 1, 50, 1);
+
     public FuncraftFlight(String name, FlightModule parent) {
         super(name, parent);
     }
@@ -22,6 +26,7 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
     private double moveSpeed;
     private double lastDistance;
     private boolean jumped;
+    private boolean startedOnGround;
 
     @Override
     public void onEnable() {
@@ -29,6 +34,7 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
         this.moveSpeed = MovementUtils.getBaseMoveSpeed();
         this.lastDistance = this.moveSpeed;
         this.jumped = !mc.thePlayer.onGround;
+        this.startedOnGround = mc.thePlayer.getAirTicks() == 0;
     }
 
     @EventHandler
@@ -44,13 +50,9 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        event.y = mc.thePlayer.motionY = -0.00001;
+        event.y = startedOnGround ? 0 : -0.00001;
 
-        if (this.stage < 40) {
-            mc.timer.timerSpeed = 1.3f;
-        } else {
-            mc.timer.timerSpeed = 1f;
-        }
+        mc.timer.timerSpeed = !(mc.thePlayer.ticksExisted % timerTicks.getValue().floatValue() == 0) ? this.timer.getValue().floatValue() : 1f;
 
         switch (this.stage) {
             case 0:
@@ -65,7 +67,7 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
                 event.y = mc.thePlayer.motionY = motion;
 
                 this.moveSpeed = MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed)
-                        ? 1.85f : 2.05f);
+                        ? 2.05f : 1.85f);
                 break;
 
             case 1:

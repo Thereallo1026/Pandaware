@@ -4,7 +4,6 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
@@ -12,6 +11,7 @@ import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.combat.KillAuraModule;
 import dev.africa.pandaware.impl.module.combat.criticals.modes.FuncraftCriticals;
+import dev.africa.pandaware.impl.module.combat.criticals.modes.HypixelCriticals;
 import dev.africa.pandaware.impl.module.combat.criticals.modes.PacketCriticals;
 import dev.africa.pandaware.impl.module.combat.criticals.modes.VerusCriticals;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
@@ -28,6 +28,7 @@ public class CriticalsModule extends Module {
     public CriticalsModule() {
         this.registerModes(
                 new PacketCriticals("Packet", this),
+                new HypixelCriticals("Hypixel", this),
                 new VerusCriticals("Verus", this),
                 new FuncraftCriticals("Funcraft", this)
         );
@@ -70,6 +71,7 @@ public class CriticalsModule extends Module {
     };
 
     boolean shouldHandleCriticals() {
+        boolean isInGame = (mc.thePlayer != null && mc.theWorld != null);
         boolean speedToggled = Client.getInstance().getModuleManager()
                 .getByClass(SpeedModule.class).getData().isEnabled();
 
@@ -79,7 +81,7 @@ public class CriticalsModule extends Module {
         return !Client.getInstance().getModuleManager().getByClass(FlightModule.class).getData().isEnabled() &&
                 !Client.getInstance().getModuleManager().getByClass(LongJumpModule.class).getData().isEnabled() &&
                 (!speedToggled || !mc.isMoveMoving()) && !mc.thePlayer.isInWater() && !mc.thePlayer.isInLava()
-                && !mc.thePlayer.isOnLadder() && (this.hasAttacked || killAuraNotNull);
+                && !mc.thePlayer.isOnLadder() && (this.hasAttacked || killAuraNotNull) && isInGame;
     }
 
     @Override

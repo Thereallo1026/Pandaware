@@ -3,7 +3,6 @@ package dev.africa.pandaware.impl.command.player;
 
 import dev.africa.pandaware.api.command.Command;
 import dev.africa.pandaware.api.command.interfaces.CommandInformation;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.utils.client.Printer;
 
 @CommandInformation(name = "VClip", description = "Clips vertically")

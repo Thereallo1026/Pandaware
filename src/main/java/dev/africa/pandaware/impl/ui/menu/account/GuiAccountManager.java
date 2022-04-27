@@ -1,5 +1,7 @@
 package dev.africa.pandaware.impl.ui.menu.account;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
@@ -7,11 +9,14 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.font.renderer.TTFFontRenderer;
+import dev.africa.pandaware.impl.microshit.server.AuthManagerWebServer;
+import dev.africa.pandaware.impl.module.misc.StreamerModule;
 import dev.africa.pandaware.impl.ui.menu.button.CustomButton;
 import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.java.FileUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
+import dev.africa.pandaware.utils.network.NetworkUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import io.netty.util.internal.ThreadLocalRandom;
@@ -22,6 +27,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Session;
 import org.lwjgl.input.Mouse;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -30,7 +38,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.Proxy;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 public class GuiAccountManager extends GuiScreen {
@@ -106,9 +117,9 @@ public class GuiAccountManager extends GuiScreen {
 
             boolean deleteHovered = MouseUtils.isMouseInBounds(mouseX, mouseY, width - 240 - 2 - 30 + 20 - 1, y - scrolling + 1, width - 240 - 2 - 1, y - scrolling + 30 - 20 + 1);
             RenderUtils.drawBorderedRect(width - 240 - 2 - 30 + 20 - 1, y - scrolling + 1, width - 240 - 2 - 1, y - scrolling + 30 - 20 + 1, 0.5, new Color(120, 0, 0).getRGB(), new Color(200, 0, 0).getRGB());
-            RenderUtils.drawImage(new ResourceLocation(Client.getInstance().getManifest().getClientName() + "/icons/x.png"), width - 240 - 2 - 30 + 1 + 20 - 1, (float) (y - scrolling + 1 + 1), 28 - 20, 28 - 20);
+            RenderUtils.drawImage(new ResourceLocation(Client.getInstance().getManifest().getClientName().toLowerCase() + "/icons/x.png"), width - 240 - 2 - 30 + 1 + 20 - 1, (float) (y - scrolling + 1 + 1), 28 - 20, 28 - 20);
 
-            RenderUtils.drawImage(new ResourceLocation(String.format(Client.getInstance().getManifest().getClientName() + "/icons/auth/%s.png", (account.isMicrosoft() ? "soft" : "jank"))), width - 240 - 2 - 30 + 1 + 20 - 1 - 20 + 12, (float) (y - scrolling + 1 + 1 + 10), 28 - 20 + 9, 28 - 20 + 9);
+            RenderUtils.drawImage(new ResourceLocation(String.format(Client.getInstance().getManifest().getClientName().toLowerCase() + "/icons/auth/%s.png", (account.isMicrosoft() ? "soft" : "jank"))), width - 240 - 2 - 30 + 1 + 20 - 1 - 20 + 12, (float) (y - scrolling + 1 + 1 + 10), 28 - 20 + 9, 28 - 20 + 9);
 
             if (deleteHovered) {
                 RenderUtils.drawRect(width - 240 - 2 - 30 + 20 - 1, y - scrolling + 1, width - 240 - 2 - 1, y - scrolling + 30 - 20 + 1, new Color(0, 0, 0, 40).getRGB());
@@ -126,7 +137,8 @@ public class GuiAccountManager extends GuiScreen {
                             account.getUsername().equalsIgnoreCase(loggedInAccount.getUsername()) :
                             (!loggedInAccount.isMicrosoft() ? mojangEquals : microsoftEquals));
 
-            Fonts.getInstance().getProductSansBig().drawStringWithShadow("Username: §7" + (account.getUsername().length() <= 0 ? account.getEmail() : account.getUsername()) +
+            StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
+            Fonts.getInstance().getProductSansBig().drawStringWithShadow("Username: §7" + (account.getUsername().length() <= 0 ? account.getEmail() : streamerModule.getData().isEnabled() ? "Legit Player" : account.getUsername()) +
                             (isSameAccount ? " §a(Logged in)" : "") + (account.isMicrosoft() ? " §7(§9Microsoft§7)" : " §7(§cMojang§7)"),
                     74 + 2, (float) (y + 2 - scrolling), -1);
             Fonts.getInstance().getProductSansBig().drawStringWithShadow("Password: §7" + (account.isCracked() ? "No password" : (account.isMicrosoft() ? account.getUuid() : account.getPassword()).replaceAll("(?s).", "*")), 74 + 2, (float) (y + 15 - scrolling), -1);
@@ -157,7 +169,8 @@ public class GuiAccountManager extends GuiScreen {
         }
 
         if (loggedInAccount != null) {
-            Fonts.getInstance().getProductSansBig().drawCenteredStringWithShadow("Current: §7" + mc.getSession().getUsername() + (loggedInAccount.isCracked() ? " §c(Cracked)" : ""), width - 235 + 92, 55 + 20 + 20 + 20 + 20 + 20 + 20 + 20 + 20 + 20, -1);
+            StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
+            Fonts.getInstance().getProductSansBig().drawCenteredStringWithShadow("Current: §7" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + (loggedInAccount.isCracked() ? " §c(Cracked)" : ""), width - 235 + 92, 55 + 20 + 20 + 20 + 20 + 20 + 20 + 20 + 20 + 20, -1);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -283,6 +296,9 @@ public class GuiAccountManager extends GuiScreen {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Cannot add a blank username", 5);
                 }
                 break;
+            case 5:
+                Client.getInstance().getMicrosoftProvider().openUrl();
+                break;
             case 6:
                 Client.getInstance().getExecutor().execute(() -> {
                     try {
@@ -383,7 +399,7 @@ public class GuiAccountManager extends GuiScreen {
             }
             Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Logging in...", 5);
 
-            Session auth = createSession(username, password);
+            Session auth = microsoft ? createMicrosoftSession(username, uuid, getTokenMicrosoft(refreshToken)) : createSession(username, password);
 
             if (auth == null) {
                 Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Login failed!", 5);
@@ -392,7 +408,8 @@ public class GuiAccountManager extends GuiScreen {
                 this.mc.setSession(auth);
 
                 this.loggedInAccount = new Account(username, mc.getSession().getUsername(), password, refreshToken, uuid, false, true, microsoft);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + mc.getSession().getUsername() + ")", 5);
+                StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.orb"), 1.0F));
             }
         }).start();
@@ -414,7 +431,8 @@ public class GuiAccountManager extends GuiScreen {
                 Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Login failed!", 5);
             } else {
                 Client.getInstance().getAccountManager().getItems().add(new Account(username, auth.getUsername(), password, refreshToken, uuid, false, false, microsoft));
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Account added! (" + auth.getUsername() + ")", 5);
+                StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Account added! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
                 Client.getInstance().getFileManager().saveAll();
             }
         }).start();
@@ -437,5 +455,54 @@ public class GuiAccountManager extends GuiScreen {
             }
             return new Session("errror", "idk", auth.getAuthenticatedToken(), "mojang");
         }
+    }
+
+    public Session createMicrosoftSession(String username, String uuid, String token) {
+        return new Session(username, uuid, token, "mojang");
+    }
+
+    private String getTokenMicrosoft(String refreshToken) {
+        try {
+            String result = NetworkUtils.getFromURL(String.format(
+                            "http://localhost:WEB_PORT/auth?code=%s&state=STORAGE_ID&reauth=true", refreshToken)
+                    .replace("WEB_PORT", String.valueOf(AuthManagerWebServer.WEB_PORT)), null, false);
+
+            JsonObject jsonObject = JsonParser.parseString(result.contains(":") ?
+                    decryptInput(result.split(":")[1]) : "").getAsJsonObject();
+
+            return jsonObject.has("access_token") ? jsonObject.get("access_token").getAsString() : null;
+        } catch (Exception ignored) {
+        }
+
+        return null;
+    }
+
+    public static String decryptInput(String in) {
+        return decode(in, decode(
+                "wDTyQl/aDOKJ+81FZr4VqJyMSsXC9n6gHGRcbZPeQ8Q=",
+                "acwKCiuWT1IZwcHqhcCiABuyBnzYqrKDJbBWF6XAY8z8tcJkB4jCXaoKz4zB"
+        ));
+    }
+
+    private static String decode(String text, String key) {
+        byte[] vector = {0x01, 0x02, 0x03, 0x05, 0x07, 0x0B, 0x0D, 0x11};
+        byte[] keyArray = new byte[24];
+        byte[] temporaryKey;
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            temporaryKey = m.digest(key.getBytes(StandardCharsets.UTF_8));
+            if (temporaryKey.length < 24) {
+                int index = 0;
+                for (int i = temporaryKey.length; i < 24; i++) {
+                    keyArray[i] = temporaryKey[index];
+                }
+            }
+            Cipher c = Cipher.getInstance("DESede/CBC/PKCS5Padding");
+            c.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyArray, "DESede"), new IvParameterSpec(vector));
+            byte[] decrypted = c.doFinal(Base64.getMimeDecoder().decode(text));
+            return new String(decrypted, StandardCharsets.UTF_8);
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 }

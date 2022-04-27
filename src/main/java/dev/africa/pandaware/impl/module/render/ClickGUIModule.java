@@ -1,19 +1,47 @@
 package dev.africa.pandaware.impl.module.render;
 
 import dev.africa.pandaware.Client;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
+import dev.africa.pandaware.impl.setting.BooleanSetting;
+import dev.africa.pandaware.impl.setting.EnumSetting;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.lwjgl.input.Keyboard;
 
-@ModuleInfo(name = "Click GUI", description = "Opens gui", category = Category.VISUAL, key = Keyboard.KEY_RSHIFT)
+@Getter
+@ModuleInfo(name = "Click GUI", description = "STOP LOOKING AT FEMBOYS FAGGOT", category = Category.VISUAL, key = Keyboard.KEY_RSHIFT)
 public class ClickGUIModule extends Module {
+    private final BooleanSetting showCummyMen = new BooleanSetting("Show Femboys", true);
+    private final EnumSetting<FemboyMode> cummyMode = new EnumSetting<>("Femboy Mode", FemboyMode.ASTOLFO,
+            this.showCummyMen::getValue);
+
+    public ClickGUIModule() {
+        this.registerSettings(
+                this.showCummyMen,
+                this.cummyMode
+        );
+    }
 
     @Override
     public void onEnable() {
         mc.displayGuiScreen(Client.getInstance().getClickGUI());
 
         this.toggle(false);
+    }
+
+    @AllArgsConstructor
+    public enum FemboyMode {
+        ASTOLFO("Astolfo"),
+        ASTOLFO2("Astolfo 2"),
+        NSFWASTOLFO("Astolfo (18+)"),
+        FELIX("Felix"),
+        FELIX2("Felix 2"),
+        HIDERI("Hideri"),
+        SAIKA("Saika"),
+        VENTI("Venti");
+
+        private final String label;
     }
 }

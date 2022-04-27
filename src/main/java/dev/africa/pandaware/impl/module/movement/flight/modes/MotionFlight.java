@@ -14,10 +14,8 @@ public class MotionFlight extends ModuleMode<FlightModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-//        mc.timer.timerSpeed = 1.2F;
-
-        event.y = mc.thePlayer.motionY = mc.gameSettings.keyBindJump.isKeyDown() ? 0.7
-                : mc.gameSettings.keyBindSneak.isKeyDown() ? -0.7 : 0.0F;
+        event.y = mc.thePlayer.motionY = mc.gameSettings.keyBindJump.isKeyDown() ? this.getParent().getSpeed().getValue().floatValue()
+                : mc.gameSettings.keyBindSneak.isKeyDown() ? -this.getParent().getSpeed().getValue().floatValue() : 0.0F;
         MovementUtils.strafe(event, this.getParent().getSpeed().getValue().doubleValue());
     };
 }

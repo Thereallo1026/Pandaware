@@ -1,13 +1,18 @@
 package dev.africa.pandaware.impl.module.misc.disabler.modes;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
+import dev.africa.pandaware.impl.ui.notification.Notification;
+import dev.africa.pandaware.switcher.ViaMCP;
+import dev.africa.pandaware.switcher.protocols.ProtocolCollection;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
+import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.var;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
@@ -36,6 +41,10 @@ public class BlocksMCDisabler extends ModuleMode<DisablerModule> {
         this.expectedTeleport = false;
         this.sendAll = true;
         this.hasDisabled = false;
+        if (ViaMCP.getInstance().getVersion() != ProtocolCollection.R1_9.getVersion().getVersion()) {
+            this.getParent().toggle(false);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Please switch to 1.9", 2);
+        }
     }
 
     @EventHandler

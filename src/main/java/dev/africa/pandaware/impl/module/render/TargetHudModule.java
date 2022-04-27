@@ -3,7 +3,6 @@ package dev.africa.pandaware.impl.module.render;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
-import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
@@ -12,6 +11,7 @@ import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.module.combat.KillAuraModule;
 import dev.africa.pandaware.impl.module.combat.TPAuraModule;
+import dev.africa.pandaware.impl.module.misc.StreamerModule;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
@@ -145,8 +145,14 @@ public class TargetHudModule extends Module {
                     RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3,
                             UISettings.INTERNAL_COLOR);
 
-                    Fonts.getInstance().getArialBdNormal().drawStringWithShadow(this.cachedEntity.getName(),
-                            this.height - 9, 5, -1);
+                    if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
+                        if (this.cachedEntity.getName() == mc.thePlayer.getName())
+                        Fonts.getInstance().getArialBdNormal().drawString("Legit Player", this.height - 9,5, -1);
+                        else Fonts.getInstance().getArialBdNormal().drawString("Player", this.height - 9,5, -1);
+                    } else {
+                        Fonts.getInstance().getArialBdNormal().drawString(this.cachedEntity.getName(),
+                                this.height - 9, 5, -1);
+                    }
 
                     Fonts.getInstance().getArialBdNormal().drawStringWithShadow("§fHealth: §7" +
                                     MathUtils.roundToDecimal(this.cachedEntity.getHealth(), 2),
@@ -174,9 +180,9 @@ public class TargetHudModule extends Module {
                     for (int i = 3; i < (this.width - 3); i++) {
                         RenderUtils.drawRect(i, this.height - 9, i + 1, this.height - 4,
                                 hudModule.getColorMode().getValue() == HUDModule.ColorMode.RAINBOW ?
-                                ColorUtils.rainbow(i * 20, 0.7f, 3.5).getRGB() :
+                                        ColorUtils.rainbow(i * 20, 0.7f, 3.5).getRGB() :
                                         ColorUtils.getColorSwitch(UISettings.FIRST_COLOR, UISettings.SECOND_COLOR,
-                                850, i, 11, 1).getRGB());
+                                                850, i, 11, 1).getRGB());
                     }
                     StencilUtils.stencilStage(StencilUtils.StencilStage.DISABLE);
 
@@ -200,8 +206,12 @@ public class TargetHudModule extends Module {
                     RenderUtils.renderSkinHead(this.cachedEntity, 2, 2, this.height - 3);
                     GlStateManager.popMatrix();
 
-                    Fonts.getInstance().getProductSansNormal().drawString(this.cachedEntity.getName(),
-                            this.height, 2, -1);
+                    if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
+                        Fonts.getInstance().getProductSansNormal().drawString("Legit Player", this.height, 2, -1);
+                    } else {
+                        Fonts.getInstance().getProductSansNormal().drawString(this.cachedEntity.getName(),
+                                this.height, 2, -1);
+                    }
 
                     String string = MathUtils.roundToDecimal(this.cachedEntity.getHealth(), 1) + " hp";
                     Fonts.getInstance().getProductSansSmall().drawString(string, this.width -
@@ -239,14 +249,18 @@ public class TargetHudModule extends Module {
 
                     RenderUtils.renderSkinHead(this.cachedEntity, 2, 2, this.height - 12);
 
-                    Fonts.getInstance().getArialBdBig().drawString(this.cachedEntity.getName(),
-                            this.height - 9, 1, -1);
+                    if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
+                        Fonts.getInstance().getArialBdBig().drawString("Legit Player", this.height - 9, 1, -1);
+                    } else {
+                        Fonts.getInstance().getArialBdBig().drawString(this.cachedEntity.getName(),
+                                this.height - 9, 1, -1);
+                    }
 
                     String string = "Health: " + MathUtils.roundToDecimal(this.cachedEntity.getHealth(), 1);
                     Fonts.getInstance().getProductSansSmall().drawString(string, this.height - 9, 14, -1);
 
                     string = "Distance: " + MathUtils.roundToDecimal(
-                            mc.thePlayer.getDistanceToEntity(this.cachedEntity), 1) +"m";
+                            mc.thePlayer.getDistanceToEntity(this.cachedEntity), 1) + "m";
                     Fonts.getInstance().getProductSansSmall().drawString(string, this.height - 9, 23, -1);
 
                     GlStateManager.translate(2, 0, 0);

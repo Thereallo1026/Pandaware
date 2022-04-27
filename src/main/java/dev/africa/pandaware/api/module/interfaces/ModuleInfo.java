@@ -1,7 +1,5 @@
 package dev.africa.pandaware.api.module.interfaces;
 
-import com.sun.jna.StringArray;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,5 +1,7 @@
 package net.minecraft.client.multiplayer;
 
+import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.module.combat.KillAuraModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -496,8 +498,13 @@ public class PlayerControllerMP
      */
     public void attackEntity(EntityPlayer playerIn, Entity targetEntity)
     {
+        KillAuraModule killAuraModule = Client.getInstance().getModuleManager().getByClass(KillAuraModule.class);
         this.syncCurrentPlayItem();
         this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
+        if (killAuraModule.getKeepSprint().getValue()) {
+            mc.thePlayer.motionX *= 0.7f;
+            mc.thePlayer.motionZ *= 0.7f;
+        }
 
         if (this.currentGameType != WorldSettings.GameType.SPECTATOR)
         {

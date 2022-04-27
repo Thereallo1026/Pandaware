@@ -1,17 +1,16 @@
 package dev.africa.pandaware.switcher;
 
-import dev.africa.pandaware.switcher.gui.GuiProtocolSlider;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.viaversion.viaversion.ViaManagerImpl;
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.data.MappingDataLoader;
+import dev.africa.pandaware.switcher.gui.AsyncVersionSlider;
 import dev.africa.pandaware.switcher.loader.MCPBackwardsLoader;
 import dev.africa.pandaware.switcher.loader.MCPRewindLoader;
 import dev.africa.pandaware.switcher.loader.MCPViaLoader;
 import dev.africa.pandaware.switcher.platform.MCPViaInjector;
 import dev.africa.pandaware.switcher.platform.MCPViaPlatform;
 import dev.africa.pandaware.switcher.utils.JLoggerToLog4j;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.viaversion.viaversion.ViaManagerImpl;
-import com.viaversion.viaversion.api.Via;
-import com.viaversion.viaversion.api.data.MappingDataLoader;
-import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.channel.EventLoop;
 import io.netty.channel.local.LocalEventLoopGroup;
 import org.apache.logging.log4j.LogManager;
@@ -23,17 +22,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
-public class ViaMCP {
+public class ViaMCP
+{
     public final static int PROTOCOL_VERSION = 47;
     private static final ViaMCP instance = new ViaMCP();
-    public GuiProtocolSlider guiProtocolSlider =
-            new GuiProtocolSlider(69, 4 + 45, 10, 110, 20, ProtocolVersion.getProtocol(ViaMCP.PROTOCOL_VERSION));
 
-    public static ViaMCP getInstance() {
+    public static ViaMCP getInstance()
+    {
         return instance;
     }
 
-    public boolean loaded;
     private final Logger jLogger = new JLoggerToLog4j(LogManager.getLogger("ViaMCP"));
     private final CompletableFuture<Void> INIT_FUTURE = new CompletableFuture<>();
 
@@ -44,7 +42,14 @@ public class ViaMCP {
     private int version;
     private String lastServer;
 
-    public void start() {
+    /**
+     * Version Slider that works Asynchronously with the Version GUI
+     * Please initialize this before usage with initAsyncSlider() or initAsyncSlider(x, y, width (min. 110), height)
+     */
+    public AsyncVersionSlider asyncSlider;
+
+    public void start()
+    {
         ThreadFactory factory = new ThreadFactoryBuilder().setDaemon(true).setNameFormat("ViaMCP-%d").build();
         ASYNC_EXEC = Executors.newFixedThreadPool(8, factory);
 
@@ -53,7 +58,8 @@ public class ViaMCP {
 
         setVersion(PROTOCOL_VERSION);
         this.file = new File("ViaMCP");
-        if (this.file.mkdir()) {
+        if (this.file.mkdir())
+        {
             this.getjLogger().info("Creating ViaMCP Folder");
         }
 
@@ -66,46 +72,65 @@ public class ViaMCP {
         new MCPRewindLoader(file);
 
         INIT_FUTURE.complete(null);
-        loaded = true;
     }
 
-    public Logger getjLogger() {
+    public void initAsyncSlider()
+    {
+        asyncSlider = new AsyncVersionSlider(-1, 5, 5, 110, 20);
+    }
+
+    public void initAsyncSlider(int x, int y, int width, int height)
+    {
+        asyncSlider = new AsyncVersionSlider(-1, x, y, Math.max(width, 110), height);
+    }
+
+    public Logger getjLogger()
+    {
         return jLogger;
     }
 
-    public CompletableFuture<Void> getInitFuture() {
+    public CompletableFuture<Void> getInitFuture()
+    {
         return INIT_FUTURE;
     }
 
-    public ExecutorService getAsyncExecutor() {
+    public ExecutorService getAsyncExecutor()
+    {
         return ASYNC_EXEC;
     }
 
-    public EventLoop getEventLoop() {
+    public EventLoop getEventLoop()
+    {
         return EVENT_LOOP;
     }
 
-    public File getFile() {
+    public File getFile()
+    {
         return file;
     }
 
-    public String getLastServer() {
+    public String getLastServer()
+    {
         return lastServer;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public void setFile(File file) {
+    public void setFile(File file)
+    {
         this.file = file;
     }
 
-    public void setLastServer(String lastServer) {
+    public void setLastServer(String lastServer)
+    {
         this.lastServer = lastServer;
     }
 }

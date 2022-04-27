@@ -4,11 +4,11 @@ import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.screen.GUIRenderer;
 import dev.africa.pandaware.impl.font.Fonts;
+import dev.africa.pandaware.impl.ui.clickgui.panel.Panel;
+import dev.africa.pandaware.impl.ui.clickgui.setting.SettingPanel;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.render.RenderUtils;
-import dev.africa.pandaware.impl.ui.clickgui.panel.Panel;
-import dev.africa.pandaware.impl.ui.clickgui.setting.SettingPanel;
 import lombok.Getter;
 import net.minecraft.client.gui.ScaledResolution;
 

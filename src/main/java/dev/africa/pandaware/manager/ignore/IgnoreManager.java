@@ -1,10 +1,12 @@
 package dev.africa.pandaware.manager.ignore;
 
+import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Getter
 public class IgnoreManager {
     private final List<EntityPlayer> ignoreList = new CopyOnWriteArrayList<>();
     private final List<EntityPlayer> friendList = new CopyOnWriteArrayList<>();

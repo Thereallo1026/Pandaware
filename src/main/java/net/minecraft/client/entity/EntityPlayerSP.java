@@ -2,11 +2,9 @@ package net.minecraft.client.entity;
 
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
-import dev.africa.pandaware.impl.event.player.ChatEvent;
-import dev.africa.pandaware.impl.event.player.MotionEvent;
-import dev.africa.pandaware.impl.event.player.MoveEvent;
-import dev.africa.pandaware.impl.event.player.UpdateEvent;
+import dev.africa.pandaware.impl.event.player.*;
 import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
+import dev.africa.pandaware.impl.module.movement.noslow.NoSlowModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.var;
@@ -717,9 +715,11 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         boolean flag2 = this.movementInput.moveForward >= f;
         this.movementInput.updatePlayerMoveState();
 
+        NoSlowModule noSlow = Client.getInstance().getModuleManager().getByClass(NoSlowModule.class);
+
         if (this.isUsingItem() && !this.isRiding()) {
-            this.movementInput.moveStrafe *= 0.2F;
-            this.movementInput.moveForward *= 0.2F;
+            this.movementInput.moveStrafe *= (noSlow.getData().isEnabled() ? noSlow.getSmultiplier().getValue().floatValue() : 0.2f);
+            this.movementInput.moveForward *= (noSlow.getData().isEnabled() ? noSlow.getMultiplier().getValue().floatValue() : 0.2f);
             this.sprintToggleTimer = 0;
         }
 

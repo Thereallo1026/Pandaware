@@ -1,6 +1,9 @@
 package net.minecraft.entity;
 
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.api.event.Event;
+import dev.africa.pandaware.impl.event.player.SafeWalkEvent;
+import dev.africa.pandaware.impl.event.player.StepEvent;
 import dev.africa.pandaware.impl.event.player.StrafeEvent;
 import lombok.var;
 import net.minecraft.block.*;
@@ -584,7 +587,10 @@ public abstract class Entity implements ICommandSender {
             double d3 = x;
             double d4 = y;
             double d5 = z;
-            boolean flag = this.onGround && this.isSneaking() && this instanceof EntityPlayer;
+
+            SafeWalkEvent safeWalkEvent = new SafeWalkEvent();
+            Client.getInstance().getEventDispatcher().dispatch(safeWalkEvent);
+            boolean flag = this.onGround && ((this.isSneaking() && this instanceof EntityPlayer) || safeWalkEvent.isCancelled());
 
             if (flag) {
                 double d6;
@@ -652,13 +658,17 @@ public abstract class Entity implements ICommandSender {
 
             this.setEntityBoundingBox(this.getEntityBoundingBox().offset(0.0D, 0.0D, z));
 
+            StepEvent stepEvent = new StepEvent(stepHeight, this, false, Event.EventState.PRE);
+
+            Client.getInstance().getEventDispatcher().dispatch(stepEvent);
+
             if (this.stepHeight > 0.0F && flag1 && (d3 != x || d5 != z)) {
                 double d11 = x;
                 double d7 = y;
                 double d8 = z;
                 AxisAlignedBB axisalignedbb3 = this.getEntityBoundingBox();
                 this.setEntityBoundingBox(axisalignedbb);
-                y = (double) this.stepHeight;
+                y = stepEvent.getStepHeight();
                 List<AxisAlignedBB> list = this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox().addCoord(d3, y, d5));
                 AxisAlignedBB axisalignedbb4 = this.getEntityBoundingBox();
                 AxisAlignedBB axisalignedbb5 = axisalignedbb4.addCoord(d3, 0.0D, d5);
@@ -732,6 +742,10 @@ public abstract class Entity implements ICommandSender {
                     z = d8;
                     this.setEntityBoundingBox(axisalignedbb3);
                 }
+                stepEvent.setStepHeight(1f + stepHeight);
+                stepEvent.setState(Event.EventState.POST);
+
+                Client.getInstance().getEventDispatcher().dispatch(stepEvent);
             }
 
             this.worldObj.theProfiler.endSection();

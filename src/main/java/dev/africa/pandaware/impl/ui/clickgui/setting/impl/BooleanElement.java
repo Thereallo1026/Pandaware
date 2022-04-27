@@ -1,10 +1,10 @@
 package dev.africa.pandaware.impl.ui.clickgui.setting.impl;
 
-import dev.africa.pandaware.impl.ui.clickgui.setting.api.Element;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
+import dev.africa.pandaware.impl.ui.clickgui.setting.api.Element;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.render.RenderUtils;

@@ -2,8 +2,8 @@ package dev.africa.pandaware.impl.setting;
 
 import dev.africa.pandaware.api.setting.Setting;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Field;
 import java.util.function.Supplier;
 
 /*
@@ -37,13 +37,7 @@ public class EnumSetting<T extends Enum> extends Setting<T> {
     }
 
     public String getLabel(T value) {
-        try {
-            Field field = value.getClass().getDeclaredField("label");
-            field.setAccessible(true);
-            return (String) field.get(value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            return value.name();
-        }
+        return StringUtils.capitalize(value.name().replace("_", " ").toLowerCase());
     }
 
     @Override

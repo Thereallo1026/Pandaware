@@ -1,62 +1,64 @@
 package dev.africa.pandaware.manager.module;
 
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.api.event.interfaces.EventCallback;
+import dev.africa.pandaware.api.event.interfaces.EventHandler;
+import dev.africa.pandaware.api.event.interfaces.EventListenable;
 import dev.africa.pandaware.api.interfaces.Initializable;
 import dev.africa.pandaware.api.module.Module;
-import dev.africa.pandaware.impl.container.MapContainer;
-import dev.africa.pandaware.api.event.interfaces.EventCallback;
-import dev.africa.pandaware.api.event.interfaces.EventListenable;
-import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.interfaces.Category;
+import dev.africa.pandaware.impl.container.MapContainer;
 import dev.africa.pandaware.impl.event.game.GameLoopEvent;
 import dev.africa.pandaware.impl.event.game.KeyEvent;
-import dev.africa.pandaware.impl.module.combat.KillAuraModule;
-import dev.africa.pandaware.impl.module.combat.TPAuraModule;
+import dev.africa.pandaware.impl.module.combat.*;
 import dev.africa.pandaware.impl.module.combat.antibot.AntiBotModule;
 import dev.africa.pandaware.impl.module.combat.criticals.CriticalsModule;
 import dev.africa.pandaware.impl.module.combat.velocity.VelocityModule;
+import dev.africa.pandaware.impl.module.misc.*;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
-import dev.africa.pandaware.impl.module.misc.MiddleClickFriendModule;
-import dev.africa.pandaware.impl.module.movement.InventoryMoveModule;
-import dev.africa.pandaware.impl.module.movement.ScaffoldModule;
-import dev.africa.pandaware.impl.module.movement.SprintModule;
-import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
+import dev.africa.pandaware.impl.module.movement.*;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
+import dev.africa.pandaware.impl.module.movement.highjump.HighJumpModule;
 import dev.africa.pandaware.impl.module.movement.longjump.LongJumpModule;
+import dev.africa.pandaware.impl.module.movement.noslow.NoSlowModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
-import dev.africa.pandaware.impl.module.player.AutoArmorModule;
-import dev.africa.pandaware.impl.module.player.ChestStealerModule;
-import dev.africa.pandaware.impl.module.player.InventoryManagerModule;
-import dev.africa.pandaware.impl.module.player.NoRotateModule;
+import dev.africa.pandaware.impl.module.movement.step.StepModule;
+import dev.africa.pandaware.impl.module.player.*;
+import dev.africa.pandaware.impl.module.player.antivoid.AntiVoidModule;
 import dev.africa.pandaware.impl.module.player.nofall.NoFallModule;
 import dev.africa.pandaware.impl.module.render.*;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
-public class ModuleManager extends MapContainer<Module, String> implements Initializable, EventListenable {
+public class ModuleManager extends MapContainer<Class<? extends Module>, Module> implements Initializable, EventListenable {
 
     @Override
     public void init() {
         this.addModules(
-                // COMBAT
+                // Combat
                 new AntiBotModule(),
                 new VelocityModule(),
                 new CriticalsModule(),
                 new KillAuraModule(),
                 new TPAuraModule(),
+                new AutoPotModule(),
 
                 // Movement
                 new SprintModule(),
                 new FlightModule(),
                 new SpeedModule(),
                 new LongJumpModule(),
+                new HighJumpModule(),
                 new ScaffoldModule(),
                 new InventoryMoveModule(),
                 new TargetStrafeModule(),
+                new StepModule(),
+                new NoSlowModule(),
+                new BlinkModule(),
 
                 // Visual
                 new AnimationsModule(),
@@ -65,7 +67,13 @@ public class ModuleManager extends MapContainer<Module, String> implements Initi
                 new ESPModule(),
                 new TargetHudModule(),
                 new ChamsModule(),
+                new ItemPhysicsModule(),
                 new DeathEffectModule(),
+                new OnlineInfoModule(),
+                new NameTagsModule(),
+                new ChestESPModule(),
+                new StreamerModule(),
+                new TracersModule(),
 
                 // Player
                 new NoFallModule(),
@@ -73,10 +81,17 @@ public class ModuleManager extends MapContainer<Module, String> implements Initi
                 new ChestStealerModule(),
                 new InventoryManagerModule(),
                 new AutoArmorModule(),
+                new AutoToolModule(),
+                new AntiVoidModule(),
 
                 // Misc
                 new DisablerModule(),
-                new MiddleClickFriendModule()
+                new MiddleClickFriendModule(),
+                new AutoJoinModule(),
+                new DebuggerModule(),
+                new KillSultsModule(),
+                new AntiDesyncModule(),
+                new AnticheatDetectorModule()
         );
 
         Client.getInstance().getEventDispatcher().subscribe(this);
@@ -84,49 +99,38 @@ public class ModuleManager extends MapContainer<Module, String> implements Initi
 
     private void addModules(Module... modules) {
         for (Module module : modules) {
-            this.getMap().put(module, module.getData().getName().replace(" ", ""));
+            this.getMap().put(module.getClass(), module);
         }
     }
 
     public List<Module> getInCategory(Category category) {
-        return this.getMap().keySet().stream().filter(module -> module.getData().getCategory() == category)
+        return this.getMap().values()
+                .stream()
+                .filter(module -> module.getData().getCategory() == category)
                 .collect(Collectors.toList());
     }
 
     public <T extends Module> T getByClass(Class<? extends Module> clazz) {
-        AtomicReference<T> atomicModule = new AtomicReference<>(null);
-
-        this.getMap().keySet().forEach(module -> {
-            if (module.getClass() == clazz) {
-                atomicModule.set((T) module);
-            }
-        });
-
-        return atomicModule.get();
+        return (T) this.getMap().get(clazz);
     }
 
-    public Module getByName(String name) {
-        AtomicReference<Module> atomicModule = new AtomicReference<>(null);
-
-        this.getMap().keySet().forEach(module -> {
-            if (module.getData().getName().equalsIgnoreCase(name)) {
-                atomicModule.set(module);
-            }
-        });
-
-        return atomicModule.get();
+    public Optional<Module> getByName(String name) {
+        return this.getMap().values()
+                .stream()
+                .filter(module -> module.getData().getName().equalsIgnoreCase(name))
+                .findFirst();
     }
 
     @EventHandler
-    EventCallback<GameLoopEvent> onGameLoop = event -> this.getMap().keySet()
+    EventCallback<GameLoopEvent> onGameLoop = event -> this.getMap().values()
             .stream()
             .filter(module -> module.getModeSetting() != null
                     && module.getModeSetting().getValue() != null
-                    && module.getCurrentMode() != null
-            ).forEach(Module::updateModes);
+                    && module.getCurrentMode() != null)
+            .forEach(Module::updateModes);
 
     @EventHandler
-    EventCallback<KeyEvent> onKey = event -> this.getMap().keySet()
+    EventCallback<KeyEvent> onKey = event -> this.getMap().values()
             .stream()
             .filter(module -> module.getData().getKey() == event.getKey())
             .forEach(Module::toggle);

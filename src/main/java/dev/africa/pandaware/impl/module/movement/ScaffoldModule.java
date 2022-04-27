@@ -9,6 +9,7 @@ import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
+import dev.africa.pandaware.impl.event.player.SafeWalkEvent;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
@@ -16,13 +17,12 @@ import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
+import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.RotationUtils;
-import dev.africa.pandaware.utils.render.RenderUtils;
-import dev.africa.pandaware.utils.render.StencilUtils;
-import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
+import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
 import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.AllArgsConstructor;
@@ -39,11 +39,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import org.lwjgl.input.Keyboard;
 
-@ModuleInfo(name = "Scaffold", category = Category.MOVEMENT)
+@Getter
+@ModuleInfo(name = "Scaffold", shortcut = {"scaf", "blockfly", "jelloforsigma"}, category = Category.MOVEMENT)
 public class ScaffoldModule extends Module {
+    private final EnumSetting<ScaffoldMode> scaffoldMode = new EnumSetting<>("Mode", ScaffoldMode.HYPIXEL);
     private final BooleanSetting itemSpoof = new BooleanSetting("Item Spoof", true);
     private final BooleanSetting tower = new BooleanSetting("Tower", true);
     private final EnumSetting<RotationMode> rotationMode = new EnumSetting<>("Rotation mode", RotationMode.NEW);
+    private final BooleanSetting sprint = new BooleanSetting("Sprint", true);
     private final EnumSetting<SpoofMode> spoofMode = new EnumSetting<>("Spoof mode", SpoofMode.SPOOF,
             this.itemSpoof::getValue);
     private final EnumSetting<TowerMode> towerMode = new EnumSetting<>("Tower mode", TowerMode.NCP,
@@ -55,27 +58,40 @@ public class ScaffoldModule extends Module {
     private final BooleanSetting downwards = new BooleanSetting("Downwards", true);
     private final BooleanSetting towerMove = new BooleanSetting("Tower move", true,
             this.tower::getValue);
+    private final BooleanSetting useSpeed = new BooleanSetting("Use Speed Modifier", false);
+    private final BooleanSetting safeWalk = new BooleanSetting("SafeWalk", true);
+    private final BooleanSetting overwriteAura = new BooleanSetting("Overwrite Aura rotations", true);
     private final NumberSetting speedModifier = new NumberSetting("Speed modifier", 1.5, 0.1,
-            1, 0.1);
+            1, 0.01, this.useSpeed::getValue);
+    private final NumberSetting expand = new NumberSetting("Expand", 6, 0, 0, 0.1);
 
     private BlockEntry blockEntry;
     private BlockEntry aimBlockEntry;
     private Vec2f rotations;
     private int lastSlot;
+    private double startY;
+    private Vec2f smoothRotations;
+    private Vec2f currentRotation;
 
     public ScaffoldModule() {
         this.registerSettings(
+                this.scaffoldMode,
                 this.spoofMode,
                 this.rotationMode,
                 this.towerMode,
                 this.swing,
                 this.rotate,
+                this.overwriteAura,
                 this.keepRotation,
                 this.itemSpoof,
                 this.downwards,
                 this.tower,
                 this.towerMove,
-                this.speedModifier
+                this.sprint,
+                this.safeWalk,
+                this.useSpeed,
+                this.speedModifier,
+                this.expand
         );
 
         this.setTaskedEvent(this.taskedEventListener);
@@ -86,6 +102,8 @@ public class ScaffoldModule extends Module {
         this.blockEntry = null;
         this.aimBlockEntry = null;
         this.rotations = null;
+        this.currentRotation = null;
+        this.startY = mc.thePlayer.posY;
 
         this.lastSlot = mc.thePlayer.inventory.currentItem;
     }
@@ -141,10 +159,7 @@ public class ScaffoldModule extends Module {
                         ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(slot);
 
                         if (itemStack.getItem() != null) {
-                            RenderUtils.renderItemOnScreenNoDepth(
-                                    itemStack,
-                                    (int) (width / 2) - 8, 4
-                            );
+                            RenderUtils.renderItemOnScreenNoDepth(itemStack, (int) (width / 2) - 8, 4);
                         }
                     }
 
@@ -182,7 +197,22 @@ public class ScaffoldModule extends Module {
             mc.thePlayer.inventory.currentItem = slot;
         }
 
-        BlockPos blockPos = new BlockPos(mc.thePlayer).down();
+        if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && downwards.getValue() ||
+                Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
+            this.startY = Math.floor(mc.thePlayer.posY);
+        }
+
+        boolean canGoDown = this.downwards.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
+                && mc.currentScreen == null;
+
+        double length = (this.tower.getValue() && !mc.gameSettings.keyBindJump.isKeyDown()
+                || !this.tower.getValue()) ? this.expand.getValue().intValue() : 0;
+        double dX = -Math.sin(Math.toRadians(MovementUtils.getDirection())) * length;
+        double dZ = Math.cos(Math.toRadians(MovementUtils.getDirection())) * length;
+
+        double y = !canGoDown ? this.startY : mc.thePlayer.posY;
+        BlockPos blockPos = new BlockPos(mc.thePlayer.posX + dX, y, mc.thePlayer.posZ + dZ).down();
+
         if (this.downwards.getValue()) {
             if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && mc.currentScreen == null) {
                 mc.gameSettings.keyBindSneak.pressed = false;
@@ -196,8 +226,9 @@ public class ScaffoldModule extends Module {
             this.aimBlockEntry = this.blockEntry;
         }
 
-        if (this.blockEntry != null) {
-            this.placeBlock(this.blockEntry, slot, this.itemSpoof.getValue());
+        if (this.blockEntry == null) return;
+        if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air) {
+            this.place(slot, this.itemSpoof.getValue());
         }
     };
 
@@ -215,12 +246,114 @@ public class ScaffoldModule extends Module {
                         event.setPitch(this.rotations.getY());
                     }
                     break;
-                case FORWARD:
+                case FACING:
                     event.setPitch(90f);
                     break;
-                case BACKWARDS:
-                    event.setYaw(event.getYaw() - 180f);
+                case STATIC:
+                    switch (this.aimBlockEntry.getFacing()) {
+                        case NORTH:
+                            event.setYaw(0);
+                            break;
+
+                        case SOUTH:
+                            event.setYaw(180);
+                            break;
+
+                        case WEST:
+                            event.setYaw(-90);
+                            break;
+
+                        case EAST:
+                            event.setYaw(90);
+                            break;
+                    }
                     event.setPitch(80.5f);
+                    break;
+                case BACKWARDS:
+                    event.setYaw(this.rotations.getX());
+                    event.setPitch(80.5f);
+                    break;
+
+                case HYPIXEL:
+                    switch (this.aimBlockEntry.getFacing()) {
+                        case NORTH:
+                            event.setYaw(0);
+                            break;
+
+                        case SOUTH:
+                            event.setYaw(180);
+                            break;
+
+                        case WEST:
+                            event.setYaw(-90);
+                            break;
+
+                        case EAST:
+                            event.setYaw(90);
+                            break;
+                    }
+                    event.setPitch(80f);
+                    break;
+                case SMOOTH:
+                    if (this.aimBlockEntry != null) {
+                        if (this.smoothRotations == null) {
+                            this.smoothRotations = new Vec2f();
+                        }
+
+                        this.smoothRotations.setY(90);
+
+                        switch (this.aimBlockEntry.getFacing()) {
+                            case NORTH:
+                                this.smoothRotations.setX(0);
+                                break;
+
+                            case SOUTH:
+                                this.smoothRotations.setX(180);
+                                break;
+
+                            case WEST:
+                                this.smoothRotations.setX(-90);
+                                break;
+
+                            case EAST:
+                                this.smoothRotations.setX(90);
+                                break;
+                        }
+
+                        float smoothness = 90f;
+
+                        if (this.currentRotation == null) {
+                            this.currentRotation = new Vec2f(
+                                    this.smoothRotations.getX(),
+                                    this.smoothRotations.getY()
+                            );
+                        }
+
+                        float smoothnessValue = 1 - (smoothness / 100f);
+
+                        Vec2f smoothed = new Vec2f(
+                                RotationUtils.updateRotation(
+                                        this.currentRotation.getX(),
+                                        this.smoothRotations.getX(),
+                                        Math.max(1, 180 * smoothnessValue)
+                                ),
+                                RotationUtils.updateRotation(
+                                        this.currentRotation.getY(),
+                                        this.smoothRotations.getY(),
+                                        Math.max(1, 90f * smoothnessValue)
+                                )
+                        );
+
+                        float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
+                        float gcd = f * f * f * 1.2F;
+
+                        smoothed.setX(smoothed.getX() - ((smoothed.getX() % gcd) - f));
+
+                        this.currentRotation = smoothed;
+
+                        event.setYaw(smoothed.getX());
+                        event.setPitch(smoothed.getY());
+                    }
                     break;
             }
         }
@@ -228,8 +361,18 @@ public class ScaffoldModule extends Module {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (this.speedModifier.getValue().floatValue() != 1.0f) {
-            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * this.speedModifier.getValue().floatValue());
+        if (scaffoldMode.getValue() == ScaffoldMode.HYPIXEL) {
+            if (mc.thePlayer.onGround && mc.isMoveMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
+                event.y = mc.thePlayer.motionY = 0.4f;
+                MovementUtils.strafe(0.244 * (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
+            }
+        } else if (mc.thePlayer.onGround && this.useSpeed.getValue()) {
+            mc.thePlayer.motionX = mc.thePlayer.motionX * this.speedModifier.getValue().floatValue();
+            mc.thePlayer.motionZ = mc.thePlayer.motionZ * this.speedModifier.getValue().floatValue();
+        }
+
+        if (mc.isMoveMoving()) {
+            mc.thePlayer.setSprinting(this.sprint.getValue());
         }
 
         if (this.tower.getValue() && mc.gameSettings.keyBindJump.isKeyDown()
@@ -247,6 +390,20 @@ public class ScaffoldModule extends Module {
                             event.y = mc.thePlayer.motionY = (mc.thePlayer.ticksExisted % 10 == 0 ? 0.02f : 0.42f);
                         }
                         break;
+
+                    case VULCAN:
+                        if (!mc.isMoveMoving()) {
+                            MovementUtils.strafe(event, 0);
+                        }
+                        if (this.blockEntry != null) {
+                            if (mc.thePlayer.onGround) {
+                                event.y = mc.thePlayer.motionY = 0.42f;
+                            } else if (mc.thePlayer.getAirTicks() == 5) {
+                                event.y = mc.thePlayer.motionY = -0.4f;
+                            }
+                        }
+                        break;
+
                     case FAST:
                         if (!mc.isMoveMoving()) {
                             MovementUtils.strafe(event, 0);
@@ -256,6 +413,7 @@ public class ScaffoldModule extends Module {
                             event.y = mc.thePlayer.motionY = (mc.isMoveMoving() ? 0.42f : 42f);
                         }
                         break;
+
                     case TELEPORT:
                         if (!mc.isMoveMoving()) {
                             MovementUtils.strafe(event, 0);
@@ -269,15 +427,63 @@ public class ScaffoldModule extends Module {
                             }
                         }
                         break;
+
+                    case VERUS:
+                        if (!mc.isMoveMoving()) {
+                            MovementUtils.strafe(event, 0);
+                        }
+
+                        if (this.blockEntry != null) {
+                            event.y = mc.thePlayer.motionY = (mc.isMoveMoving() ? 0.5f : 0f);
+                        }
+                        break;
+
+                    case LEGIT:
+                        if (mc.gameSettings.keyBindJump.isKeyDown() && mc.thePlayer.onGround) {
+                            mc.gameSettings.keyBindJump.pressed = true;
+                        }
+                        break;
                 }
             }
         }
     };
 
-    private void placeBlock(BlockEntry blockEntry, int slot, boolean spoofItem) {
-        if (blockEntry == null || slot == -1) {
+    @EventHandler
+    EventCallback<SafeWalkEvent> onSafeWalk = event -> {
+        if (safeWalk.getValue() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) event.cancel();
+    };
+
+    private void place(int slot, boolean spoofItem) {
+        if (this.expand.getValue().doubleValue() > 0 && (this.tower.getValue()
+                && !mc.gameSettings.keyBindJump.isKeyDown() || !this.tower.getValue())) {
+            for (double i = 0; i < this.expand.getValue().doubleValue(); i += 0.5) {
+                double dX = -Math.sin(Math.toRadians(MovementUtils.getDirection())) * i;
+                double dZ = Math.cos(Math.toRadians(MovementUtils.getDirection())) * i;
+
+                boolean canGoDown = this.downwards.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
+                        && mc.currentScreen == null;
+
+                double blockBelowY = !canGoDown && mc.isMoveMoving() ? startY : mc.thePlayer.posY;
+
+                BlockPos blockBelow1 = canGoDown ? new BlockPos(mc.thePlayer.posX + dX, mc.thePlayer.posY - 0.5,
+                        mc.thePlayer.posZ + dZ).down()
+                        : new BlockPos(mc.thePlayer.posX + dX, blockBelowY, mc.thePlayer.posZ + dZ).down();
+
+                this.blockEntry = this.getBlockEntry(new BlockPos(blockBelow1));
+
+                if (BlockUtils.getBlockAtPos(blockBelow1) == Blocks.air) {
+                    this.placeBlock(this.blockEntry, slot, spoofItem);
+                }
+            }
+
             return;
         }
+
+        this.placeBlock(this.blockEntry, slot, spoofItem);
+    }
+
+    private void placeBlock(BlockEntry blockEntry, int slot, boolean spoofItem) {
+        if (blockEntry == null || slot == -1) return;
 
         if (spoofItem && this.spoofMode.getValue() == SpoofMode.SPOOF) {
             this.lastSlot = mc.thePlayer.inventory.currentItem;
@@ -325,16 +531,10 @@ public class ScaffoldModule extends Module {
             }
         }
 
-        ItemStack offHandStack = mc.thePlayer.getHeldItem();
-        if (offHandStack != null && count && offHandStack.getItem() instanceof ItemBlock) {
-            itemCount += offHandStack.stackSize;
-        }
-
         return itemCount;
     }
 
     private BlockEntry getBlockEntry(BlockPos pos) {
-        if (mc.theWorld.getBlockState(pos).getBlock() != Blocks.air) return null;
 
         if (isValid(mc.theWorld.getBlockState((pos.add(0, -1, 0))).getBlock())) {
             return new BlockEntry(pos.add(0, -1, 0), EnumFacing.UP);
@@ -629,7 +829,10 @@ public class ScaffoldModule extends Module {
     @AllArgsConstructor
     private enum TowerMode {
         NCP("NCP"),
+        VULCAN("Vulcan"),
         FAST("Fast"),
+        VERUS("Verus"),
+        LEGIT("Legit"),
         TELEPORT("Teleport");
 
         private final String label;
@@ -640,8 +843,19 @@ public class ScaffoldModule extends Module {
         SNAP("Snap"),
         OLD("Old"),
         NEW("New"),
-        FORWARD("Forward"),
-        BACKWARDS("Backwards");
+        FACING("Facing"),
+        STATIC("Static"),
+        HYPIXEL("Hypixel"),
+        BACKWARDS("Backwards"),
+        SMOOTH("Smooth");
+
+        private final String label;
+    }
+
+    @AllArgsConstructor
+    private enum ScaffoldMode {
+        NORMAL("Normal"),
+        HYPIXEL("Hypixel");
 
         private final String label;
     }

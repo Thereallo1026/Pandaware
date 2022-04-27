@@ -12,6 +12,7 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.game.GameLoopEvent;
 import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.game.TickEvent;
+import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -132,7 +133,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     /**
      * The RenderEngine instance used by Minecraft
      */
-    private TextureManager renderEngine;
+    public TextureManager renderEngine;
 
     /**
      * Set to 'this' in Minecraft constructor; used by some settings get methods
@@ -166,7 +167,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     public Entity pointedEntity;
     public EffectRenderer effectRenderer;
     @Setter
-    private Session session;
+    public Session session;
     private boolean isGamePaused;
 
     /**
@@ -272,7 +273,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      * Keeps track of how long the debug crash keycombo (F3+C) has been pressed for, in order to crash after 10 seconds.
      */
     private long debugCrashKeyPressTime = -1L;
-    private IReloadableResourceManager mcResourceManager;
+    public IReloadableResourceManager mcResourceManager;
     private final IMetadataSerializer metadataSerializer_ = new IMetadataSerializer();
     private final List<IResourcePack> defaultResourcePacks = Lists.newArrayList();
     private final DefaultResourcePack mcDefaultResourcePack;
@@ -1283,7 +1284,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
     private void clickMouse() {
         if (this.leftClickCounter <= 0) {
-            this.thePlayer.swingItem();
+            if (ProtocolUtils.isOneDotEight()) {
+                this.thePlayer.swingItem();
+            }
 
             if (this.objectMouseOver == null) {
                 Logger.error("Null returned as 'hitResult', this shouldn't happen!");
@@ -1311,6 +1314,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                             this.leftClickCounter = 10;
                         }
                 }
+            }
+            if (!ProtocolUtils.isOneDotEight()) {
+                this.thePlayer.swingItem();
             }
         }
     }

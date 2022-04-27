@@ -95,7 +95,7 @@ public class VerusFlight extends ModuleMode<FlightModule> {
             if (stage >= 7 && mc.isMoveMoving() && !this.shouldFly) {
                 float add = mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.04f : -0.04f;
 
-                MovementUtils.strafe(event, MovementUtils.getSpeed(event) + ((this.ticks % 2 == 0 ? 0.18f : 0.17f) + add));
+                MovementUtils.strafe(event, MovementUtils.getSpeed(event) + ((this.ticks % 2 == 0 ? 0.12f : 0.11f) + add));
                 MovementUtils.strafe(event, MovementUtils.getSpeed(event) - RandomUtils.nextFloat(0.012f, 0.02f));
             }
 

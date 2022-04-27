@@ -9,9 +9,9 @@ import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.Getter;
 
 @Getter
-@ModuleInfo(name = "Flight", shortcut = {"fly", "flyaroundthenigga"},category = Category.MOVEMENT)
+@ModuleInfo(name = "Flight", shortcut = {"fly", "verusairlines"}, category = Category.MOVEMENT)
 public class FlightModule extends Module {
-    private final NumberSetting speed = new NumberSetting("Speed", 10, 0, 1, 0.05);
+    private final NumberSetting speed = new NumberSetting("Speed", 10, 0.05, 1, 0.05);
 
     public FlightModule() {
         this.registerModes(
