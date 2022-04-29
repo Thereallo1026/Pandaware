@@ -6,6 +6,8 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.module.movement.noslow.NoSlowModule;
+import dev.africa.pandaware.utils.client.HypixelUtils;
+import net.minecraft.client.gui.GuiMultiplayer;
 
 public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
     public HypixelNoSlow(String name, NoSlowModule parent) {
@@ -17,10 +19,13 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
 
         boolean usingItem = mc.thePlayer.isUsingItem() && mc.thePlayer.getCurrentEquippedItem() != null && mc.isMoveMoving();
 
-        if (usingItem && event.getEventState() == Event.EventState.PRE &&
-                mc.thePlayer.onGround && mc.thePlayer.ticksExisted % 2 == 0) {
-            event.setY(event.getY() + 0.05);
-            event.setOnGround(false);
+        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
+                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+            if (usingItem && event.getEventState() == Event.EventState.PRE &&
+                    mc.thePlayer.onGround && mc.thePlayer.ticksExisted % 2 == 0) {
+                event.setY(event.getY() + 0.05);
+                event.setOnGround(false);
+            }
         }
     };
 }

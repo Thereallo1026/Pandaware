@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.game.TickEvent;
+import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
@@ -14,6 +15,7 @@ import dev.africa.pandaware.impl.setting.ColorSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
+import dev.africa.pandaware.utils.java.EvictingList;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
@@ -29,6 +31,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,6 +47,7 @@ public class HUDModule extends Module {
     private final BooleanSetting label = new BooleanSetting("Show Labels", true, this.arraylist::getValue);
     private final BooleanSetting informations = new BooleanSetting("Information", true);
     private final BooleanSetting customFont = new BooleanSetting("Custom font", true);
+    private final BooleanSetting irc = new BooleanSetting("IRC", false);
     private final BooleanSetting arraylistLine = new BooleanSetting("Arraylist line", true,
             this.arraylist::getValue);
     private final BooleanSetting borderlessFullscreen = new BooleanSetting("Borderless Fulscreen", true);
@@ -85,6 +89,7 @@ public class HUDModule extends Module {
                 this.label,
                 this.watermark,
                 this.informations,
+                this.irc,
                 this.customFont,
                 this.borderlessFullscreen,
                 this.arraylistLine,

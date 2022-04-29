@@ -4,14 +4,12 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.module.movement.flight.modes.*;
-import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.Getter;
 
 @Getter
-@ModuleInfo(name = "Flight", shortcut = {"fly", "verusairlines"}, category = Category.MOVEMENT)
+@ModuleInfo(name = "Flight", category = Category.MOVEMENT)
 public class FlightModule extends Module {
-    private final NumberSetting speed = new NumberSetting("Speed", 10, 0.05, 1, 0.05);
 
     public FlightModule() {
         this.registerModes(
@@ -19,11 +17,9 @@ public class FlightModule extends Module {
                 new VerusFlight("Verus", this),
                 new CollideFlight("Collide", this),
                 new FuncraftFlight("Funcraft", this),
-                new PacketFlight("Packet", this)
-        );
-
-        this.registerSettings(
-                this.speed
+                new PacketFlight("Packet", this),
+                new VulcanFlight("Vulcan", this),
+                new MineboxFlight("Minebox", this)
         );
     }
 

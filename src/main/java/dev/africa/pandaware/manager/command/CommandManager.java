@@ -21,10 +21,11 @@ public class CommandManager extends Container<Command> implements Initializable 
                 new BindCommand(),
                 new HelpCommand(),
                 new ConfigCommand(),
-                new ShortcutCommand(),
                 new ToggleCommand(),
 
-                new VClipCommand()
+                new VClipCommand(),
+                new IRCCommand(),
+                new SetIRCNameCommand()
         );
     }
 

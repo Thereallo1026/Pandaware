@@ -9,7 +9,7 @@ import dev.africa.pandaware.impl.setting.NumberSetting;
 import lombok.Getter;
 
 @Getter
-@ModuleInfo(name = "High Jump", shortcut = {"hj"}, category = Category.MOVEMENT)
+@ModuleInfo(name = "High Jump", category = Category.MOVEMENT)
 public class HighJumpModule extends Module {
     private final NumberSetting height = new NumberSetting("Height", 10, 0.5, 1, 0.1,
             () -> !(this.getCurrentMode() instanceof VerusHighjump));

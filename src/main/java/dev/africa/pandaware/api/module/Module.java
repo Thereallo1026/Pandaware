@@ -44,7 +44,6 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
 
             this.data = new ModuleData(
                     moduleInfo.name(),
-                    moduleInfo.shortcut(),
                     moduleInfo.description(),
                     moduleInfo.category(),
                     moduleInfo.key(),
@@ -167,7 +166,6 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
     @AllArgsConstructor
     public static class ModuleData {
         private final String name;
-        private final String[] shortcuts;
         private final String description;
         private final Category category;
 

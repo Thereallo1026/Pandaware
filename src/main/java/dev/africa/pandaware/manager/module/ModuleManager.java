@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
+@SuppressWarnings("unchecked")
 public class ModuleManager extends MapContainer<Class<? extends Module>, Module> implements Initializable, EventListenable {
 
     @Override
@@ -90,8 +91,9 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 new AutoJoinModule(),
                 new DebuggerModule(),
                 new KillSultsModule(),
-                new AntiDesyncModule(),
-                new AnticheatDetectorModule()
+                new AnticheatDetectorModule(),
+                new ClientBrandChangerModule(),
+                new GhostBlockModule()
         );
 
         Client.getInstance().getEventDispatcher().subscribe(this);

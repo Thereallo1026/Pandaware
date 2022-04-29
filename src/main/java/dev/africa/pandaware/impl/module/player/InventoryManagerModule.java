@@ -23,7 +23,7 @@ import net.minecraft.item.*;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-@ModuleInfo(name = "Inv Manager", shortcut = {"manager", "cleaner", "shitdropper"}, category = Category.PLAYER)
+@ModuleInfo(name = "Inv Manager", category = Category.PLAYER)
 public class InventoryManagerModule extends Module {
 
     private static final int WEAPON_SLOT = 36, PICKAXE_SLOT = 37, AXE_SLOT = 38, SHOVEL_SLOT = 39, BLOCKS_SLOT = 44;

@@ -24,13 +24,18 @@ public class PacketFlight extends ModuleMode<FlightModule> {
     private final NumberSetting zMultiply = new NumberSetting("Z multiply", 500, -500, 100);
     private final NumberSetting backSpeed = new NumberSetting("Back speed", 10, 0, 0);
     private final NumberSetting yMotion = new NumberSetting("Y motion", 4, -4, 0);
+    private final NumberSetting speed = new NumberSetting("Speed", 10, 0.1, 1, 0.1);
+    private final NumberSetting timer = new NumberSetting("Timer", 10, 0.1, 1, 0.1);
 
     private final NumberSetting teleportTicks = new NumberSetting("Teleport ticks", 50, 1, 2);
 
     public PacketFlight(String name, FlightModule parent) {
+
         super(name, parent);
 
         this.registerSettings(
+                this.speed,
+                this.timer,
                 this.randomOffset,
                 this.freeze,
                 this.freezeY,
@@ -48,6 +53,12 @@ public class PacketFlight extends ModuleMode<FlightModule> {
     @Override
     public void onEnable() {
         this.laggedBack = false;
+        mc.timer.timerSpeed = this.timer.getValue().floatValue();
+    }
+
+    @Override
+    public void onDisable() {
+        mc.timer.timerSpeed = 1f;
     }
 
     @EventHandler
@@ -87,7 +98,7 @@ public class PacketFlight extends ModuleMode<FlightModule> {
         mc.thePlayer.motionY = 0;
 
         if (mc.thePlayer.ticksExisted % this.teleportTicks.getValue().intValue() == 0) {
-            double speed = (mc.isMoveMoving() ? this.getParent().getSpeed().getValue().doubleValue() : 0);
+            double speed = (mc.isMoveMoving() ? this.speed.getValue().doubleValue() : 0);
 
             double radiansYaw = Math.toRadians(MovementUtils.getDirection());
             double xMove = -Math.sin(radiansYaw) * speed;

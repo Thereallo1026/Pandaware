@@ -10,8 +10,6 @@ import java.lang.annotation.Target;
 public @interface ModuleInfo {
     String name();
 
-    String[] shortcut() default {};
-
     String description() default "No description";
 
     Category category() default Category.MISC;

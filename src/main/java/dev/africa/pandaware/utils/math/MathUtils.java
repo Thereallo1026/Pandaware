@@ -9,18 +9,14 @@ import java.util.List;
 
 @UtilityClass
 public class MathUtils {
-    public double getAverageDouble(List<Double> list) {
-        if (list.size() <= 0) {
-            return 0;
-        } else {
-            double average = 0;
+    public double getAverage(List<Number> numbers) {
+        double sum = 0;
 
-            for (double value : list) {
-                average += value;
-            }
-
-            return average / list.size();
+        for (Number number : numbers) {
+            sum += number.doubleValue();
         }
+
+        return sum / numbers.size();
     }
 
     public double roundToDecimal(double number, double places) {
@@ -65,5 +61,10 @@ public class MathUtils {
                 interpolate(entity.prevPosY, entity.posY, offset),
                 interpolate(entity.prevPosZ, entity.posZ, offset)
         );
+    }
+
+    public float calculateGaussianOffset(float x, float sigma) {
+        double output = 1.0 / Math.sqrt(2.0 * Math.PI * (sigma * sigma));
+        return (float) (output * Math.exp(-(x * x) / (2.0 * (sigma * sigma))));
     }
 }

@@ -10,10 +10,7 @@ import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.combat.KillAuraModule;
-import dev.africa.pandaware.impl.module.combat.criticals.modes.FuncraftCriticals;
-import dev.africa.pandaware.impl.module.combat.criticals.modes.HypixelCriticals;
-import dev.africa.pandaware.impl.module.combat.criticals.modes.PacketCriticals;
-import dev.africa.pandaware.impl.module.combat.criticals.modes.VerusCriticals;
+import dev.africa.pandaware.impl.module.combat.criticals.modes.*;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.module.movement.longjump.LongJumpModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
@@ -30,7 +27,8 @@ public class CriticalsModule extends Module {
                 new PacketCriticals("Packet", this),
                 new HypixelCriticals("Hypixel", this),
                 new VerusCriticals("Verus", this),
-                new FuncraftCriticals("Funcraft", this)
+                new FuncraftCriticals("Funcraft", this),
+                new OldVulcanCriticals("Old Vulcan", this)
         );
     }
 

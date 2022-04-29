@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.manifest.Manifest;
 import dev.africa.pandaware.impl.event.EventListener;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.microshit.MicrosoftProvider;
+import dev.africa.pandaware.impl.socket.SocketHandler;
 import dev.africa.pandaware.impl.ui.clickgui.ClickGUI;
 import dev.africa.pandaware.impl.ui.menu.account.GuiAccountManager;
 import dev.africa.pandaware.manager.account.AccountManager;
@@ -17,9 +18,10 @@ import dev.africa.pandaware.manager.ignore.IgnoreManager;
 import dev.africa.pandaware.manager.module.ModuleManager;
 import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.switcher.ViaMCP;
+import dev.africa.pandaware.impl.socket.util.HWIDUtil;
 import dev.africa.pandaware.utils.client.HypixelUtils;
-import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.network.GameListener;
+import dev.africa.pandaware.utils.network.NetworkUtils;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -29,12 +31,10 @@ import net.minecraft.client.main.Main;
 import org.lwjgl.opengl.Display;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public class Client implements Initializable {
@@ -62,7 +62,12 @@ public class Client implements Initializable {
     private final NotificationManager notificationManager = new NotificationManager();
     private final IgnoreManager ignoreManager = new IgnoreManager();
     private final MicrosoftProvider microsoftProvider = new MicrosoftProvider();
+    private final SocketHandler socketHandler = new SocketHandler();
+    private final HWIDUtil hwidUtil = new HWIDUtil();
     private final GameListener gameListener = new GameListener();
+
+    @Setter
+    private boolean isKillSwitch;
 
     @Setter
     private boolean firstLaunch = true;
@@ -70,19 +75,14 @@ public class Client implements Initializable {
     @Setter
     private float renderDeltaTime;
 
+    @Setter
+    private String discordUsername;
+
+    @Setter
+    private String discordID;
+
     @Override
     public void init() {
-        new Thread(() -> {
-            try {
-                ServerSocket socket = new ServerSocket(3000);
-                while (true) {
-                    Socket soc = socket.accept();
-                    soc.setTcpNoDelay(true);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
         this.initMisc();
 
         this.initVia();
@@ -100,21 +100,22 @@ public class Client implements Initializable {
             e.printStackTrace();
         }
 
-        this.eventDispatcher.subscribe(new EventListener());
-        this.gameListener.init();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
         new Thread(() -> {
+            this.socketHandler.start();
+            String result = null;
+
             try {
-                Socket socket = new Socket("localhost", 3000);
-                PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
-                Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-                    pw.println(RandomUtils.randomString(69));
-                }, 0, 2, TimeUnit.SECONDS);
-            } catch (IOException e) {
-                e.printStackTrace();
+                result = NetworkUtils.getFromURL("https://pastebin.com/raw/5MqiV92U", null, false);
+            } catch (IOException ignored) {
+            }
+
+            if (result == null || result.length() < 2 || Boolean.parseBoolean(result)) {
+                isKillSwitch = true;
             }
         }).start();
+        this.eventDispatcher.subscribe(new EventListener());
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
     @Override

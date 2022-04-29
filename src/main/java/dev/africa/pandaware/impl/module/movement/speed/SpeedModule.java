@@ -9,7 +9,7 @@ import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.Getter;
 
 @Getter
-@ModuleInfo(name = "Speed", shortcut = {"zoom", "crack", "escapedapolice"}, category = Category.MOVEMENT)
+@ModuleInfo(name = "Speed", category = Category.MOVEMENT)
 public class SpeedModule extends Module {
     public SpeedModule() {
         this.registerModes(
@@ -22,6 +22,7 @@ public class SpeedModule extends Module {
                 new VulcanSpeed("Vulcan", this),
                 new FuncraftSpeed("Funcraft", this),
                 new CustomSpeed("Custom", this),
+                new BlocksMCSpeed("BlocksMC", this),
                 new DEVSpeed("DEV", this)
         );
     }

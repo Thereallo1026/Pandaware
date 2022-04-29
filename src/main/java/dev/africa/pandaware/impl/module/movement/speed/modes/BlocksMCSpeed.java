@@ -8,8 +8,8 @@ import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import net.minecraft.potion.Potion;
 
-public class DEVSpeed extends ModuleMode<SpeedModule> {
-    public DEVSpeed(String name, SpeedModule parent) {
+public class BlocksMCSpeed extends ModuleMode<SpeedModule> {
+    public BlocksMCSpeed(String name, SpeedModule parent) {
         super(name, parent);
     }
 

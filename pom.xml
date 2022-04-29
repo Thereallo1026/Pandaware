@@ -19,6 +19,13 @@
             <id>minecraft</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
+
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+            <name>jcenter-bintray</name>
+        </repository>
+
         <repository>
             <id>Sparky</id>
             <url>https://nexus.sparky.ac/repository/Sparky/</url>
@@ -47,7 +54,7 @@
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>3.4.0</version>
+            <version>5.11.0</version>
         </dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
@@ -188,9 +195,11 @@
 
         <!-- START Pandaware libraries-->
         <dependency>
-            <groupId>us.myles</groupId>
-            <artifactId>ViaVersion-gay</artifactId>
-            <version>69</version>
+            <groupId>com.viaversion</groupId>
+            <artifactId>viaversion</artifactId>
+            <version>4.1.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/offline/ViaVersion-4.1.2-SNAPSHOT-fix.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.viaversion</groupId>
@@ -202,7 +211,7 @@
         <dependency>
             <groupId>com.viaversion</groupId>
             <artifactId>viabackwards</artifactId>
-            <version>4.1.0</version>
+            <version>4.1.2</version>
             <scope>system</scope>
             <systemPath>${basedir}/offline/viabackwards-4.1.2-SNAPSHOT-FIX.jar</systemPath>
         </dependency>
@@ -236,6 +245,30 @@
             <artifactId>javafaker</artifactId>
             <version>1.0.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.psnrigner</groupId>
+            <artifactId>discord-rpc-java</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>me.rhys</groupId>
+            <artifactId>PandawarePacketAPI</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- END Pandaware libraries-->
     </dependencies>
 

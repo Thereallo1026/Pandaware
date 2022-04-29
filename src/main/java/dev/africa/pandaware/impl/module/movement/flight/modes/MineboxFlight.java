@@ -6,6 +6,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
+import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -13,8 +14,12 @@ import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 
 public class MineboxFlight extends ModuleMode<FlightModule> {
+    private final NumberSetting speed = new NumberSetting("Speed", 10, 0.1, 1, 0.1);
+
     public MineboxFlight(String name, FlightModule parent) {
         super(name, parent);
+
+        this.registerSettings(this.speed);
     }
 
     @EventHandler
@@ -28,7 +33,7 @@ public class MineboxFlight extends ModuleMode<FlightModule> {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         event.y = mc.thePlayer.motionY = mc.gameSettings.keyBindJump.isKeyDown() ? 0.7
-                : mc.gameSettings.keyBindSneak.isKeyDown() ? -this.getParent().getSpeed().getValue().doubleValue() : 0.0F;
-        MovementUtils.strafe(event, this.getParent().getSpeed().getValue().doubleValue());
+                : mc.gameSettings.keyBindSneak.isKeyDown() ? -this.speed.getValue().doubleValue() : 0.0F;
+        MovementUtils.strafe(event, this.speed.getValue().doubleValue());
     };
 }

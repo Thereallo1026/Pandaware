@@ -15,8 +15,7 @@ import lombok.var;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @ModuleInfo(name = "Blink", category = Category.MOVEMENT)
 public class BlinkModule extends Module {
@@ -34,7 +33,7 @@ public class BlinkModule extends Module {
     private final BooleanSetting c0f = new BooleanSetting("C0F", false);
 
     private final Timer timer = new Timer();
-    private final List<Packet<?>> packetList = new ArrayList();
+    private final ConcurrentLinkedQueue<Packet> packetList = new ConcurrentLinkedQueue<>();
 
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
@@ -100,9 +99,8 @@ public class BlinkModule extends Module {
                     }
                 }
 
-                if (timer.hasReached(delayTimer.getValue().doubleValue() * 1000)) {
-                    packetList.forEach(packet1 -> mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(packet1));
-                    packetList.clear();
+                if (timer.hasReached(delayTimer.getValue().doubleValue() * 1000) && mc.thePlayer != null && mc.theWorld != null) {
+                    packetList.forEach(packet1 -> mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(this.packetList.poll()));
                     this.timer.reset();
                 }
                 break;
@@ -126,8 +124,7 @@ public class BlinkModule extends Module {
 
     @Override
     public void onDisable() {
-        packetList.forEach(packet -> mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(packet));
-        packetList.clear();
+        packetList.forEach(packet1 -> mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(this.packetList.poll()));
         this.timer.reset();
     }
 

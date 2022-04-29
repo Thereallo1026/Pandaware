@@ -11,7 +11,6 @@ public class VelocityModule extends Module {
     public VelocityModule() {
         this.registerModes(
                 new PacketVelocity("Packet", this),
-                new CustomVelocity("Custom", this),
                 new GroundVelocity("Ground", this),
                 new TickVelocity("Tick", this),
                 new GlitchVelocity("Glitch", this),

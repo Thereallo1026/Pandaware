@@ -31,13 +31,12 @@ public class CollideFlight extends ModuleMode<FlightModule> {
                 }
                 break;
             case JUMP:
-                if (mc.gameSettings.keyBindSneak.isKeyDown()) {
+                if (mc.gameSettings.keyBindSneak.isKeyDown() && mc.thePlayer.posY <= startY) {
                     startY = Math.floor(mc.thePlayer.posY);
                 }
                 if (mc.thePlayer != null && !mc.thePlayer.isSneaking() && event.getBlockPos().getY() <= startY - 1) {
                     event.setCollisionBox(new AxisAlignedBB(-100, -2, -100, 100, 1, 100)
                             .offset(event.getBlockPos().getX(), event.getBlockPos().getY(), event.getBlockPos().getZ()));
-                    startY = Math.floor(mc.thePlayer.posY);
                 }
                 break;
         }
@@ -46,7 +45,7 @@ public class CollideFlight extends ModuleMode<FlightModule> {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if (this.mode.getValue() == Mode.JUMP) {
-            if (mc.thePlayer.posY == startY) {
+            if (mc.thePlayer.posY <= startY) {
                 event.y = mc.thePlayer.motionY = 0.42f;
             }
         }

@@ -69,7 +69,7 @@ public class PlayerUtils implements MinecraftInstance {
 
     public boolean isBlockAbove(float offset) {
         boolean liquid = false;
-        final int y = (int) (mc.thePlayer.getEntityBoundingBox().minY + 2);
+        final int y = (int) (mc.thePlayer.getEntityBoundingBox().maxY);
         for (int x = MathHelper.floor_double(mc.thePlayer.getEntityBoundingBox().minX); x < MathHelper
                 .floor_double(mc.thePlayer.getEntityBoundingBox().maxX) + 1; ++x) {
             for (int z = MathHelper.floor_double(mc.thePlayer.getEntityBoundingBox().minZ); z < MathHelper

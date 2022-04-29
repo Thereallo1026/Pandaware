@@ -52,7 +52,8 @@ public class KillSultsModule extends Module {
             if (message.toLowerCase().contains(mc.thePlayer.getName().toLowerCase())) {
                 for (String announcement : GameUtils.KILL_ANNOUNCEMENTS) {
                     if (message.toLowerCase().contains(announcement.toLowerCase()
-                            .replace("%player%", mc.thePlayer.getName().toLowerCase()))) {
+                            .replace("%player%", mc.thePlayer.getName().toLowerCase())) ||
+                            message.toLowerCase().contains("was slain by") && message.toLowerCase().endsWith(mc.thePlayer.getName())) {
                         try (Stream<String> insultsStream = Files.lines(Paths.get(insultsFile.getPath()))) {
                             List<String> insults = ArrayUtils.getArrayListFromStream(insultsStream);
                             String finalMsg = (insults.get(RandomUtils.nextInt(0, insults.size())).replace("%PLAYER%", message.split(" ")[0]));

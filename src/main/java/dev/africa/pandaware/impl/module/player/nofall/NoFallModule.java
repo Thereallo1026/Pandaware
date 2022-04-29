@@ -17,7 +17,8 @@ public class NoFallModule extends Module {
                 new NoGroundNoFall("No Ground", this),
                 new PacketNoFall("Packet", this),
                 new PositionRoundNoFall("Position Round", this),
-                new ReduceNoFall("Reduce", this)
+                new ReduceNoFall("Reduce", this),
+                new VulcanNoFall("Vulcan", this)
         );
     }
 

@@ -18,6 +18,8 @@ public class DebuggerModule extends Module {
     private final BooleanSetting transaction = new BooleanSetting("Transactions", true);
     private final BooleanSetting payloads = new BooleanSetting("Custom Payloads", false);
     private final BooleanSetting everyPacket = new BooleanSetting("Debug every packet", false);
+    private final BooleanSetting everyPacketSent = new BooleanSetting("Debug only sent packets", false, this.everyPacket::getValue);
+    private final BooleanSetting everyPacketReceived = new BooleanSetting("Debug only received packets", false, this.everyPacket::getValue);
     private long lastKeepAlive;
     private long lastTransaction;
 
@@ -26,7 +28,9 @@ public class DebuggerModule extends Module {
                 this.transaction,
                 this.keepAlive,
                 this.payloads,
-                this.everyPacket
+                this.everyPacket,
+                this.everyPacketSent,
+                this.everyPacketReceived
         );
     }
 

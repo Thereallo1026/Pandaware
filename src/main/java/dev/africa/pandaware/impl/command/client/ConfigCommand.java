@@ -31,7 +31,7 @@ public class ConfigCommand extends Command {
                         config = Client.getInstance().getConfigManager().createConfig(configName);
                     }
 
-                    config.save(false);
+                    config.save(true);
                     Printer.chat("§aSaved §7" + config.getName() + "§a successfully!");
                     break;
                 }

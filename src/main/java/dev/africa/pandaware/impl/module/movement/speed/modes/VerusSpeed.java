@@ -53,7 +53,7 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
                         mc.gameSettings.keyBindJump.pressed = false;
                         if (mc.thePlayer.onGround) {
                             mc.thePlayer.jump();
-                            MovementUtils.strafe(0.48 + speedAmplifier);
+                            MovementUtils.strafe(0.49 + speedAmplifier);
                         } else {
                             if (this.verusMode.getValue() == VerusMode.SLAB) {
                                 if (mc.thePlayer.getAirTicks() == 2) {

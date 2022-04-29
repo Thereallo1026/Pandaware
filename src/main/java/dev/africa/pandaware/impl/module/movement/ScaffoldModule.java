@@ -40,7 +40,7 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.input.Keyboard;
 
 @Getter
-@ModuleInfo(name = "Scaffold", shortcut = {"scaf", "blockfly", "jelloforsigma"}, category = Category.MOVEMENT)
+@ModuleInfo(name = "Scaffold", category = Category.MOVEMENT)
 public class ScaffoldModule extends Module {
     private final EnumSetting<ScaffoldMode> scaffoldMode = new EnumSetting<>("Mode", ScaffoldMode.HYPIXEL);
     private final BooleanSetting itemSpoof = new BooleanSetting("Item Spoof", true);

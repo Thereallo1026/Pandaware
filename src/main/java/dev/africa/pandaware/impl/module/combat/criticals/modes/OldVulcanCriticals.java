@@ -7,56 +7,74 @@ import dev.africa.pandaware.impl.module.combat.criticals.CriticalsModule;
 import dev.africa.pandaware.impl.module.combat.criticals.ICriticalsMode;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.utils.player.PlayerUtils;
+import lombok.Getter;
 
-public class VerusCriticals extends ModuleMode<CriticalsModule> implements ICriticalsMode {
-    public VerusCriticals(String name, CriticalsModule parent) {
+public class OldVulcanCriticals extends ModuleMode<CriticalsModule> implements ICriticalsMode {
+    public OldVulcanCriticals(String name, CriticalsModule parent) {
         super(name, parent);
     }
 
+    @Getter
     private int stage;
 
     @Override
-    public void onEnable() {
-        this.stage = 0;
-    }
-
-    @Override
     public void handle(MotionEvent event, int ticksExisted) {
+        if (mc.thePlayer == null || mc.theWorld == null) return;
         if (Client.getInstance().getModuleManager().getByClass(FlightModule.class).getData().isEnabled()) return;
         double yGround = mc.thePlayer.posY % 0.015625;
         if (this.isOnGround() && yGround >= 0 && yGround < .1 && !PlayerUtils.isBlockAbove(1)) {
-
             switch (stage++) {
-                case 2:
-                case 1: {
+                case 3:
+                case 2: {
+                    event.setY(event.getY() + 0.42f);
                     event.setOnGround(false);
-                    event.setY(event.getY() + 0.419999986886978);
                     break;
                 }
 
                 case 4:
-                case 3: {
+                case 5: {
+                    event.setY(event.getY() + 0.007531999805212);
                     event.setOnGround(false);
-                    event.setY(event.getY() + 0.341599985361099);
                     break;
                 }
 
                 case 6:
-                case 5: {
+                case 7: {
+                    event.setY(event.getY() + .00133597911214);
                     event.setOnGround(false);
-                    event.setY(event.getY() + 0.186367980844497);
+                    break;
+                }
+
+                case 8:
+                case 9: {
+                    event.setY(event.getY() + 0.16610926093895);
+                    event.setOnGround(false);
                     break;
                 }
             }
 
-            this.stage++;
-
-            if (this.stage >= 9) {
-                this.stage = 0;
+            if (stage > 25) {
+                stage = 0;
             }
-        } else {
-            this.stage = 0;
+
+            if (!mc.isMoveMoving() && mc.thePlayer.ticksExisted % 2 == 0) {
+                double yaw = Math.toRadians(mc.thePlayer.rotationYaw);
+                double amount = .1;
+                double dX = -Math.sin(yaw) * amount;
+                double dZ = Math.cos(yaw) * amount;
+
+                event.setX(event.getX() + dX);
+                event.setZ(event.getZ() + dZ);
+            }
+
+            event.setOnGround(event.isOnGround());
+            event.setY(event.getY());
         }
+    }
+
+    @Override
+    public void onEnable() {
+        stage = 0;
     }
 
     @Override
