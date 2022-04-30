@@ -5,6 +5,7 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
+import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class StreamerModule extends Module {
     public final List<String> PLAYERS = new ArrayList<>();
 
     @EventHandler
-    EventCallback<UpdateEvent> onCum = event -> {
+    EventCallback<TickEvent> onCum = event -> {
         if (mc.theWorld != null && mc.thePlayer != null) {
             for (final NetworkPlayerInfo player : mc.getNetHandler().getPlayerInfoMap()) {
                 if (player.getGameProfile().getName().length() < 3) continue;

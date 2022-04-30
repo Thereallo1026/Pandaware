@@ -17,7 +17,7 @@ public class GlitchNoFall extends ModuleMode<NoFallModule> {
     EventCallback<MotionEvent> onMotion = event -> {
         if (this.getParent().canFall() && mc.thePlayer.fallDistance > 2.5 && PlayerUtils.isOnGround(1)) {
             event.setOnGround(true);
-            event.setY(event.getY() - 1);
+            event.setY(event.getY() - 1f);
 
             Printer.chat("§7[§cNo Fall§7] §fGlitched 1 block down");
 

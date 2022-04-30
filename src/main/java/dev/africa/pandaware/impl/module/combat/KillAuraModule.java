@@ -706,8 +706,6 @@ public class KillAuraModule extends Module {
                 case VANILLA:
                     if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
                         mc.playerController.syncCurrentPlayItem();
-                        mc.thePlayer.sendQueue
-                                .addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
 
                         mc.thePlayer.setBlockingSword(true);
                     }

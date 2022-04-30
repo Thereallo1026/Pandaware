@@ -20,6 +20,7 @@ import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
+import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.player.RotationUtils;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
@@ -61,6 +62,7 @@ public class ScaffoldModule extends Module {
     private final BooleanSetting useSpeed = new BooleanSetting("Use Speed Modifier", false);
     private final BooleanSetting safeWalk = new BooleanSetting("SafeWalk", true);
     private final BooleanSetting overwriteAura = new BooleanSetting("Overwrite Aura rotations", true);
+    private final BooleanSetting replaceBlocks = new BooleanSetting("Replace Blocks", true);
     private final NumberSetting speedModifier = new NumberSetting("Speed modifier", 1.5, 0.1,
             1, 0.01, this.useSpeed::getValue);
     private final NumberSetting expand = new NumberSetting("Expand", 6, 0, 0, 0.1);
@@ -72,6 +74,7 @@ public class ScaffoldModule extends Module {
     private double startY;
     private Vec2f smoothRotations;
     private Vec2f currentRotation;
+    private float slowdown;
 
     public ScaffoldModule() {
         this.registerSettings(
@@ -84,6 +87,7 @@ public class ScaffoldModule extends Module {
                 this.overwriteAura,
                 this.keepRotation,
                 this.itemSpoof,
+                this.replaceBlocks,
                 this.downwards,
                 this.tower,
                 this.towerMove,
@@ -192,6 +196,37 @@ public class ScaffoldModule extends Module {
         this.blockEntry = null;
         int slot = this.getItemSlot(false);
 
+        if (this.replaceBlocks.getValue() && slot == -1) {
+            if (getBlockCount(true) > 0) {
+
+                int toSwitch = 8;
+
+                for (int i = 0; i < 9; i++) {
+                    ItemStack itemStack = mc.thePlayer.inventory.mainInventory[i];
+                    if (itemStack == null) {
+                        toSwitch = i;
+                        break;
+                    }
+                }
+
+                mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, 0, toSwitch, 0, mc.thePlayer);
+                mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, -999, 0, 0, mc.thePlayer);
+
+                for (int i1 = 9; i1 < 45; ++i1) {
+                    if (mc.thePlayer.inventoryContainer.getSlot(i1).getHasStack()) {
+                        ItemStack is = this.mc.thePlayer.inventoryContainer.getSlot(i1).getStack();
+                        if (is != null) {
+                            if (!(is.getItem() instanceof ItemBlock) || !isValid(((ItemBlock) is.getItem()).getBlock()))
+                                continue;
+
+                            mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, i1, toSwitch, 2, mc.thePlayer);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
         if (this.itemSpoof.getValue() && this.spoofMode.getValue() == SpoofMode.SWITCH && slot != -1) {
             mc.thePlayer.inventory.currentItem = slot;
@@ -274,7 +309,7 @@ public class ScaffoldModule extends Module {
                     event.setPitch(80.5f);
                     break;
 
-                case HYPIXEL:
+                case MMC:
                     switch (this.aimBlockEntry.getFacing()) {
                         case NORTH:
                             event.setYaw(0);
@@ -294,7 +329,7 @@ public class ScaffoldModule extends Module {
                     }
                     event.setPitch(80f);
                     break;
-                case SMOOTH:
+                case SMOOTHGCD:
                     if (this.aimBlockEntry != null) {
                         if (this.smoothRotations == null) {
                             this.smoothRotations = new Vec2f();
@@ -361,10 +396,11 @@ public class ScaffoldModule extends Module {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
+        if (getItemSlot(true) == -1) return;
         if (scaffoldMode.getValue() == ScaffoldMode.HYPIXEL) {
             if (mc.thePlayer.onGround && mc.isMoveMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                 event.y = mc.thePlayer.motionY = 0.4f;
-                MovementUtils.strafe(0.244 * (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
+                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed() * 0.75) * (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
             }
         } else if (mc.thePlayer.onGround && this.useSpeed.getValue()) {
             mc.thePlayer.motionX = mc.thePlayer.motionX * this.speedModifier.getValue().floatValue();
@@ -410,7 +446,7 @@ public class ScaffoldModule extends Module {
                         }
 
                         if (this.blockEntry != null) {
-                            event.y = mc.thePlayer.motionY = (mc.isMoveMoving() ? 0.42f : 42f);
+                            event.y = mc.thePlayer.motionY = (mc.isMoveMoving() ? 0.42f : 0);
                         }
                         break;
 
@@ -439,7 +475,7 @@ public class ScaffoldModule extends Module {
                         break;
 
                     case LEGIT:
-                        if (mc.gameSettings.keyBindJump.isKeyDown() && mc.thePlayer.onGround) {
+                        if (mc.gameSettings.keyBindJump.isKeyDown() && PlayerUtils.isMathGround()) {
                             mc.gameSettings.keyBindJump.pressed = true;
                         }
                         break;
@@ -814,6 +850,24 @@ public class ScaffoldModule extends Module {
         return null;
     }
 
+    private int getBlockCount(Boolean count) {
+        int itemCount = (count ? 0 : -1);
+
+        for (int i = 36; i >= 0; i--) {
+            ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(i);
+
+            if (itemStack != null && itemStack.getItem() instanceof ItemBlock) {
+                if (count) {
+                    itemCount += itemStack.stackSize;
+                } else {
+                    itemCount = i;
+                }
+            }
+        }
+
+        return itemCount;
+    }
+
     private boolean isValid(Block block) {
         return !BlockUtils.INVALID_BLOCKS.contains(block);
     }
@@ -845,9 +899,9 @@ public class ScaffoldModule extends Module {
         NEW("New"),
         FACING("Facing"),
         STATIC("Static"),
-        HYPIXEL("Hypixel"),
+        MMC("MMC"),
         BACKWARDS("Backwards"),
-        SMOOTH("Smooth");
+        SMOOTHGCD("Smooth GCD");
 
         private final String label;
     }

@@ -15,7 +15,7 @@ import lombok.Getter;
 @Getter
 @ModuleInfo(name = "Long Jump", category = Category.MOVEMENT)
 public class LongJumpModule extends Module {
-    private final NumberSetting speed = new NumberSetting("Speed", 10, 0, 1, 0.1);
+    private final NumberSetting speed = new NumberSetting("Speed", 2.5, 0, 1, 0.05);
     private final BooleanSetting autoDisable = new BooleanSetting("Auto Disable", false);
 
     private boolean wasOnGround;
@@ -26,7 +26,8 @@ public class LongJumpModule extends Module {
                 new VanillaLongjump("Vanilla", this),
                 new HypixelLongJump("Hypixel", this),
                 new NCPLongJump("NCP", this),
-                new FuncraftLongJump("Funcraft", this)
+                new FuncraftLongJump("Funcraft", this),
+                new BowLongJump("Bow", this)
         );
 
         this.registerSettings(this.speed, this.autoDisable);

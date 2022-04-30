@@ -13,7 +13,7 @@ public class DisablerModule extends Module {
                 new DEVDisabler("DEV", this),
                 new C03ReplaceDisabler("C03 Replace", this),
                 new S08Disabler("S08", this),
-                new BlocksMCDisabler("Blocks MC", this),
+                new BlocksMCDisabler("Verus (old BlocksMC)", this),
                 new FuncraftDisabler("Funcraft Staff", this),
                 new VerusCombatDisabler("Verus Combat", this),
                 new CancelDmgPacketDisabler("Cancel Damage", this)

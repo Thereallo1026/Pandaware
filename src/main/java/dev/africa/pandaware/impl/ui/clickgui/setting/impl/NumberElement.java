@@ -44,7 +44,7 @@ public class NumberElement extends Element<NumberSetting> {
         if (this.dragging) {
             double difference = this.getSetting().getMax().doubleValue() - this.getSetting().getMin().doubleValue();
 
-            double length = 95;
+            double length = 125;
             double x = this.getPosition().getX() + this.getSize().getX() - (length + 8);
 
             double percentage = (mousePosition.getX() - x) / length;
@@ -70,7 +70,7 @@ public class NumberElement extends Element<NumberSetting> {
         double percentage = ((value - minValue) / (maxValue - minValue));
         percentage = MathHelper.clamp_double(percentage, 0, 1);
 
-        double length = 95;
+        double length = 125;
         GlStateManager.pushMatrix();
         GlStateManager.translate(
                 this.getPosition().getX() + this.getSize().getX() - (length + 8),
@@ -109,7 +109,7 @@ public class NumberElement extends Element<NumberSetting> {
     @Override
     public void handleClick(Vec2i mousePosition, int button) {
         if (button == 0 && this.getPosition() != null && this.getSize() != null) {
-            double length = 95;
+            double length = 125;
             double x = this.getPosition().getX() + this.getSize().getX() - (length + 8);
 
             if (MouseUtils.isMouseInBounds(mousePosition,

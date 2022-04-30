@@ -13,8 +13,7 @@ import net.minecraft.network.play.server.S27PacketExplosion;
 public class CancelDmgPacketDisabler extends ModuleMode<DisablerModule> {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
-        if (event.getPacket() instanceof S06PacketUpdateHealth || event.getPacket() instanceof S12PacketEntityVelocity
-                || event.getPacket() instanceof S27PacketExplosion) {
+        if (event.getPacket() instanceof S06PacketUpdateHealth) {
             event.cancel();
             Printer.chat("Alan (dev of rise): \"What if I delay transactions to pretend I didnt receive the damage packet\"");
         }

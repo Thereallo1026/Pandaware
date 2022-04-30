@@ -34,7 +34,7 @@ public class RangeElement extends Element<NumberRangeSetting> {
         if (this.draggingLeft || this.draggingRight) {
             double difference = this.getSetting().getMax().doubleValue() - this.getSetting().getMin().doubleValue();
 
-            double length = 95;
+            double length = 125;
             double x = this.getPosition().getX() + this.getSize().getX() - (length + 8);
 
             double percentage = (mousePosition.getX() - x) / length;
@@ -80,7 +80,7 @@ public class RangeElement extends Element<NumberRangeSetting> {
         percentageLeft = MathHelper.clamp_double(percentageLeft, 0, 1);
         percentageRight = MathHelper.clamp_double(percentageRight, 0, 1);
 
-        double length = 95;
+        double length = 125;
         GlStateManager.pushMatrix();
         GlStateManager.translate(
                 this.getPosition().getX() + this.getSize().getX() - (length + 8),
@@ -165,7 +165,7 @@ public class RangeElement extends Element<NumberRangeSetting> {
         percentBar1 = MathHelper.clamp_double(percentBar1, 0, 1);
         percentBar2 = MathHelper.clamp_double(percentBar2, 0, 1);
 
-        double length = 95;
+        double length = 125;
         double x = this.getPosition().getX() + this.getSize().getX() - (length + 8);
 
         double left = (x + (percentBar1 * length));
@@ -185,7 +185,7 @@ public class RangeElement extends Element<NumberRangeSetting> {
         percentBar1 = MathHelper.clamp_double(percentBar1, 0, 1);
         percentBar2 = MathHelper.clamp_double(percentBar2, 0, 1);
 
-        double length = 95;
+        double length = 125;
         double x = this.getPosition().getX() + this.getSize().getX() - (length + 8);
 
         double left = (x + (percentBar1 * length));

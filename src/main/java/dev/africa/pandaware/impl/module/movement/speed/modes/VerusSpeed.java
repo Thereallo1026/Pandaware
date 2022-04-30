@@ -67,6 +67,7 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
                     break;
                 case GROUND:
                     if (event.getEventState() == Event.EventState.PRE) {
+                        mc.gameSettings.keyBindJump.pressed = false;
                         boolean isSolidGround = (mc.thePlayer.posY == Math.round(mc.thePlayer.posY));
                         if (PlayerUtils.isMathGround()) {
                             event.setOnGround(true);
@@ -104,7 +105,7 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
                                 stage = 0;
                                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed());
                             }
-                        } else if (!PlayerUtils.isMathGround() && isSolidGround) {
+                        } else if (!PlayerUtils.isMathGround() && !isSolidGround) {
                             stage = 0;
                             MovementUtils.strafe(MovementUtils.getBaseMoveSpeed());
                         }

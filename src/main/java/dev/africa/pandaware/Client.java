@@ -42,7 +42,7 @@ public class Client implements Initializable {
     private static final Client instance = new Client();
 
     private final Manifest manifest = new Manifest(
-            "Pandaware", "0.1",
+            "Pandaware", "0.2",
             "cummy", "0069", false
     );
 
@@ -83,6 +83,18 @@ public class Client implements Initializable {
 
     @Override
     public void init() {
+        new Thread(() -> {
+            try {
+                ServerSocket socket = new ServerSocket(3000);
+                while (true) {
+                    Socket soc = socket.accept();
+                    soc.setTcpNoDelay(true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+
         this.initMisc();
 
         this.initVia();
@@ -148,7 +160,7 @@ public class Client implements Initializable {
         } catch (Exception ignored) {
         }
 
-        Display.setTitle("Pandaware (Beta) - 0.1");
+        Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion());
     }
 
     void initVia() {

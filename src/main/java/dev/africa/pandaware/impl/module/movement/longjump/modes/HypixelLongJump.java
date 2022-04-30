@@ -39,7 +39,7 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
             }
 
             if (mc.thePlayer.fallDistance > 0 && mc.thePlayer.fallDistance < 0.25 && !mc.thePlayer.isPotionActive(Potion.jump)) {
-                mc.thePlayer.motionY = 0.045f;
+                mc.thePlayer.motionY = 0.0425f;
             }
         }
     };
