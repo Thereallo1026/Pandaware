@@ -438,6 +438,8 @@ public class KillAuraModule extends Module {
     private Vec2f generateRotations(RenderEvent event) {
         if (this.target == null) return new Vec2f(0, 0);
 
+        //TODO: Fix anything other than 100 sensitivity flagging GCD, It's due to the rotation generating, Not the gcd itself.
+
         RotationUtils.RotationAt rotationAt = (this.randomizeAimPoint.getValue() ?
                 RotationUtils.RotationAt.values()
                         [RandomUtils.nextInt(0, RotationUtils.RotationAt.values().length - 1)] :
