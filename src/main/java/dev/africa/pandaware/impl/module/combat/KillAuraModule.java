@@ -438,8 +438,6 @@ public class KillAuraModule extends Module {
     private Vec2f generateRotations(RenderEvent event) {
         if (this.target == null) return new Vec2f(0, 0);
 
-        //TODO: Fix anything other than 100 sensitivity flagging GCD, It's due to the rotation generating, Not the gcd itself.
-
         RotationUtils.RotationAt rotationAt = (this.randomizeAimPoint.getValue() ?
                 RotationUtils.RotationAt.values()
                         [RandomUtils.nextInt(0, RotationUtils.RotationAt.values().length - 1)] :
@@ -504,8 +502,8 @@ public class KillAuraModule extends Module {
                     float f2 = (float) deltaX * f1;
                     float f3 = (float) deltaY * f1;
 
-                    newRotation.setX((this.lastRotation.getX() + f2) + .15F);
-                    newRotation.setY((this.lastRotation.getY() + f3) + .15F);
+                    newRotation.setX((this.lastRotation.getX() + f2) + f1);
+                    newRotation.setY((this.lastRotation.getY() + f3) + f1);
                     break;
                 }
                 case GREEK_SMOOTH:
@@ -513,11 +511,11 @@ public class KillAuraModule extends Module {
                     int deltaX = Math.round(deltaYaw / f1);
                     int deltaY = Math.round(deltaPitch / f1);
 
-                    float smoothedF2 = (deltaX * f1) / 2;
-                    float smoothedF3 = (deltaY * f1) / 2;
+                    float smoothedF2 = (deltaX * f1) / 3;
+                    float smoothedF3 = (deltaY * f1) / 3;
 
-                    newRotation.setX((this.lastRotation.getX() + smoothedF2) + .15F);
-                    newRotation.setY((this.lastRotation.getY() + smoothedF3) + .15F);
+                    newRotation.setX((this.lastRotation.getX() + smoothedF2) + f1);
+                    newRotation.setY((this.lastRotation.getY() + smoothedF3) + f1);
 
                     break;
             }
