@@ -28,8 +28,8 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
 
         if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
                 !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
-            if ((usingItem || mc.thePlayer.isBlockingSword() && mc.isMoveMoving() &&
-                    !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled())
+            if (usingItem && mc.isMoveMoving() &&
+                    !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()
                     && event.getEventState() == Event.EventState.PRE &&
                     mc.thePlayer.onGround && mc.thePlayer.ticksExisted % 2 == 0) {
                 event.setY(event.getY() + 0.05);
@@ -44,8 +44,8 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
 
         if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
                 !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
-            if (((usingItem || mc.thePlayer.isBlockingSword() && mc.isMoveMoving()) && this.slabSafe.getValue() &&
-                    !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled())) {
+            if ((usingItem && mc.isMoveMoving()) && this.slabSafe.getValue() &&
+                    !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()) {
                 event.setStepHeight(0);
             }
         }

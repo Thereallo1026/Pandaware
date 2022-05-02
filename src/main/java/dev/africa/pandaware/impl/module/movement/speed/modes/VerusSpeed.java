@@ -74,7 +74,7 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
 
                             switch (this.stage++) {
                                 case 0:
-                                    MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * 0.4);
+                                    MovementUtils.strafe(MovementUtils.getBaseMoveSpeed());
                                     break;
                                 case 2:
                                 case 1: {
@@ -166,11 +166,12 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
 
                 if (!mc.gameSettings.keyBindJump.pressed && this.shouldSpeed) {
                     if (stage >= 7 && mc.isMoveMoving()) {
-                        float add = mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.13f : -0.04f;
-                        float sideways = (mc.gameSettings.keyBindLeft.pressed || mc.gameSettings.keyBindRight.pressed ||
-                                mc.gameSettings.keyBindBack.pressed) ? mc.thePlayer.isPotionActive(Potion.moveSpeed) ? -0.12f : -0.06f : 0f;
+                        float add = mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.12f : -0.05f;
+                        boolean strafing = mc.gameSettings.keyBindLeft.pressed || mc.gameSettings.keyBindRight.pressed ||
+                                mc.gameSettings.keyBindBack.pressed;
+                        float sideways = (strafing) ? mc.thePlayer.isPotionActive(Potion.moveSpeed) ? -0.12f : -0.06f : 0f;
 
-                        if (mc.gameSettings.keyBindLeft.pressed || mc.gameSettings.keyBindRight.pressed) {
+                        if (strafing) {
                             mc.thePlayer.setSprinting(false);
                         }
 
