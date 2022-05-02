@@ -7,6 +7,7 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.module.combat.AimAssistModule;
 import dev.africa.pandaware.impl.module.combat.ReachModule;
+import dev.africa.pandaware.impl.module.movement.ScaffoldModule;
 import dev.africa.pandaware.impl.module.player.ChestStealerModule;
 import dev.africa.pandaware.impl.module.render.TracersModule;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
@@ -441,9 +442,12 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         Entity entity = this.mc.getRenderViewEntity();
 
         if (entity != null && this.mc.theWorld != null) {
+
+            boolean reachEnabled = Client.getInstance().getModuleManager().getByClass(ReachModule.class).getData().isEnabled();
+
             this.mc.mcProfiler.startSection("pick");
             this.mc.pointedEntity = null;
-            double d0 = (ReachModule.enabled && ReachModule.reach.getValue().doubleValue() > this.mc.playerController.getBlockReachDistance()
+            double d0 = (reachEnabled && ReachModule.reach.getValue().doubleValue() > this.mc.playerController.getBlockReachDistance()
                     ? ReachModule.reach.getValue().doubleValue()
                     : this.mc.playerController.getBlockReachDistance());
             this.mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
@@ -456,7 +460,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 d0 = 6.0D;
                 d1 = 6.0D;
             } else {
-                if (d0 > (ReachModule.enabled ? ReachModule.reach.getValue().doubleValue() : 3.0D)) {
+                if (d0 > (reachEnabled ? ReachModule.reach.getValue().doubleValue() : 3.0D)) {
                     flag = true;
                 }
 
@@ -516,7 +520,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             }
 
             if (this.pointedEntity != null && flag && vec3.distanceTo(vec33)
-                    > (ReachModule.enabled ? ReachModule.reach.getValue().doubleValue() : 3.0D)) {
+                    > (reachEnabled ? ReachModule.reach.getValue().doubleValue() : 3.0D)) {
                 this.pointedEntity = null;
                 this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, vec33, (EnumFacing) null, new BlockPos(vec33));
             }

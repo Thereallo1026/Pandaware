@@ -10,8 +10,7 @@ import lombok.Getter;
 @ModuleInfo(name = "Reach", description = "Huge arms, Just like Nik's dick", category = Category.COMBAT)
 public class ReachModule extends Module {
 
-    public static boolean enabled = false;
-    public static final NumberSetting reach = new NumberSetting("Reach", 7D, 3D, 3.5D, 0.01D);
+    public static final NumberSetting reach = new NumberSetting("Reach", 6D, 3D, 3.5D, 0.01D);
 
     public ReachModule() {
         this.registerSettings(
@@ -21,13 +20,11 @@ public class ReachModule extends Module {
 
     @Override
     public void onEnable() {
-        enabled = true;
         super.onEnable();
     }
 
     @Override
     public void onDisable() {
-        enabled = false;
         super.onDisable();
     }
 }

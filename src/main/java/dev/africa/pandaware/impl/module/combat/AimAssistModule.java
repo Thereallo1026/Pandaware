@@ -80,5 +80,6 @@ public class AimAssistModule extends Module {
         float f1 = f * f * f * 8.0F;
 
         mouseX = Math.round(smoothX / f1);
+        //TODO: Fix Y
     };
 }
