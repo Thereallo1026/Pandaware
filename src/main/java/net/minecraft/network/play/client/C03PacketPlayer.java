@@ -1,13 +1,12 @@
 package net.minecraft.network.play.client;
 
-import java.io.IOException;
-
-import com.sun.xml.internal.ws.developer.Serialization;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
+
+import java.io.IOException;
 
 @Setter
 @Getter

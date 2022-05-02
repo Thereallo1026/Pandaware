@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.client.C19PacketResourcePackStatus;
-import sun.net.www.protocol.http.HttpURLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;

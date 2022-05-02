@@ -62,7 +62,7 @@ public class KillAuraModule extends Module {
     private final EnumSetting<TargetMode> targetMode = new EnumSetting<>("Target Mode", TargetMode.SINGLE);
     private final EnumSetting<SortingMode> sortingMode = new EnumSetting<>("Sorting Mode", SortingMode.DISTANCE);
     private final EnumSetting<AimMode> aimMode
-            = new EnumSetting<>("Aim Mode", AimMode.NORMAl, this.rotate::getValue);
+            = new EnumSetting<>("Aim Mode", AimMode.NORMAL, this.rotate::getValue);
     private final EnumSetting<ClickMode> clickMode
             = new EnumSetting<>("Click Mode", ClickMode.SECURE_RANDOM);
     private final EnumSetting<RangeCalculation> rangeCalculationMode
@@ -105,7 +105,6 @@ public class KillAuraModule extends Module {
     private final BooleanSetting gcd = new BooleanSetting("GCD", true, this.rotate::getValue);
     private final EnumSetting<GCDMode> gcdMode = new EnumSetting<>("GCD Mode", GCDMode.MODULO,
             () -> this.gcd.getValue() && this.rotate.getValue());
-    private final BooleanSetting rotationFix = new BooleanSetting("Rotation Fix", true, this.rotate::getValue);
     private final BooleanSetting lockView
             = new BooleanSetting("LockView", false, this.rotate::getValue);
     private final BooleanSetting keepSprint
@@ -165,14 +164,14 @@ public class KillAuraModule extends Module {
             }
         }
     };
-    private Vec2f packetRotationVector = new Vec2f(0, 0);
+    private Vec2f lastRotation = new Vec2f(0, 0);
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (event.getPacket() instanceof C03PacketPlayer) {
             C03PacketPlayer packet = (C03PacketPlayer) event.getPacket();
 
             if (packet.getRotating()) {
-                this.packetRotationVector = new Vec2f(packet.getYaw(), packet.getPitch());
+                this.lastRotation = new Vec2f(packet.getYaw(), packet.getPitch());
             }
         }
     };
@@ -371,7 +370,6 @@ public class KillAuraModule extends Module {
                 this.middleRotation,
                 this.randomizeAimPoint,
                 this.gcd,
-                this.rotationFix,
                 this.cinematic,
                 this.cinematicFilterAfterRotation,
                 this.lockView,
@@ -443,126 +441,110 @@ public class KillAuraModule extends Module {
                 RotationUtils.RotationAt.values()
                         [RandomUtils.nextInt(0, RotationUtils.RotationAt.values().length - 1)] :
                 this.lookAt.getValue());
-        Vec2f generated = (this.middleRotation.getValue() ?
+        Vec2f newRotation = (this.middleRotation.getValue() ?
                 RotationUtils.getMiddlePointRotations(this.target, rotationAt) :
                 RotationUtils.getRotations(this.target, rotationAt));
 
-        if (this.rotationFix.getValue()) {
-            generated.setX(generated.getX() - this.packetRotationVector.getX());
-            generated.setY(generated.getY() - this.packetRotationVector.getY());
-        }
+        float sensitivity = Minecraft.getMinecraft().gameSettings.mouseSensitivity;
+        float f = sensitivity * 0.6F + 0.2F;
+        float f1 = f * f * f * 1.2F;
 
-        switch (this.aimMode.getValue()) {
-            case NORMAl: {
-                generated.setX(generated.getX());
-                generated.setY(MathHelper.clamp_float(generated.getY(), -90, 90));
-                break;
-            }
-            case RANDOMIZE: {
-                generated.setX(generated.getX() + RandomUtils.nextFloat(-4, 4));
-                generated.setY(MathHelper.clamp_float(generated.getY() + RandomUtils.nextFloat(-2, 2), -90, 90));
-                break;
-            }
-            case LOCK: {
-                if (mc.thePlayer.ticksExisted % 10 == 0) {
-                    generated.setX(generated.getX());
-                    generated.setY(MathHelper.clamp_float(generated.getY(), -90, 90));
-                }
-                break;
-            }
-            case ROUND: {
-                generated.setX((float) Math.round(generated.getX()));
-                generated.setY(MathHelper.clamp_float(Math.round(generated.getY()), -90, 90));
-                break;
-            }
-        }
+        float deltaYaw = MathHelper.wrapAngleTo180_float(newRotation.getX() - this.lastRotation.getX());
+        float deltaPitch = newRotation.getY() - this.lastRotation.getY();
 
-        float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
-        float gcd = f * f * f * 1.2F;
+        //Apply the GCD Fix if enabled
         if (this.gcd.getValue()) {
             switch (this.gcdMode.getValue()) {
-                case NORMAl: {
-                    generated.setX(generated.getX() - generated.getX() % gcd);
-                    generated.setY(generated.getY() - generated.getY() % gcd);
+                case NORMAL: {
+                    newRotation.setX(newRotation.getX() - (deltaYaw % f1));
+                    newRotation.setY(newRotation.getY() - (deltaPitch % f1));
                     break;
                 }
                 case MODULO: {
                     double fixedGcdDivision = (ThreadLocalRandom.current().nextBoolean() ? 45 : 90);
-                    double fixedGcd = gcd / fixedGcdDivision + gcd;
+                    double fixedGcd = f1 / fixedGcdDivision + f1;
 
-                    generated.setX((float) (generated.getX() - Math.floor(generated.getX()) % fixedGcd));
-                    generated.setY((float) (generated.getY() - Math.floor(generated.getY()) % fixedGcd));
+                    newRotation.setX((float) (newRotation.getX() - Math.floor(newRotation.getX()) % fixedGcd));
+                    newRotation.setY((float) (newRotation.getY() - Math.floor(newRotation.getY()) % fixedGcd));
                     break;
                 }
                 case MODULO1: {
-                    generated.setX(generated.getX() - ((generated.getX() % gcd) - f));
-                    generated.setY(generated.getY() - ((generated.getY() % gcd) - f));
+                    newRotation.setX(newRotation.getX() - ((newRotation.getX() % f1) - f));
+                    newRotation.setY(newRotation.getY() - ((newRotation.getY() % f1) - f));
                     break;
                 }
                 case HI: {
-                    float deltaYaw = generated.getX() - this.packetRotationVector.getX();
-                    float deltaPitch = generated.getY() - this.packetRotationVector.getY();
 
-                    int deltaX = (int) Math.floor((deltaYaw / .15) / (Math.pow(f, 3) * 8));
-                    int deltaY = (int) Math.floor((deltaPitch / .15) / (Math.pow(f, 3) * 8));
+                    int deltaX = Math.round(deltaYaw / f1);
+                    int deltaY = Math.round(deltaPitch / f1);
 
-                    float clampedX = deltaX * gcd;
-                    float clampedY = deltaY * gcd;
+                    float clampedX = deltaX * f1;
+                    float clampedY = deltaY * f1;
 
-                    clampedX -= clampedX % gcd;
-                    clampedY -= clampedY % gcd;
+                    clampedX -= clampedX % f1;
+                    clampedY -= clampedY % f1;
 
                     float f2 = f * f * f * 8.0F;
 
                     clampedX += f2;
                     clampedY += f2;
 
-                    generated.setX(this.packetRotationVector.getX() + clampedX);
-                    generated.setY(MathHelper.clamp_float(this.packetRotationVector.getY() + clampedY, -90, 90));
+                    newRotation.setX(this.lastRotation.getX() + clampedX);
+                    newRotation.setY(MathHelper.clamp_float(this.lastRotation.getY() + clampedY, -90, 90));
                     break;
                 }
                 case GREEK: {
-                    float deltaYaw = MathHelper.wrapAngleTo180_float(mc.thePlayer.rotationYaw - generated.getX());
-                    float deltaPitch = generated.getY() - generated.getX();
 
-                    int deltaX = Math.round(deltaYaw / f);
-                    int deltaY = Math.round(deltaPitch / f);
+                    /*
+                    Better than Liquidbounce^^
+                     */
 
-                    float f2 = (float) deltaX * f;
-                    float f3 = (float) deltaY * f;
+                    int deltaX = Math.round(deltaYaw / f1);
+                    int deltaY = Math.round(deltaPitch / f1);
 
-                    generated.setX(generated.getX() + f2);
-                    generated.setY(generated.getY() + f3);
+                    float f2 = (float) deltaX * f1;
+                    float f3 = (float) deltaY * f1;
+
+                    newRotation.setX((this.lastRotation.getX() + f2) + .15F);
+                    newRotation.setY((this.lastRotation.getY() + f3) + .15F);
                     break;
                 }
+                case GREEK_SMOOTH:
+
+                    int deltaX = Math.round(deltaYaw / f1);
+                    int deltaY = Math.round(deltaPitch / f1);
+
+                    float smoothedF2 = (deltaX * f1) / 2;
+                    float smoothedF3 = (deltaY * f1) / 2;
+
+                    newRotation.setX((this.lastRotation.getX() + smoothedF2) + .15F);
+                    newRotation.setY((this.lastRotation.getY() + smoothedF3) + .15F);
+
+                    break;
             }
         }
 
-        if (this.rotationFix.getValue()) {
-            generated.setX(generated.getX() + this.packetRotationVector.getX());
-            generated.setY(generated.getY() + this.packetRotationVector.getY());
-        }
-
+        //Apply cinematic if enabled
         if (this.cinematic.getValue()) {
             if (!this.cinematicFilterAfterRotation.getValue()) {
                 this.smoothCamFilterX = this.filterX.smooth(this.smoothCamYaw,
-                        this.cinematicSpeed.getValue().floatValue() * gcd);
+                        this.cinematicSpeed.getValue().floatValue() * f1);
                 this.smoothCamFilterY = this.filterY.smooth(this.smoothCamPitch,
-                        this.cinematicSpeed.getValue().floatValue() * gcd);
+                        this.cinematicSpeed.getValue().floatValue() * f1);
                 this.smoothCamPartialTicks = 0.0F;
                 this.smoothCamYaw = 0.0F;
                 this.smoothCamPitch = 0.0F;
             }
 
-            this.smoothCamYaw += generated.getX();
-            this.smoothCamPitch += generated.getY();
+            this.smoothCamYaw += newRotation.getX();
+            this.smoothCamPitch += newRotation.getY();
 
             float smoothedPartialTicks = event.getPartialTicks() - this.smoothCamPartialTicks;
 
             this.smoothCamPartialTicks = event.getPartialTicks();
 
-            generated.setX(this.smoothCamFilterX * smoothedPartialTicks);
-            generated.setY(this.smoothCamFilterY * smoothedPartialTicks);
+            newRotation.setX(this.smoothCamFilterX * smoothedPartialTicks);
+            newRotation.setY(this.smoothCamFilterY * smoothedPartialTicks);
         } else {
             if (!this.cinematicFilterAfterRotation.getValue()) {
                 this.smoothCamFilterX = 0.0F;
@@ -575,8 +557,44 @@ public class KillAuraModule extends Module {
             this.smoothCamPitch = 0.0F;
         }
 
-        generated.setY(MathHelper.clamp_float(generated.getY(), -90, 90));
-        return generated;
+        //Now that we've applied all the above, We can finally apply the rotation mode.
+        switch (this.aimMode.getValue()) {
+            case NORMAL: {
+                newRotation.setX(newRotation.getX());
+                newRotation.setY(newRotation.getY());
+                break;
+            }
+            case RANDOMIZE: {
+                newRotation.setX(newRotation.getX() + RandomUtils.nextFloat(-4, 4));
+                newRotation.setY(newRotation.getY() + RandomUtils.nextFloat(-2, 2));
+                break;
+            }
+            case LOCK: {
+
+                /*
+                This should be done properly by using the Hitbox
+                Instead of a fixed time.
+                 */
+
+                boolean update = mc.thePlayer.ticksExisted % 5 == 0;
+
+                //Grab a new rotation if we should update, otherwise return the old one
+                newRotation.setX(update ? newRotation.getX() : this.lastRotation.getX());
+                newRotation.setY(update ? newRotation.getY() : this.lastRotation.getY());
+
+                break;
+            }
+            case ROUND: {
+                newRotation.setX(Math.round(newRotation.getX()));
+                newRotation.setY(Math.round(newRotation.getY()));
+                break;
+            }
+        }
+
+        //Finally clamp the pitch to make sure we didn't mess up.
+        newRotation.setY(MathHelper.clamp_float(newRotation.getY(), -90, 90));
+
+        return newRotation;
     }
 
     public void drawCircle(Entity entity, double rad, boolean shade) {
@@ -737,8 +755,6 @@ public class KillAuraModule extends Module {
 
                 case VANILLA:
                     if (mc.thePlayer.isBlockingSword()) {
-                        mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging
-                                .Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
                         mc.thePlayer.setBlockingSword(false);
                     }
                     break;
@@ -1100,18 +1116,19 @@ public class KillAuraModule extends Module {
 
     @AllArgsConstructor
     private enum GCDMode {
-        NORMAl("Normal"),
+        NORMAL("Normal"),
         MODULO("Modulo"),
         MODULO1("Modulo1"),
         HI("Hi"),
-        GREEK("Greek");
+        GREEK("Greek"),
+        GREEK_SMOOTH("Greek Smooth");
 
         private final String label;
     }
 
     @AllArgsConstructor
     private enum AimMode {
-        NORMAl("Normal"),
+        NORMAL("Normal"),
         ROUND("Round"),
         LOCK("Lock"),
         RANDOMIZE("Randomize");
