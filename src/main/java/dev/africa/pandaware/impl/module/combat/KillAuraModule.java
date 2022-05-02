@@ -228,6 +228,7 @@ public class KillAuraModule extends Module {
             }
         }
     };
+
     private int blockCount;
     private double increaseClicks;
     private int nextClickTime;
@@ -494,10 +495,6 @@ public class KillAuraModule extends Module {
                     break;
                 }
                 case GREEK: {
-
-                    /*
-                    Better than Liquidbounce^^
-                     */
 
                     int deltaX = Math.round(deltaYaw / f1);
                     int deltaY = Math.round(deltaPitch / f1);

@@ -45,8 +45,10 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 new VelocityModule(),
                 new CriticalsModule(),
                 new KillAuraModule(),
+                new AimAssistModule(),
                 new TPAuraModule(),
                 new AutoPotModule(),
+                new ReachModule(),
 
                 // Movement
                 new SprintModule(),

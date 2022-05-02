@@ -5,6 +5,8 @@ import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
+import dev.africa.pandaware.impl.module.combat.AimAssistModule;
+import dev.africa.pandaware.impl.module.combat.ReachModule;
 import dev.africa.pandaware.impl.module.player.ChestStealerModule;
 import dev.africa.pandaware.impl.module.render.TracersModule;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
@@ -441,7 +443,9 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         if (entity != null && this.mc.theWorld != null) {
             this.mc.mcProfiler.startSection("pick");
             this.mc.pointedEntity = null;
-            double d0 = (double) this.mc.playerController.getBlockReachDistance();
+            double d0 = (ReachModule.enabled && ReachModule.reach.getValue().doubleValue() > this.mc.playerController.getBlockReachDistance()
+                    ? ReachModule.reach.getValue().doubleValue()
+                    : this.mc.playerController.getBlockReachDistance());
             this.mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
             double d1 = d0;
             Vec3 vec3 = entity.getPositionEyes(partialTicks);
@@ -451,8 +455,12 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             if (this.mc.playerController.extendedReach()) {
                 d0 = 6.0D;
                 d1 = 6.0D;
-            } else if (d0 > 3.0D) {
-                flag = true;
+            } else {
+                if (d0 > (ReachModule.enabled ? ReachModule.reach.getValue().doubleValue() : 3.0D)) {
+                    flag = true;
+                }
+
+                d0 = d0;
             }
 
             if (this.mc.objectMouseOver != null) {
@@ -507,7 +515,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 }
             }
 
-            if (this.pointedEntity != null && flag && vec3.distanceTo(vec33) > 3.0D) {
+            if (this.pointedEntity != null && flag && vec3.distanceTo(vec33)
+                    > (ReachModule.enabled ? ReachModule.reach.getValue().doubleValue() : 3.0D)) {
                 this.pointedEntity = null;
                 this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, vec33, (EnumFacing) null, new BlockPos(vec33));
             }
@@ -1168,8 +1177,12 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
             float f1 = f * f * f * 8.0F;
-            float f2 = (float) this.mc.mouseHelper.deltaX * f1;
-            float f3 = (float) this.mc.mouseHelper.deltaY * f1;
+
+            int deltaX = this.mc.mouseHelper.deltaX + AimAssistModule.mouseX;
+            int deltaY = this.mc.mouseHelper.deltaY + AimAssistModule.mouseY;
+
+            float f2 = (float) deltaX * f1;
+            float f3 = (float) deltaY * f1;
             int i = 1;
 
             if (this.mc.gameSettings.invertMouse) {
