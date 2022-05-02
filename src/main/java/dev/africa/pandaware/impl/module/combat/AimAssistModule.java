@@ -33,6 +33,17 @@ public class AimAssistModule extends Module {
         );
     }
 
+    @Override
+    public void onEnable() {
+        super.onEnable();
+    }
+
+    @Override
+    public void onDisable() {
+        mouseX = mouseY = 0;
+        super.onDisable();
+    }
+
     @EventHandler
     EventCallback<MotionEvent> onRender = event -> {
         if (event.getEventState() != Event.EventState.PRE) return;

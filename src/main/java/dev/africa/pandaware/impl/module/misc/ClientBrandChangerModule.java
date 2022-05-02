@@ -27,6 +27,14 @@ public class ClientBrandChangerModule extends Module {
             if (packet.getChannelName().equals("MC|Brand")) {
                 event.cancel();
                 switch (mode.getValue()) {
+                    case COLOR_CODES:
+
+                        StringBuilder sb = new StringBuilder("§c§l§k");
+
+                        for (int i = 0; i < 50; i++) sb.append("#|");
+
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent((new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(sb.toString()))));
+                        break;
                     case FORGE:
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent((new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString("FML"))));
                         break;
@@ -50,7 +58,8 @@ public class ClientBrandChangerModule extends Module {
         FORGE("Forge"),
         LUNAR("Lunar"),
         PVPLOUNGE("PVP Lounge"),
-        CHEATBREAKER("Cheatbreaker");
+        CHEATBREAKER("Cheatbreaker"),
+        COLOR_CODES("Color Codes");
 
         private final String label;
     }
