@@ -9,6 +9,7 @@ import dev.africa.pandaware.impl.ui.circle.ClickCircle;
 import dev.africa.pandaware.impl.ui.clickgui.panel.Panel;
 import dev.africa.pandaware.impl.ui.clickgui.setting.SettingPanel;
 import dev.africa.pandaware.utils.client.MouseUtils;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
@@ -127,12 +128,19 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/venti.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 200, 292);
                 break;
+                case GREEK:
+                    RenderUtils.drawImage(new ResourceLocation("pandaware/icons/greek.png"), 0, 0, this.width, this.height);
+                break;
             }
         }
 
         if (this.senitiel.toString().toLowerCase().contains("dawson")) {
-            RenderUtils.drawImage(new ResourceLocation("pandaware/icons/dawson.jpg"), 0, 0, this.width,
-                    this.height);
+            if (!(clickGUI.getCummyMode().getValue() == ClickGUIModule.FemboyMode.GREEK)) {
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/dawson.jpg"), 0, 0, this.width,
+                        this.height);
+            } else {
+                Printer.chat("STOP TRYING TO REPLACE NIK YOU FUCKING FAGGOT");
+            }
         }
 
         this.panelList.forEach(panel -> panel.handleRender(mousePosition, pTicks));

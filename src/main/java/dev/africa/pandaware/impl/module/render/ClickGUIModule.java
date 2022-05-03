@@ -14,7 +14,7 @@ import org.lwjgl.input.Keyboard;
 @ModuleInfo(name = "Click GUI", description = "STOP LOOKING AT FEMBOYS FAGGOT", category = Category.VISUAL, key = Keyboard.KEY_RSHIFT)
 public class ClickGUIModule extends Module {
     private final BooleanSetting showCummyMen = new BooleanSetting("Show Femboys", true);
-    private final EnumSetting<FemboyMode> cummyMode = new EnumSetting<>("Femboy Mode", FemboyMode.ASTOLFO,
+    private final EnumSetting<FemboyMode> cummyMode = new EnumSetting<>("Femboy Mode", FemboyMode.GREEK,
             this.showCummyMen::getValue);
 
     public ClickGUIModule() {
@@ -40,7 +40,8 @@ public class ClickGUIModule extends Module {
         FELIX2("Felix 2"),
         HIDERI("Hideri"),
         SAIKA("Saika"),
-        VENTI("Venti");
+        VENTI("Venti"),
+        GREEK("Greek");
 
         private final String label;
     }

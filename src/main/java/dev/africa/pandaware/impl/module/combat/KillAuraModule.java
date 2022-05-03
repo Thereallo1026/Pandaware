@@ -722,6 +722,7 @@ public class KillAuraModule extends Module {
                 case VANILLA:
                     if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
                         mc.playerController.syncCurrentPlayItem();
+                        mc.thePlayer.sendQueue.addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
 
                         mc.thePlayer.setBlockingSword(true);
                     }
@@ -753,6 +754,7 @@ public class KillAuraModule extends Module {
 
                 case VANILLA:
                     if (mc.thePlayer.isBlockingSword()) {
+                        mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
                         mc.thePlayer.setBlockingSword(false);
                     }
                     break;

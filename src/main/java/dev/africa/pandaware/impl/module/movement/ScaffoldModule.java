@@ -397,14 +397,25 @@ public class ScaffoldModule extends Module {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if (getItemSlot(true) == -1) return;
-        if (scaffoldMode.getValue() == ScaffoldMode.HYPIXEL) {
-            if (mc.thePlayer.onGround && mc.isMoveMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
-                event.y = mc.thePlayer.motionY = 0.4f;
-                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed() * 0.75) * (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
-            }
-        } else if (mc.thePlayer.onGround && this.useSpeed.getValue()) {
-            mc.thePlayer.motionX = mc.thePlayer.motionX * this.speedModifier.getValue().floatValue();
-            mc.thePlayer.motionZ = mc.thePlayer.motionZ * this.speedModifier.getValue().floatValue();
+        switch (scaffoldMode.getValue()) {
+            case HYPIXEL:
+                if (mc.thePlayer.onGround && mc.isMoveMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
+                    event.y = mc.thePlayer.motionY = 0.4f;
+                    MovementUtils.strafe((MovementUtils.getBaseMoveSpeed() * 0.75) * (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
+                }
+                break;
+            case BLOCKSMC:
+                if (mc.thePlayer.onGround && mc.isMoveMoving()) {
+                    event.y = mc.thePlayer.motionY = 0.42f;
+                    MovementUtils.strafe(event, 0.49);
+                } else if (!mc.thePlayer.onGround && mc.isMoveMoving()) {
+                    MovementUtils.strafe(event);
+                }
+                break;
+            case NORMAL:
+                mc.thePlayer.motionX = mc.thePlayer.motionX * this.speedModifier.getValue().floatValue();
+                mc.thePlayer.motionZ = mc.thePlayer.motionZ * this.speedModifier.getValue().floatValue();
+                break;
         }
 
         if (mc.isMoveMoving()) {
@@ -909,6 +920,7 @@ public class ScaffoldModule extends Module {
     @AllArgsConstructor
     private enum ScaffoldMode {
         NORMAL("Normal"),
+        BLOCKSMC("BlocksMC"),
         HYPIXEL("Hypixel");
 
         private final String label;

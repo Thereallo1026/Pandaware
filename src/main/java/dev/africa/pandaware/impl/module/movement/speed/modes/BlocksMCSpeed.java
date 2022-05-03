@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.module.movement.speed.modes;
 
+import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
@@ -14,17 +15,39 @@ public class BlocksMCSpeed extends ModuleMode<SpeedModule> {
         super(name, parent);
     }
 
+    private double moveSpeed;
+    private double lastDistance;
+    private boolean jumpered;
+
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
+        if (event.getEventState() == Event.EventState.PRE) {
+            lastDistance = MovementUtils.getLastDistance();
+        }
+    };
+
+    @EventHandler
+    EventCallback<MoveEvent> onStabChildren = event -> {
         if (mc.isMoveMoving()) {
             if (mc.thePlayer.onGround) {
                 double speedAmplifier = (mc.thePlayer.isPotionActive(Potion.moveSpeed)
                         ? ((mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * 0.025) : 0);
-                mc.thePlayer.motionY = 0.42f;
-                MovementUtils.strafe(0.49 + speedAmplifier);
+                event.y = mc.thePlayer.motionY = 0.42f;
+                moveSpeed = 0.49 + speedAmplifier;
+                jumpered = true;
+            } else if (jumpered) {
+                moveSpeed = lastDistance - 0.66F * (lastDistance - MovementUtils.getBaseMoveSpeed());
+                jumpered = false;
             } else {
-                MovementUtils.strafe(MovementUtils.getSpeed());
+                moveSpeed = lastDistance - lastDistance / 190;
             }
+            MovementUtils.strafe(event, Math.max(MovementUtils.getBaseMoveSpeed(), moveSpeed));
         }
     };
+
+    public void onEnable() {
+        lastDistance = 0;
+        moveSpeed = 0;
+        jumpered = false;
+    }
 }
