@@ -49,6 +49,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 new TPAuraModule(),
                 new AutoPotModule(),
                 new ReachModule(),
+                new AutoClickerModule(),
 
                 // Movement
                 new SprintModule(),

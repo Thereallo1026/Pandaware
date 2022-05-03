@@ -103,7 +103,7 @@ public class KillAuraModule extends Module {
     private final BooleanSetting randomizeAimPoint
             = new BooleanSetting("Randomize Aim Point", false, this.rotate::getValue);
     private final BooleanSetting gcd = new BooleanSetting("GCD", true, this.rotate::getValue);
-    private final EnumSetting<GCDMode> gcdMode = new EnumSetting<>("GCD Mode", GCDMode.MODULO,
+    private final EnumSetting<GCDMode> gcdMode = new EnumSetting<>("GCD Mode", GCDMode.NORMAL,
             () -> this.gcd.getValue() && this.rotate.getValue());
     private final BooleanSetting lockView
             = new BooleanSetting("LockView", false, this.rotate::getValue);
