@@ -330,6 +330,7 @@ public class KillAuraModule extends Module {
                                 this.attack(this.target);
 
                                 mc.thePlayer.resetCooldown();
+                                mc.leftClickCounter = 0;
                                 this.timer.reset();
                             }
                         }

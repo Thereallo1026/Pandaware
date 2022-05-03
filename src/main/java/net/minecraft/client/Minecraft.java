@@ -186,7 +186,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     /**
      * Mouse left click counter
      */
-    private int leftClickCounter;
+    public int leftClickCounter;
 
     /**
      * Display width

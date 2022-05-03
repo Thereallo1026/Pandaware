@@ -73,6 +73,7 @@ public class AutoClickerModule extends Module {
             }
 
             mc.thePlayer.resetCooldown();
+            mc.leftClickCounter = 0;
             this.timer.reset();
         }
     };
