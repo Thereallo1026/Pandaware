@@ -25,7 +25,7 @@ import java.util.Comparator;
 public class AimAssistModule extends Module {
 
     private final NumberSetting distance = new NumberSetting("Distance", 10D, 1D, 4D, 0.5D);
-    private final NumberSetting smoothing = new NumberSetting("Smoothing", 2F, 0.1F, 2F, 0.1F);
+    private final NumberSetting smoothing = new NumberSetting("Smoothing", 2F, 0.25F, 1.5F, 0.025F);
     private final EnumSetting<RotationUtils.RotationAt> lookAt
             = new EnumSetting<>("Look At", RotationUtils.RotationAt.HEAD);
 
