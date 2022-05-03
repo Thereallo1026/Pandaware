@@ -63,6 +63,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 new StepModule(),
                 new NoSlowModule(),
                 new BlinkModule(),
+                new SafeWalkModule(),
 
                 // Visual
                 new AnimationsModule(),
