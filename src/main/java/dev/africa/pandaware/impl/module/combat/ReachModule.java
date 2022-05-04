@@ -13,8 +13,6 @@ public class ReachModule extends Module {
     public static final NumberSetting reach = new NumberSetting("Reach", 6D, 3D, 3.5D, 0.01D);
 
     public ReachModule() {
-        this.registerSettings(
-                reach
-        );
+        this.registerSettings(reach);
     }
 }

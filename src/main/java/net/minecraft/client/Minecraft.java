@@ -9,9 +9,12 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.impl.event.game.GameLoopEvent;
 import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.game.TickEvent;
+import dev.africa.pandaware.impl.module.player.FastPlaceModule;
+import dev.africa.pandaware.manager.module.ModuleManager;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.Setter;
 import net.minecraft.block.Block;
@@ -1328,7 +1331,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      */
     private void rightClickMouse() {
         if (!this.playerController.func_181040_m()) {
-            this.rightClickDelayTimer = 4;
+            this.rightClickDelayTimer = Client.getInstance().getModuleManager().getByClass(FastPlaceModule.class).getData().isEnabled()
+                    ? FastPlaceModule.getSpeed()
+                    : 4;
+
             boolean flag = true;
             ItemStack itemstack = this.thePlayer.inventory.getCurrentItem();
 
