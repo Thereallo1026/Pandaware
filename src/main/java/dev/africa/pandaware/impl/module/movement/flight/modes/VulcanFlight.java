@@ -14,13 +14,13 @@ public class VulcanFlight extends ModuleMode<FlightModule> {
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.PRE) {
-            if (mc.thePlayer.posY <= startY) MovementUtils.strafe(0.33);
+            if (mc.thePlayer.posY <= startY) MovementUtils.strafe(MovementUtils.getBaseMoveSpeed());
             if (mc.thePlayer.onGround) mc.thePlayer.motionY = 0.42f;
-            if (mc.thePlayer.ticksExisted % 30 == 0) mc.thePlayer.motionY = -0.01f;
-            if (mc.thePlayer.fallDistance > 0.28) {
-                mc.timer.timerSpeed = 0.68f;
+            if (mc.thePlayer.ticksExisted % 25 == 0) mc.thePlayer.motionY = -0.15;
+            if (mc.thePlayer.fallDistance > 0.2 && mc.thePlayer.posY <= startY) {
+                mc.timer.timerSpeed = 0.65f;
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));
-                mc.thePlayer.motionY = -0.1075f;
+                mc.thePlayer.motionY = -0.13;
                 mc.thePlayer.fallDistance = 0;
             }
         }

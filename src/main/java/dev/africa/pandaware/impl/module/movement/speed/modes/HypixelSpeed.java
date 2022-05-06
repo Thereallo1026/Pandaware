@@ -7,7 +7,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
-import dev.africa.pandaware.utils.client.HypixelUtils;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import net.minecraft.client.gui.GuiMultiplayer;
@@ -20,7 +20,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
             if (event.getEventState() == Event.EventState.PRE) {
                 if (mc.isMoveMoving()) {
                     lastDistance = MovementUtils.getLastDistance();
@@ -33,7 +33,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
     @EventHandler
     protected final EventCallback<MoveEvent> onMove = event -> {
         if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
             if (mc.thePlayer.isInWater() || mc.thePlayer.isInLava()) return;
             if (mc.thePlayer.onGround && mc.isMoveMoving()) {
                 double motion = 0.4F;

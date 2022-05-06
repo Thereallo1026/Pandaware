@@ -3,6 +3,7 @@ package dev.africa.pandaware.utils.player;
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.impl.event.player.CollisionEvent;
 import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
+import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -15,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.*;
 import net.optifine.reflect.Reflector;
@@ -197,6 +199,24 @@ public class PlayerUtils implements MinecraftInstance {
         if (event.getBlock() == Blocks.air) {
             event.setCollisionBox(new AxisAlignedBB(-100, -2, -100, 100, 1, 100)
                     .offset(event.getBlockPos().getX(), event.getBlockPos().getY(), event.getBlockPos().getZ()));
+        }
+    }
+
+    public void attackEntityProtocol(Entity entity, boolean swing, boolean keepSprint) {
+        if (ProtocolUtils.isOneDotEight() && swing) {
+            mc.thePlayer.swingItem();
+        }
+
+        if (keepSprint) {
+            mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C02PacketUseEntity(
+                    entity, C02PacketUseEntity.Action.ATTACK
+            ));
+        } else {
+            mc.playerController.attackEntity(mc.thePlayer, entity);
+        }
+
+        if (!ProtocolUtils.isOneDotEight() && swing) {
+            mc.thePlayer.swingItem();
         }
     }
 }

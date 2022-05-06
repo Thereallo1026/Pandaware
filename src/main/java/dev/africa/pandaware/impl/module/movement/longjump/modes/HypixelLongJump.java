@@ -7,10 +7,9 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.longjump.LongJumpModule;
-import dev.africa.pandaware.utils.client.HypixelUtils;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
-import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.potion.Potion;
 
 public class HypixelLongJump extends ModuleMode<LongJumpModule> {
@@ -25,8 +24,7 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+        if (ServerUtils.isOnServer("mc.hypixel.net") && !(ServerUtils.compromised)) {
 
             if (mc.thePlayer.onGround && mc.isMoveMoving()) {
                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * 2.3);

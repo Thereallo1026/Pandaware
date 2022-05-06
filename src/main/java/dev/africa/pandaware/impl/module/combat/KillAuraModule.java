@@ -18,7 +18,6 @@ import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
-import dev.africa.pandaware.utils.network.ProtocolUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.player.RotationUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
@@ -35,7 +34,6 @@ import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
@@ -126,6 +124,7 @@ public class KillAuraModule extends Module {
             this.players::getValue);
     private final BooleanSetting returnOnScaffold = new BooleanSetting("Return on Scaffold", false);
     private final BooleanSetting esp = new BooleanSetting("ESP", true).setSaveConfig(false);
+    private final BooleanSetting unblockOnAttack = new BooleanSetting("Unblock on attack", false, this.autoBlock::getValue);
 
     private final TimeHelper clickTimer = new TimeHelper();
     private final SecureRandom random = new SecureRandom();
@@ -133,6 +132,7 @@ public class KillAuraModule extends Module {
     public long lastFrame = 0;
     private int backRotationTicks;
     private EntityLivingBase target;
+    private int attacks;
 
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
@@ -241,7 +241,7 @@ public class KillAuraModule extends Module {
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == PRE) {
-            this.target = this.getTarget(this.range.getValue().floatValue());
+            this.target = this.getTarget(this.antiSnap.getValue() ? this.range.getValue().floatValue() + 1 : this.range.getValue().floatValue());
 
             if (this.target != null && RotationUtils.getYawRotationDifference(this.target) >
                     this.attackAngle.getValue().doubleValue()) {
@@ -257,7 +257,7 @@ public class KillAuraModule extends Module {
 
         if (event.getEventState() == this.eventType.getValue()) {
             if (event.getEventState() == Event.EventState.PRE) {
-                this.target = this.getTarget(this.range.getValue().floatValue());
+                this.target = this.getTarget(this.antiSnap.getValue() ? this.range.getValue().floatValue() + 1 : this.range.getValue().floatValue());
 
                 if (this.target != null && RotationUtils.getYawRotationDifference(this.target) >
                         this.attackAngle.getValue().doubleValue()) {
@@ -292,6 +292,7 @@ public class KillAuraModule extends Module {
                     }
 
                     this.clickTimer.reset();
+                    this.attacks = 0;
                     this.increaseClicks = 0;
                     this.nextClickTime = 0;
                     this.blockCount = 1;
@@ -366,6 +367,7 @@ public class KillAuraModule extends Module {
                 this.attackAngle,
                 this.hitChance,
                 this.autoBlock,
+                this.unblockOnAttack,
                 this.rotate,
                 this.antiSnap,
                 this.returnOnScaffold,
@@ -390,6 +392,7 @@ public class KillAuraModule extends Module {
     public void onEnable() {
         super.onEnable();
 
+        this.attacks = 0;
         this.blockCount = 0;
         this.target = null;
         this.filterX.reset();
@@ -690,7 +693,8 @@ public class KillAuraModule extends Module {
 
     private void block() {
         boolean swordBlock = mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword;
-        if (swordBlock) {
+        if (this.unblockOnAttack.getValue() && attacks <= 1) return;
+        if (swordBlock && !mc.thePlayer.isBlockingSword()) {
             switch (this.autoBlockMode.getValue()) {
                 case FAKE:
                     mc.thePlayer.setAnimateBlocking(true);
@@ -722,9 +726,9 @@ public class KillAuraModule extends Module {
                 case VANILLA:
                     if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
                         mc.playerController.syncCurrentPlayItem();
-                        mc.thePlayer.sendQueue.addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
 
                         mc.thePlayer.setBlockingSword(true);
+                        mc.gameSettings.keyBindUseItem.pressed = true;
                     }
                     break;
             }
@@ -753,10 +757,11 @@ public class KillAuraModule extends Module {
                 }
 
                 case VANILLA:
-                    if (mc.thePlayer.isBlockingSword()) {
-                        mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-                        mc.thePlayer.setBlockingSword(false);
-                    }
+                    mc.playerController.syncCurrentPlayItem();
+                    mc.thePlayer.setBlockingSword(false);
+
+                    mc.gameSettings.keyBindUseItem.pressed = false;
+                    mc.thePlayer.setBlockingSword(false);
                     break;
 
                 case SYNC:
@@ -796,22 +801,8 @@ public class KillAuraModule extends Module {
         AttackEvent attackEvent = new AttackEvent(entity, PRE);
         Client.getInstance().getEventDispatcher().dispatch(attackEvent);
 
-        if (ProtocolUtils.isOneDotEight() && this.swing.getValue()) {
-            mc.thePlayer.swingItem();
-        }
-
-        if (this.keepSprint.getValue()) {
-            mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C02PacketUseEntity(entity, C02PacketUseEntity.Action.ATTACK));
-        } else {
-            mc.thePlayer.motionX *= 0.7F;
-            mc.thePlayer.motionZ *= 0.7F;
-
-            mc.playerController.attackEntity(mc.thePlayer, entity);
-        }
-
-        if (!ProtocolUtils.isOneDotEight() && this.swing.getValue()) {
-            mc.thePlayer.swingItem();
-        }
+        attacks++;
+        PlayerUtils.attackEntityProtocol(this.target, this.swing.getValue(), this.keepSprint.getValue());
 
         attackEvent.setEventState(Event.EventState.POST);
         Client.getInstance().getEventDispatcher().dispatch(attackEvent);
@@ -931,10 +922,10 @@ public class KillAuraModule extends Module {
             }
 
             case FULL_RANDOM: {
-                double min = this.aps.getFirstValue().doubleValue() * RandomUtils.nextDouble(0, 1);
-                double max = this.aps.getSecondValue().doubleValue() * RandomUtils.nextDouble(0, 1);
+                double min = this.aps.getFirstValue().doubleValue();
+                double max = this.aps.getSecondValue().doubleValue();
 
-                double time = (max / min) * (RandomUtils.nextDouble(min, max));
+                double time = (max / min) * ((max / RandomUtils.nextDouble(1, 2)));
 
                 return this.timer.reach((float) (1000L / time));
             }

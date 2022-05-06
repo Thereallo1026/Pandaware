@@ -4,7 +4,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.module.combat.criticals.CriticalsModule;
 import dev.africa.pandaware.impl.module.combat.criticals.ICriticalsMode;
-import dev.africa.pandaware.utils.client.HypixelUtils;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
 import net.minecraft.client.gui.GuiMultiplayer;
@@ -29,8 +29,7 @@ public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICr
                 mc.thePlayer.posZ
         )).getUnlocalizedName();
 
-        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+        if (ServerUtils.isOnServer("mc.hypixel.net") && !(ServerUtils.compromised)) {
             if (yGround && mc.thePlayer.onGround && ticksExisted % 5 != 0 &&
                     (isSolidGround || isSlab && block.toLowerCase().contains("slab"))) {
                 event.setOnGround(false);

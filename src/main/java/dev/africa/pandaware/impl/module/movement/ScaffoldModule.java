@@ -413,8 +413,8 @@ public class ScaffoldModule extends Module {
                 }
                 break;
             case NORMAL:
-                mc.thePlayer.motionX = mc.thePlayer.motionX * this.speedModifier.getValue().floatValue();
-                mc.thePlayer.motionZ = mc.thePlayer.motionZ * this.speedModifier.getValue().floatValue();
+                mc.thePlayer.motionX *= (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1);
+                mc.thePlayer.motionZ *= (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1);
                 break;
         }
 

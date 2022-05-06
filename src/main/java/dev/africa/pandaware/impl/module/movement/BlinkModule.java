@@ -33,7 +33,7 @@ public class BlinkModule extends Module {
     private final BooleanSetting c0f = new BooleanSetting("C0F", false);
 
     private final Timer timer = new Timer();
-    private final ConcurrentLinkedQueue<Packet> packetList = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Packet<?>> packetList = new ConcurrentLinkedQueue<>();
 
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {

@@ -5,8 +5,7 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
-import dev.africa.pandaware.utils.client.HypixelUtils;
-import net.minecraft.client.gui.GuiMultiplayer;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.S01PacketJoinGame;
 
@@ -14,8 +13,7 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
     private double packets;
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
-        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.contains("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+        if (ServerUtils.isOnServer("mc.hypixel.net") && !(ServerUtils.compromised)) {
             if (event.getPacket() instanceof S01PacketJoinGame) {
                 packets = 0;
             }

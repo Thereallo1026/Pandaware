@@ -19,7 +19,7 @@ import dev.africa.pandaware.manager.module.ModuleManager;
 import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.impl.socket.util.HWIDUtil;
-import dev.africa.pandaware.utils.client.HypixelUtils;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.network.GameListener;
 import dev.africa.pandaware.utils.network.NetworkUtils;
 import joptsimple.OptionParser;
@@ -156,7 +156,7 @@ public class Client implements Initializable {
         }
 
         try {
-            HypixelUtils.checkHosts();
+            ServerUtils.checkHosts();
         } catch (Exception ignored) {
         }
 

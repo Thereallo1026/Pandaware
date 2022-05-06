@@ -10,7 +10,7 @@ import dev.africa.pandaware.impl.event.player.StepEvent;
 import dev.africa.pandaware.impl.module.movement.noslow.NoSlowModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
-import dev.africa.pandaware.utils.client.HypixelUtils;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import net.minecraft.client.gui.GuiMultiplayer;
 
 public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
@@ -27,7 +27,7 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
         boolean usingItem = mc.thePlayer.isUsingItem() && mc.thePlayer.getCurrentEquippedItem() != null && mc.isMoveMoving();
 
         if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
             if (usingItem && mc.isMoveMoving() &&
                     !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()
                     && event.getEventState() == Event.EventState.PRE &&
@@ -43,7 +43,7 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
         boolean usingItem = mc.thePlayer.isUsingItem() && mc.thePlayer.getCurrentEquippedItem() != null && mc.isMoveMoving();
 
         if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(HypixelUtils.compromised)) {
+                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
             if ((usingItem && mc.isMoveMoving()) && this.slabSafe.getValue() &&
                     !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()) {
                 event.setStepHeight(0);
