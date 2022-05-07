@@ -42,7 +42,7 @@ public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICr
                 } else if (this.stage == 2) {
                     event.setY(event.getY() + 0.13150004615783);
                 } else if (this.stage == 3) {
-                    event.setY(event.getY() + 0.01855504270225);
+                    event.setY(event.getY() + 0.01855504270223);
                     this.stage = 0;
                 }
 

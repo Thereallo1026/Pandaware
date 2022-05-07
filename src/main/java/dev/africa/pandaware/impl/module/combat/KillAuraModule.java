@@ -15,6 +15,7 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberRangeSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
@@ -133,6 +134,49 @@ public class KillAuraModule extends Module {
     private int backRotationTicks;
     private EntityLivingBase target;
     private int attacks;
+
+    public KillAuraModule() {
+        this.registerSettings(
+                this.targetMode,
+                this.sortingMode,
+                this.aimMode,
+                this.clickMode,
+                this.rangeCalculationMode,
+                this.rotationEvent,
+                this.eventType,
+                this.lookAt,
+                this.gcdMode,
+                this.autoBlockMode,
+                this.blockState,
+                this.unblockState,
+                this.strafeMode,
+                this.range,
+                this.aps,
+                this.cinematicSpeed,
+                this.switchSpeed,
+                this.attackAngle,
+                this.hitChance,
+                this.autoBlock,
+                this.unblockOnAttack,
+                this.rotate,
+                this.antiSnap,
+                this.returnOnScaffold,
+                this.middleRotation,
+                this.randomizeAimPoint,
+                this.gcd,
+                this.cinematic,
+                this.cinematicFilterAfterRotation,
+                this.lockView,
+                this.keepSprint,
+                this.swing,
+                this.sprint,
+                this.players,
+                this.invisibles,
+                this.mobs,
+                this.teams,
+                this.esp
+        );
+    }
 
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
@@ -297,18 +341,10 @@ public class KillAuraModule extends Module {
                     this.nextClickTime = 0;
                     this.blockCount = 1;
 
-                    if (!mc.gameSettings.keyBindUseItem.pressed) {
+                    if (mc.thePlayer.isBlockingSword() || mc.thePlayer.isAnimateBlocking()) {
+                        unblock();
+                        mc.thePlayer.setBlockingSword(false);
                         mc.thePlayer.setAnimateBlocking(false);
-                    }
-
-                    if (mc.thePlayer.isBlockingSword()) {
-                        mc.gameSettings.keyBindUseItem.pressed = false;
-                        mc.thePlayer.setBlockingSword(false);
-                    }
-
-                    if (mc.thePlayer.isBlockingSword()) {
-                        mc.playerController.onStoppedUsingItem(mc.thePlayer);
-                        mc.thePlayer.setBlockingSword(false);
                     }
                 } else {
                     this.backRotationTicks = 0;
@@ -344,49 +380,6 @@ public class KillAuraModule extends Module {
             this.unblock();
         }
     };
-
-    public KillAuraModule() {
-        this.registerSettings(
-                this.targetMode,
-                this.sortingMode,
-                this.aimMode,
-                this.clickMode,
-                this.rangeCalculationMode,
-                this.rotationEvent,
-                this.eventType,
-                this.lookAt,
-                this.gcdMode,
-                this.autoBlockMode,
-                this.blockState,
-                this.unblockState,
-                this.strafeMode,
-                this.range,
-                this.aps,
-                this.cinematicSpeed,
-                this.switchSpeed,
-                this.attackAngle,
-                this.hitChance,
-                this.autoBlock,
-                this.unblockOnAttack,
-                this.rotate,
-                this.antiSnap,
-                this.returnOnScaffold,
-                this.middleRotation,
-                this.randomizeAimPoint,
-                this.gcd,
-                this.cinematic,
-                this.cinematicFilterAfterRotation,
-                this.lockView,
-                this.keepSprint,
-                this.swing,
-                this.sprint,
-                this.players,
-                this.invisibles,
-                this.mobs,
-                this.teams,
-                this.esp
-        );
-    }
 
     @Override
     public void onEnable() {
@@ -758,9 +751,8 @@ public class KillAuraModule extends Module {
 
                 case VANILLA:
                     mc.playerController.syncCurrentPlayItem();
-                    mc.thePlayer.setBlockingSword(false);
-
                     mc.gameSettings.keyBindUseItem.pressed = false;
+
                     mc.thePlayer.setBlockingSword(false);
                     break;
 
