@@ -7,6 +7,7 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.module.misc.StreamerModule;
 import dev.africa.pandaware.impl.module.render.HUDModule;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -56,7 +57,6 @@ public class GuiIngame extends Gui {
      * ChatGUI instance that retains all previous chat data
      */
     private final GuiNewChat persistantChatGUI;
-    private final GuiStreamIndicator streamIndicator;
     private int updateCounter;
 
     /**
@@ -116,7 +116,6 @@ public class GuiIngame extends Gui {
         this.overlayDebug = new GuiOverlayDebug(mcIn);
         this.spectatorGui = new GuiSpectator(mcIn);
         this.persistantChatGUI = new GuiNewChat(mcIn);
-        this.streamIndicator = new GuiStreamIndicator(mcIn);
         this.overlayPlayerList = new GuiPlayerTabOverlay(mcIn, this);
         this.func_175177_a();
     }
@@ -506,10 +505,6 @@ public class GuiIngame extends Gui {
         }
     }
 
-    public void renderStreamIndicator(ScaledResolution p_180478_1_) {
-        this.streamIndicator.render(p_180478_1_.getScaledWidth() - 10, 10);
-    }
-
     private void renderScoreboard(ScoreObjective p_180475_1_, ScaledResolution p_180475_2_) {
         Scoreboard scoreboard = p_180475_1_.getScoreboard();
         Collection<Score> collection = scoreboard.getSortedScores(p_180475_1_);
@@ -550,7 +545,8 @@ public class GuiIngame extends Gui {
             int l = p_180475_2_.getScaledWidth() - k1 + 2;
             drawRect(l1 - 2, k, l, k + this.getFontRenderer().FONT_HEIGHT, 1342177280);
             if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled() &&
-                    score1.getScorePoints() != collection.size()) {
+                    score1.getScorePoints() != collection.size() && (ServerUtils.isOnServer("mc.hypixel.net") ||
+                    ServerUtils.isOnServer("hypixel.net"))) {
                 this.getFontRenderer().drawString(s1, l1, k, 553648127);
                 this.getFontRenderer().drawString(s2, l - this.getFontRenderer().getStringWidth(s2), k, 553648127);
             } else if (!Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
@@ -972,7 +968,6 @@ public class GuiIngame extends Gui {
         }
 
         ++this.updateCounter;
-        this.streamIndicator.func_152439_a();
 
         if (this.mc.thePlayer != null) {
             ItemStack itemstack = this.mc.thePlayer.inventory.getCurrentItem();
