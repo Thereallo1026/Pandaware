@@ -40,7 +40,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 motion += PlayerUtils.getJumpBoostMotion();
 
                 event.y = mc.thePlayer.motionY = motion;
-                moveSpeed = (MovementUtils.getBaseMoveSpeed() * 1.725);
+                moveSpeed = (MovementUtils.getBaseMoveSpeed() * 1.73);
                 jumped = true;
             } else if (jumped) {
                 moveSpeed = lastDistance - 0.67F * (lastDistance - MovementUtils.getBaseMoveSpeed());

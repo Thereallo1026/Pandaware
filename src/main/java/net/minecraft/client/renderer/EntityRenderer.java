@@ -7,10 +7,10 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.module.combat.AimAssistModule;
 import dev.africa.pandaware.impl.module.combat.ReachModule;
-import dev.africa.pandaware.impl.module.movement.ScaffoldModule;
 import dev.africa.pandaware.impl.module.player.ChestStealerModule;
 import dev.africa.pandaware.impl.module.render.TracersModule;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
+import dev.africa.pandaware.utils.network.ProtocolUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -487,6 +487,11 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 Entity entity1 = (Entity) list.get(j);
                 float f1 = entity1.getCollisionBorderSize();
                 AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double) f1, (double) f1, (double) f1);
+
+                if (!ProtocolUtils.isOneDotEight()) {
+                    axisalignedbb = axisalignedbb.expand(-0.1, -0.1, -0.1);
+                }
+
                 MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
 
                 if (axisalignedbb.isVecInside(vec3)) {

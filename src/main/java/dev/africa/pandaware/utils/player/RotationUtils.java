@@ -145,6 +145,9 @@ public class RotationUtils implements MinecraftInstance {
     }
 
     public static Vec2f getBlockRotations(BlockPos blockPos) {
+        if (blockPos == null || mc.thePlayer == null) {
+            return new Vec2f();
+        }
         double deltaX = (blockPos.getX() + 0.5) - mc.thePlayer.posX;
         double deltaY = (blockPos.getY() + 0.5) - (1.6D + 0.2125) - 0.4D - mc.thePlayer.posY;
         double deltaZ = (blockPos.getZ() + 0.5) - mc.thePlayer.posZ;

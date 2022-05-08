@@ -60,8 +60,10 @@ public class TimerModule extends Module {
             } else {
                 mc.timer.timerSpeed = 1f;
             }
-        } else {
+        } else if (mc.theWorld != null && mc.thePlayer != null) {
             mc.timer.timerSpeed = this.speed.getValue().floatValue();
+        } else {
+            mc.timer.timerSpeed = 1f;
         }
     };
 

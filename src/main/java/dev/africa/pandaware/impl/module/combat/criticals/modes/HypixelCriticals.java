@@ -29,7 +29,7 @@ public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICr
                 mc.thePlayer.posZ
         )).getUnlocalizedName();
 
-        if (ServerUtils.isOnServer("mc.hypixel.net") && !(ServerUtils.compromised)) {
+        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
             if (yGround && mc.thePlayer.onGround && ticksExisted % 4 != 0 &&
                     (isSolidGround || isSlab && block.toLowerCase().contains("slab"))) {
                 event.setOnGround(false);

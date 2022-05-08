@@ -1,5 +1,7 @@
 package dev.africa.pandaware.impl.font.renderer;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.module.misc.StreamerModule;
 import dev.africa.pandaware.utils.render.ColorUtils;
@@ -16,8 +18,12 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class TTFFontRenderer {
+    private final Cache<String, Float> widthCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build();
     private final Font font;
     private final CharacterData[] regularData;
     private final CharacterData[] boldData;
@@ -341,6 +347,9 @@ public class TTFFontRenderer {
     }
 
     public float getStringWidth(String text) {
+        if (this.widthCache.asMap().containsKey(text)) {
+            return this.widthCache.asMap().get(text);
+        }
         float width = 0.0f;
         CharacterData[] characterData = regularData;
         for (int length = text.length(), i = 0; i < length; ++i) {
@@ -362,7 +371,11 @@ public class TTFFontRenderer {
                 }
             }
         }
-        return width + 2.0f;
+        float length = width + 2f;
+
+        this.widthCache.put(text, length);
+
+        return length;
     }
 
     private float getCharWidthFloat(char p_78263_1_) {

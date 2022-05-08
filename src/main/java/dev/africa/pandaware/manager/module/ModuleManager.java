@@ -99,7 +99,8 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 new KillSultsModule(),
                 new AnticheatDetectorModule(),
                 new ClientBrandChangerModule(),
-                new GhostBlockModule()
+                new GhostBlockModule(),
+                new No003Module()
         );
 
         Client.getInstance().getEventDispatcher().subscribe(this);

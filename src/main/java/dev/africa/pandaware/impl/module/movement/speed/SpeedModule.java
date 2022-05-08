@@ -17,7 +17,7 @@ public class SpeedModule extends Module {
                 new NCPSpeed("NCP", this),
                 new HypixelSpeed("Hypixel", this),
                 new TickSpeed("Tick Speed", this),
-                new SentinelSpeed("Sentinel", this),
+                new CubecraftSpeed("Cubecraft", this),
                 new VerusSpeed("Verus", this),
                 new VulcanSpeed("Vulcan", this),
                 new FuncraftSpeed("Funcraft", this),

@@ -69,16 +69,6 @@ public class AutoArmorModule extends Module {
                     }
                 }
 
-                if (this.item != -1) {
-                    if (mc.thePlayer.inventoryContainer.getSlot(this.item).getStack() != null) {
-                        mc.playerController.windowClick(0, this.num, 0, 1, mc.thePlayer);
-                    }
-
-                    mc.playerController.windowClick(0, this.item, 0, 1, mc.thePlayer);
-
-                    lastCycle = System.currentTimeMillis();
-                }
-
                 this.num = this.num == 8 ? 5 : ++this.num;
                 this.timer.reset();
             }

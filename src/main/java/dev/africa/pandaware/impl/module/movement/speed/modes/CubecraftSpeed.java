@@ -9,8 +9,8 @@ import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import net.minecraft.potion.Potion;
 
-public class SentinelSpeed extends ModuleMode<SpeedModule> {
-    public SentinelSpeed(String name, SpeedModule parent) {
+public class CubecraftSpeed extends ModuleMode<SpeedModule> {
+    public CubecraftSpeed(String name, SpeedModule parent) {
         super(name, parent);
     }
 
@@ -29,10 +29,6 @@ public class SentinelSpeed extends ModuleMode<SpeedModule> {
                 } else {
                     if (mc.thePlayer.getAirTicks() == 3) {
                         mc.thePlayer.motionY -= 0.1;
-                    }
-
-                    if (mc.thePlayer.getAirTicks() == 4) {
-                        mc.thePlayer.motionY = 0.0;
                     }
 
                     if (mc.thePlayer.getAirTicks() == 4) {

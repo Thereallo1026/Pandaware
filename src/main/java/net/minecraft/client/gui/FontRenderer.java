@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
@@ -15,7 +17,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.Config;
 import net.minecraft.util.ResourceLocation;
 import net.optifine.CustomColors;
@@ -28,9 +29,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class FontRenderer implements IResourceManagerReloadListener {
     private static final ResourceLocation[] unicodePageLocations = new ResourceLocation[256];
+    private final Cache<String, Integer> widthCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build();
 
     /**
      * Array of width of all the characters in default.png
@@ -647,6 +652,9 @@ public class FontRenderer implements IResourceManagerReloadListener {
         if (text == null) {
             return 0;
         } else {
+            if (this.widthCache.asMap().containsKey(text)) {
+                return this.widthCache.asMap().get(text);
+            }
 
             final Minecraft mc = Minecraft.getMinecraft();
 
@@ -693,7 +701,11 @@ public class FontRenderer implements IResourceManagerReloadListener {
                 }
             }
 
-            return Math.round(f);
+            int width = Math.round(f);
+
+            this.widthCache.put(text, width);
+
+            return width;
         }
     }
 

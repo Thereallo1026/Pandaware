@@ -3,8 +3,10 @@ package net.minecraft.client.entity;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.impl.event.player.*;
+import dev.africa.pandaware.impl.module.misc.No003Module;
 import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
 import dev.africa.pandaware.impl.module.movement.noslow.NoSlowModule;
+import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.var;
@@ -38,6 +40,8 @@ import net.minecraft.world.World;
 public class EntityPlayerSP extends AbstractClientPlayer {
     public final NetHandlerPlayClient sendQueue;
     private final StatFileWriter statWriter;
+
+    private boolean prevOnGround;
 
     /**
      * The last X position which was transmitted to the server, used to determine when the X position changes and needs
@@ -118,6 +122,12 @@ public class EntityPlayerSP extends AbstractClientPlayer {
     @Getter
     private int groundTicks, airTicks;
 
+    @Getter
+    private int diagonalTicks;
+
+    private double lastDiagonalX;
+    private double lastDiagonalZ;
+
     /**
      * The amount of time an entity has been in a Portal
      */
@@ -175,6 +185,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
                 this.groundTicks = 0;
             }
 
+            this.updateDiagonal();
+
             super.onUpdate();
 
             if (this.isRiding()) {
@@ -189,6 +201,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
             } else {
                 this.onUpdateWalkingPlayer();
             }
+            this.ticksSinceLastSwing++;
         }
     }
 
@@ -232,7 +245,13 @@ public class EntityPlayerSP extends AbstractClientPlayer {
             double d2 = motionEvent.getZ() - this.lastReportedPosZ;
             double d3 = motionEvent.getYaw() - this.lastReportedYaw;
             double d4 = motionEvent.getPitch() - this.lastReportedPitch;
-            boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || this.positionUpdateTicks >= 20;
+
+            if (!ProtocolUtils.isOneDotEight()) {
+                ++this.positionUpdateTicks;
+            }
+
+            No003Module no003 = Client.getInstance().getModuleManager().getByClass(No003Module.class);
+            boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || no003.getData().isEnabled() || this.positionUpdateTicks >= 20;
             boolean flag3 = d3 != 0.0D || d4 != 0.0D;
 
             if (this.ridingEntity == null) {
@@ -242,7 +261,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
                     this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(motionEvent.getX(), motionEvent.getY(), motionEvent.getZ(), motionEvent.isOnGround()));
                 } else if (flag3) {
                     this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(motionEvent.getYaw(), motionEvent.getPitch(), motionEvent.isOnGround()));
-                } else {
+                } else if (this.prevOnGround != this.onGround || ProtocolUtils.isOneDotEight()) {
                     this.sendQueue.addToSendQueue(new C03PacketPlayer(motionEvent.isOnGround()));
                 }
             } else {
@@ -263,6 +282,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
                 this.lastReportedYaw = motionEvent.getYaw();
                 this.lastReportedPitch = motionEvent.getPitch();
             }
+
+            this.prevOnGround = this.onGround;
         }
 
         this.setThirdPersonRotations(motionEvent);
@@ -858,5 +879,22 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         }
 
         super.moveEntity(moveEvent.x, moveEvent.y, moveEvent.z);
+    }
+
+    void updateDiagonal() {
+        double x = this.posX;
+        double z = this.posZ;
+
+        double accelerationX = Math.abs(this.lastDiagonalX - x);
+        double accelerationZ = Math.abs(this.lastDiagonalZ - z);
+
+        this.lastDiagonalX = x;
+        this.lastDiagonalZ = z;
+
+        if (accelerationX > .09 && accelerationZ > .09) {
+            this.diagonalTicks++;
+        } else {
+            this.diagonalTicks = 0;
+        }
     }
 }

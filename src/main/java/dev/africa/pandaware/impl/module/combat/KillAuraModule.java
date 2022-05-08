@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
+import dev.africa.pandaware.impl.event.game.ServerJoinEvent;
 import dev.africa.pandaware.impl.event.player.*;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.module.movement.ScaffoldModule;
@@ -15,7 +16,6 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberRangeSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
-import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
@@ -88,7 +88,7 @@ public class KillAuraModule extends Module {
             = new BooleanSetting("Cinematic Filter After Rotation", false,
             () -> this.cinematic.getValue() && this.rotationEvent.getValue() == RenderEvent.Type.RENDER_3D && this.rotate.getValue());
     private final NumberSetting range =
-            new NumberSetting("Range", 6, 0.1, 4.5, 0.01);
+            new NumberSetting("Range", 6, 0.1, 4.5, 0.05);
     private final NumberRangeSetting aps =
             new NumberRangeSetting("APS", 20, 0.5, 9, 11, 0.5);
     private final NumberSetting switchSpeed = new NumberSetting("Switch Speed",
@@ -126,6 +126,8 @@ public class KillAuraModule extends Module {
     private final BooleanSetting returnOnScaffold = new BooleanSetting("Return on Scaffold", false);
     private final BooleanSetting esp = new BooleanSetting("ESP", true).setSaveConfig(false);
     private final BooleanSetting unblockOnAttack = new BooleanSetting("Unblock on attack", false, this.autoBlock::getValue);
+    private final BooleanSetting rayCast = new BooleanSetting("Raycast", false);
+    private final BooleanSetting rayTrace = new BooleanSetting("Raytrace", false);
 
     private final TimeHelper clickTimer = new TimeHelper();
     private final SecureRandom random = new SecureRandom();
@@ -168,6 +170,8 @@ public class KillAuraModule extends Module {
                 this.cinematicFilterAfterRotation,
                 this.lockView,
                 this.keepSprint,
+                this.rayCast,
+                this.rayTrace,
                 this.swing,
                 this.sprint,
                 this.players,
@@ -364,7 +368,26 @@ public class KillAuraModule extends Module {
                             if (mc.thePlayer.getDistanceToEntity(this.target) <= this.range.getValue().floatValue()) {
                                 if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
                                         .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
-                                this.attack(this.target);
+                                EntityLivingBase rayCastTarget = this.target;
+
+                                if (this.rayCast.getValue()) {
+                                    Vec2f rayCastRotations = RotationUtils.getRotations(rayCastTarget);
+
+                                    float yaw = this.rotationVector != null ? this.rotationVector.getX() :
+                                            rayCastRotations != null ? rayCastRotations.getX() : mc.thePlayer.rotationYaw;
+
+                                    float pitch = this.rotationVector != null ? this.rotationVector.getY() :
+                                            rayCastRotations != null ? rayCastRotations.getY() : mc.thePlayer.rotationPitch;
+
+                                    EntityLivingBase rayCasted = PlayerUtils.rayCast(this.range.getValue().doubleValue(),
+                                            yaw, pitch
+                                    );
+
+                                    if (rayCasted instanceof EntityMob || rayCasted instanceof EntityPlayer) {
+                                        rayCastTarget = rayCasted;
+                                    }
+                                }
+                                this.attack(rayCastTarget);
 
                                 mc.thePlayer.resetCooldown();
                                 mc.leftClickCounter = 0;
@@ -380,6 +403,9 @@ public class KillAuraModule extends Module {
             this.unblock();
         }
     };
+
+    @EventHandler
+    EventCallback<ServerJoinEvent> onJoin = event -> this.toggle(false);
 
     @Override
     public void onEnable() {
@@ -794,7 +820,7 @@ public class KillAuraModule extends Module {
         Client.getInstance().getEventDispatcher().dispatch(attackEvent);
 
         attacks++;
-        PlayerUtils.attackEntityProtocol(this.target, this.swing.getValue(), this.keepSprint.getValue());
+        PlayerUtils.attackEntityProtocol(entity, this.swing.getValue(), this.keepSprint.getValue());
 
         attackEvent.setEventState(Event.EventState.POST);
         Client.getInstance().getEventDispatcher().dispatch(attackEvent);
@@ -862,6 +888,10 @@ public class KillAuraModule extends Module {
 
         if (entity != null) {
             if (entity == mc.thePlayer) {
+                valid = false;
+            }
+
+            if (this.rayTrace.getValue() && !mc.thePlayer.canEntityBeSeen(entity)) {
                 valid = false;
             }
 

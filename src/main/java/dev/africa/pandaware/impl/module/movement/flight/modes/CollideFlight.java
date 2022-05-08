@@ -5,9 +5,13 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.CollisionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
+import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import lombok.AllArgsConstructor;
+import lombok.var;
+import net.minecraft.network.play.client.C03PacketPlayer;
+import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.util.AxisAlignedBB;
 
 public class CollideFlight extends ModuleMode<FlightModule> {
@@ -25,6 +29,7 @@ public class CollideFlight extends ModuleMode<FlightModule> {
     EventCallback<CollisionEvent> onCollision = event -> {
         switch (this.mode.getValue()) {
             case NORMAL:
+            case SILENT_ACCEPT:
                 if (mc.thePlayer != null && !mc.thePlayer.isSneaking()) {
                     event.setCollisionBox(new AxisAlignedBB(-100, -2, -100, 100, 1, 100)
                             .offset(event.getBlockPos().getX(), event.getBlockPos().getY(), event.getBlockPos().getZ()));
@@ -51,6 +56,23 @@ public class CollideFlight extends ModuleMode<FlightModule> {
         }
     };
 
+    @EventHandler
+    EventCallback<PacketEvent> onPacket = event -> {
+        if (this.mode.getValue() == Mode.SILENT_ACCEPT) {
+            if (event.getPacket() instanceof S08PacketPlayerPosLook && mc.thePlayer != null &&
+                    mc.thePlayer.ticksExisted > 15) {
+                var packet = (S08PacketPlayerPosLook) event.getPacket();
+
+                mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C03PacketPlayer.C06PacketPlayerPosLook(
+                        packet.getX(), packet.getY(), packet.getZ(),
+                        packet.getYaw(), packet.getPitch(), false
+                ));
+
+                event.cancel();
+            }
+        }
+    };
+
     @Override
     public void onEnable() {
         startY = Math.floor(mc.thePlayer.posY);
@@ -66,7 +88,8 @@ public class CollideFlight extends ModuleMode<FlightModule> {
     @AllArgsConstructor
     private enum Mode {
         NORMAL("Normal"),
-        JUMP("Jump");
+        JUMP("Jump"),
+        SILENT_ACCEPT("Silent Accept");
 
         private final String label;
     }
