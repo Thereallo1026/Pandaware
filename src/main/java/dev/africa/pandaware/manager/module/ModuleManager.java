@@ -80,10 +80,11 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 new ChestESPModule(),
                 new StreamerModule(),
                 new TracersModule(),
+                new WaveyCapesModule(),
 
                 // Player
                 new NoFallModule(),
-                new NoRotateModule(),
+                new AntiServerModule(),
                 new ChestStealerModule(),
                 new InventoryManagerModule(),
                 new AutoArmorModule(),

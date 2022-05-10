@@ -323,7 +323,7 @@ public class WorldRenderer
         }
     }
 
-    public WorldRenderer func_181673_a(double p_181673_1_, double p_181673_3_)
+    public WorldRenderer tex(double p_181673_1_, double p_181673_3_)
     {
         if (this.quadSprite != null && this.quadSprites != null)
         {
@@ -661,7 +661,7 @@ public class WorldRenderer
         }
     }
 
-    public WorldRenderer func_181663_c(float p_181663_1_, float p_181663_2_, float p_181663_3_)
+    public WorldRenderer normal(float p_181663_1_, float p_181663_2_, float p_181663_3_)
     {
         int i = this.vertexCount * this.vertexFormat.getNextOffset() + this.vertexFormat.func_181720_d(this.field_181678_g);
 

@@ -42,7 +42,7 @@ public class Client implements Initializable {
     private static final Client instance = new Client();
 
     private final Manifest manifest = new Manifest(
-            "Pandaware", "0.2",
+            "Pandaware", "0.2.1",
             "cummy", "0069", false
     );
 

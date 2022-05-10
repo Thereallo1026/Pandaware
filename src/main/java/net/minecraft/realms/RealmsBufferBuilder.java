@@ -61,7 +61,7 @@ public class RealmsBufferBuilder
 
     public RealmsBufferBuilder normal(float p_normal_1_, float p_normal_2_, float p_normal_3_)
     {
-        return this.from(this.b.func_181663_c(p_normal_1_, p_normal_2_, p_normal_3_));
+        return this.from(this.b.normal(p_normal_1_, p_normal_2_, p_normal_3_));
     }
 
     public void end()
@@ -121,7 +121,7 @@ public class RealmsBufferBuilder
 
     public RealmsBufferBuilder tex(double p_tex_1_, double p_tex_3_)
     {
-        return this.from(this.b.func_181673_a(p_tex_1_, p_tex_3_));
+        return this.from(this.b.tex(p_tex_1_, p_tex_3_));
     }
 
     public int getVertexCount()

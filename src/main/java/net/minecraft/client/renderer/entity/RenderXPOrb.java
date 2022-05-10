@@ -82,10 +82,10 @@ public class RenderXPOrb extends Render<EntityXPOrb>
             }
         }
 
-        worldrenderer.pos((double)(0.0F - f5), (double)(0.0F - f6), 0.0D).func_181673_a((double)f, (double)f3).func_181669_b(k1, l1, i2, 128).func_181663_c(0.0F, 1.0F, 0.0F).endVertex();
-        worldrenderer.pos((double)(f4 - f5), (double)(0.0F - f6), 0.0D).func_181673_a((double)f1, (double)f3).func_181669_b(k1, l1, i2, 128).func_181663_c(0.0F, 1.0F, 0.0F).endVertex();
-        worldrenderer.pos((double)(f4 - f5), (double)(1.0F - f6), 0.0D).func_181673_a((double)f1, (double)f2).func_181669_b(k1, l1, i2, 128).func_181663_c(0.0F, 1.0F, 0.0F).endVertex();
-        worldrenderer.pos((double)(0.0F - f5), (double)(1.0F - f6), 0.0D).func_181673_a((double)f, (double)f2).func_181669_b(k1, l1, i2, 128).func_181663_c(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos((double)(0.0F - f5), (double)(0.0F - f6), 0.0D).tex((double)f, (double)f3).func_181669_b(k1, l1, i2, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos((double)(f4 - f5), (double)(0.0F - f6), 0.0D).tex((double)f1, (double)f3).func_181669_b(k1, l1, i2, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos((double)(f4 - f5), (double)(1.0F - f6), 0.0D).tex((double)f1, (double)f2).func_181669_b(k1, l1, i2, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos((double)(0.0F - f5), (double)(1.0F - f6), 0.0D).tex((double)f, (double)f2).func_181669_b(k1, l1, i2, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
         tessellator.draw();
         GlStateManager.disableBlend();
         GlStateManager.disableRescaleNormal();

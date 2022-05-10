@@ -25,14 +25,14 @@ public class CubecraftSpeed extends ModuleMode<SpeedModule> {
                 if (mc.thePlayer.onGround) {
                     mc.thePlayer.jump();
                     MovementUtils.strafe((mc.thePlayer.isPotionActive(Potion.moveSpeed) ?
-                            0.62 : 0.48) + speedAmplifier);
+                            0.59 : 0.47) + speedAmplifier);
                 } else {
                     if (mc.thePlayer.getAirTicks() == 3) {
-                        mc.thePlayer.motionY -= 0.1;
+                        mc.thePlayer.motionY -= 0.07;
                     }
 
                     if (mc.thePlayer.getAirTicks() == 4) {
-                        mc.thePlayer.motionY += 0.02;
+                        mc.thePlayer.motionY += 0.01;
                     }
                 }
 

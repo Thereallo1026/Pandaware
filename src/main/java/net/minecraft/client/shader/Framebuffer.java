@@ -215,10 +215,10 @@ public class Framebuffer {
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
-            worldrenderer.pos(0.0D, (double) f1, 0.0D).func_181673_a(0.0D, 0.0D).func_181669_b(255, 255, 255, 255).endVertex();
-            worldrenderer.pos((double) f, (double) f1, 0.0D).func_181673_a((double) f2, 0.0D).func_181669_b(255, 255, 255, 255).endVertex();
-            worldrenderer.pos((double) f, 0.0D, 0.0D).func_181673_a((double) f2, (double) f3).func_181669_b(255, 255, 255, 255).endVertex();
-            worldrenderer.pos(0.0D, 0.0D, 0.0D).func_181673_a(0.0D, (double) f3).func_181669_b(255, 255, 255, 255).endVertex();
+            worldrenderer.pos(0.0D, (double) f1, 0.0D).tex(0.0D, 0.0D).func_181669_b(255, 255, 255, 255).endVertex();
+            worldrenderer.pos((double) f, (double) f1, 0.0D).tex((double) f2, 0.0D).func_181669_b(255, 255, 255, 255).endVertex();
+            worldrenderer.pos((double) f, 0.0D, 0.0D).tex((double) f2, (double) f3).func_181669_b(255, 255, 255, 255).endVertex();
+            worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, (double) f3).func_181669_b(255, 255, 255, 255).endVertex();
             tessellator.draw();
             this.unbindFramebufferTexture();
             GlStateManager.depthMask(true);

@@ -7,7 +7,6 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.game.TickEvent;
-import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
@@ -15,8 +14,8 @@ import dev.africa.pandaware.impl.setting.ColorSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
-import dev.africa.pandaware.utils.java.EvictingList;
 import dev.africa.pandaware.utils.math.MathUtils;
+import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
@@ -27,11 +26,11 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,6 +50,8 @@ public class HUDModule extends Module {
     private final BooleanSetting arraylistLine = new BooleanSetting("Arraylist line", true,
             this.arraylist::getValue);
     private final BooleanSetting borderlessFullscreen = new BooleanSetting("Borderless Fulscreen", true);
+    private final BooleanSetting showCape = new BooleanSetting("Show Cape", true);
+    private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.MINECON2016, this.showCape::getValue);
 
     private final NumberSetting colorTime = new NumberSetting("Color time",
             10000, 100, 3000, 1, () -> this.colorMode.getValue() == ColorMode.PANDAWARE
@@ -79,6 +80,9 @@ public class HUDModule extends Module {
             () -> this.colorMode.getValue() == ColorMode.SHADE);
 
     private boolean lastFullscreen;
+    private int animated = 1;
+    private final TimeHelper timer = new TimeHelper();
+    private ResourceLocation animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(1).gif");
 
     public HUDModule() {
         this.toggle(true);
@@ -90,6 +94,8 @@ public class HUDModule extends Module {
                 this.watermark,
                 this.informations,
                 this.irc,
+                this.showCape,
+                this.capeMode,
                 this.customFont,
                 this.borderlessFullscreen,
                 this.arraylistLine,
@@ -134,6 +140,16 @@ public class HUDModule extends Module {
                 }
 
                 GlStateManager.popMatrix();
+                break;
+            case RENDER_3D:
+                if (timer.reach(69)) {
+                    this.animated++;
+                    timer.reset();
+                }
+                if (animated > 16) {
+                    animated = 1;
+                }
+                this.animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(" + animated + ").gif");
                 break;
         }
     };
@@ -369,5 +385,22 @@ public class HUDModule extends Module {
         RAINBOW("Rainbow");
 
         private final String label;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum CapeMode {
+        PANDAWARE("Pandaware", new ResourceLocation("pandaware/icons/capes/cum.png")),
+        CUSTOM("Custom", new ResourceLocation("pandaware/icons/capes/custom.png")),
+        MINECON2011("Minecon 2011", new ResourceLocation("pandaware/icons/capes/2011.png")),
+        MINECON2012("Minecon 2012", new ResourceLocation("pandaware/icons/capes/2012.png")),
+        MINECON2013("Minecon 2013", new ResourceLocation("pandaware/icons/capes/2013.png")),
+        MINECON2015("Minecon 2015", new ResourceLocation("pandaware/icons/capes/2015.png")),
+        MINECON2016("Minecon 2016", new ResourceLocation("pandaware/icons/capes/2016.png")),
+        MOJANG("Mojang", new ResourceLocation("pandaware/icons/capes/mojang.png")),
+        YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png"));
+
+        private final String label;
+        private final ResourceLocation resource;
     }
 }

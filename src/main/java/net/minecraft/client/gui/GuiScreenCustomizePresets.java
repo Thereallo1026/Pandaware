@@ -219,10 +219,10 @@ public class GuiScreenCustomizePresets extends GuiScreen
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
-            worldrenderer.pos((double)(i + 0), (double)(p_178051_2_ + 32), 0.0D).func_181673_a(0.0D, 1.0D).endVertex();
-            worldrenderer.pos((double)(i + 32), (double)(p_178051_2_ + 32), 0.0D).func_181673_a(1.0D, 1.0D).endVertex();
-            worldrenderer.pos((double)(i + 32), (double)(p_178051_2_ + 0), 0.0D).func_181673_a(1.0D, 0.0D).endVertex();
-            worldrenderer.pos((double)(i + 0), (double)(p_178051_2_ + 0), 0.0D).func_181673_a(0.0D, 0.0D).endVertex();
+            worldrenderer.pos((double)(i + 0), (double)(p_178051_2_ + 32), 0.0D).tex(0.0D, 1.0D).endVertex();
+            worldrenderer.pos((double)(i + 32), (double)(p_178051_2_ + 32), 0.0D).tex(1.0D, 1.0D).endVertex();
+            worldrenderer.pos((double)(i + 32), (double)(p_178051_2_ + 0), 0.0D).tex(1.0D, 0.0D).endVertex();
+            worldrenderer.pos((double)(i + 0), (double)(p_178051_2_ + 0), 0.0D).tex(0.0D, 0.0D).endVertex();
             tessellator.draw();
         }
 

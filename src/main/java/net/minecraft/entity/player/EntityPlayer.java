@@ -3,6 +3,9 @@ package net.minecraft.entity.player;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import dev.africa.pandaware.impl.cape.simulation.CapeHolder;
+import dev.africa.pandaware.impl.cape.simulation.StickSimulation;
+import dev.africa.pandaware.impl.ui.UISettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;
@@ -48,7 +51,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("incomplete-switch")
-public abstract class EntityPlayer extends EntityLivingBase {
+public abstract class EntityPlayer extends EntityLivingBase implements CapeHolder {
     /**
      * Inventory of the player
      */
@@ -239,10 +242,21 @@ public abstract class EntityPlayer extends EntityLivingBase {
         return this.isUsingItem() && this.itemInUse.getItem().getItemUseAction(this.itemInUse) == EnumAction.BLOCK;
     }
 
+    private final StickSimulation stickSimulation = new StickSimulation();
+
+    @Override
+    public StickSimulation getSimulation() {
+        return this.stickSimulation;
+    }
+
     /**
      * Called to update the entity's position/logic.
      */
     public void onUpdate() {
+        if (UISettings.WAVEY_CAPES) {
+            this.simulate(this);
+        }
+
         this.noClip = this.isSpectator();
 
         if (this.isSpectator()) {

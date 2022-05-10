@@ -8,6 +8,7 @@ import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
@@ -20,6 +21,11 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
 
     public FuncraftFlight(String name, FlightModule parent) {
         super(name, parent);
+
+        this.registerSettings(
+                this.timer,
+                this.timerTicks
+        );
     }
 
     private int stage;
@@ -27,6 +33,7 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
     private double lastDistance;
     private boolean jumped;
     private boolean startedOnGround;
+    boolean timerB;
 
     @Override
     public void onEnable() {
@@ -35,6 +42,7 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
         this.lastDistance = this.moveSpeed;
         this.jumped = !mc.thePlayer.onGround;
         this.startedOnGround = mc.thePlayer.getAirTicks() == 0;
+        this.timerB = true;
     }
 
     @EventHandler
@@ -52,7 +60,13 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
     EventCallback<MoveEvent> onMove = event -> {
         event.y = startedOnGround ? 0 : -0.00001;
 
-        mc.timer.timerSpeed = !(mc.thePlayer.ticksExisted % timerTicks.getValue().floatValue() == 0) ? this.timer.getValue().floatValue() : 1f;
+        if (timerB) {
+            mc.timer.timerSpeed = this.timer.getValue().floatValue();
+        }
+        if (mc.thePlayer.getAirTicks() == this.timerTicks.getValue().doubleValue()) {
+            mc.timer.timerSpeed = 1f;
+            timerB = false;
+        }
 
         switch (this.stage) {
             case 0:
@@ -71,7 +85,7 @@ public class FuncraftFlight extends ModuleMode<FlightModule> {
                 break;
 
             case 1:
-                this.moveSpeed *= 2.8f;
+                this.moveSpeed *= 2.6f;
                 break;
 
             case 2:

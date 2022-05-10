@@ -16,14 +16,14 @@ import net.minecraft.potion.Potion;
 public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private boolean jumped;
     private double lastDistance;
-    private double moveSpeed;
+    private double movespeed;
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
                 !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
             if (event.getEventState() == Event.EventState.PRE) {
                 if (mc.isMoveMoving()) {
-                    lastDistance = MovementUtils.getLastDistance();
+                    this.lastDistance = MovementUtils.getLastDistance();
                     mc.gameSettings.keyBindJump.pressed = false;
                 }
             }
@@ -40,41 +40,43 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 motion += PlayerUtils.getJumpBoostMotion();
 
                 event.y = mc.thePlayer.motionY = motion;
-                moveSpeed = (MovementUtils.getBaseMoveSpeed() * 1.73);
-                jumped = true;
-            } else if (jumped) {
-                moveSpeed = lastDistance - 0.67F * (lastDistance - MovementUtils.getBaseMoveSpeed());
-                jumped = false;
+                this.movespeed = (MovementUtils.getBaseMoveSpeed() * 1.73);
+                this.jumped = true;
+            } else if (this.jumped) {
+                this.movespeed = this.lastDistance - 0.67F * (this.lastDistance - MovementUtils.getBaseMoveSpeed());
+                this.jumped = false;
             } else {
+                this.movespeed = this.lastDistance - this.lastDistance / 94.3;
                 if (mc.thePlayer.moveStrafing > 0) {
-                    moveSpeed = lastDistance - lastDistance / 80;
-                } else {
-                    moveSpeed = lastDistance - lastDistance / 94.3;
+                    double multi = (MovementUtils.getSpeed() - this.lastDistance) * MovementUtils.getBaseMoveSpeed();
+
+                    this.movespeed += multi;
+                    this.movespeed -= 0.013f;
                 }
             }
             if (mc.thePlayer.getAirTicks() == 5 && !mc.thePlayer.isPotionActive(Potion.jump)) {
                 event.y = mc.thePlayer.motionY = -0.02;
             }
-            MovementUtils.strafe(event, moveSpeed = Math.max(moveSpeed, MovementUtils.getBaseMoveSpeed()));
+            MovementUtils.strafe(event, this.movespeed = Math.max(this.movespeed, MovementUtils.getBaseMoveSpeed()));
         }
     };
 
     //AtomicReference<String> bobEsponja = new AtomicReference<>();
     public void onDisable() {
-        lastDistance = 0;
-        jumped = false;
+        this.lastDistance = 0;
+        this.jumped = false;
         /*bobEsponja.set("0"); I found a better version and dont need rise anymore
         new Thread(() -> {
             try {
                 Field bobesja = getClass().getDeclaredField("bobEsponja");
                 AtomicReference<String> cumEsponja = (AtomicReference<String>) bobesja.get(getClass());
-                moveSpeed = Double.parseDouble(String.valueOf(Long.parseLong(String.valueOf(cumEsponja.get()))));
+                this.movespeed = Double.parseDouble(String.valueOf(Long.parseLong(String.valueOf(cumEsponja.get()))));
             } catch (Exception e) {
-                moveSpeed = 0;
+                this.movespeed = 0;
                 e.printStackTrace();
             }
         }).start();*/
-        moveSpeed = 0;
+        this.movespeed = 0;
     }
 
     public HypixelSpeed(String name, SpeedModule parent) {

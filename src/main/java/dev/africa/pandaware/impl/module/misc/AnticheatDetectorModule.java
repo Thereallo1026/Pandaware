@@ -13,15 +13,12 @@ import lombok.var;
 import net.minecraft.network.play.client.C0FPacketConfirmTransaction;
 import net.minecraft.network.play.server.S01PacketJoinGame;
 
-@ModuleInfo(name = "Anticheat Detector", description = "Detects various anticheats using packets and commands")
+@ModuleInfo(name = "Anticheat Detector", description = "Detects various anticheats using packets")
 public class AnticheatDetectorModule extends Module {
     private final TimeHelper timer = new TimeHelper();
     private boolean joined;
     private boolean firstTransaction;
     private boolean secondTransaction;
-
-    @EventHandler
-    EventCallback<ServerJoinEvent> onJoin = event -> joined = true;
 
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {

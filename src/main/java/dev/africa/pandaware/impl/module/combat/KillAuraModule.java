@@ -303,96 +303,78 @@ public class KillAuraModule extends Module {
             }
         }
 
-        if (event.getEventState() == this.eventType.getValue()) {
-            if (event.getEventState() == Event.EventState.PRE) {
-                this.target = this.getTarget(this.antiSnap.getValue() ? this.range.getValue().floatValue() + 1 : this.range.getValue().floatValue());
-
-                if (this.target != null && RotationUtils.getYawRotationDifference(this.target) >
-                        this.attackAngle.getValue().doubleValue()) {
-                    this.target = null;
-                }
-            }
-
-            if (this.autoBlock.getValue() && this.target != null) {
-                if (event.getEventState() == this.blockState.getValue()) {
-                    this.block();
-                }
-            }
-
-            if (event.getEventState() == this.eventType.getValue()) {
-                if (this.target == null) {
-                    if (this.antiSnap.getValue() && this.rotationVector != null) {
-                        if (this.lockView.getValue()) {
-                            mc.thePlayer.rotationYaw = this.rotationVector.getX();
-                            mc.thePlayer.rotationPitch = this.rotationVector.getY();
-                        } else {
-                            event.setYaw(this.rotationVector.getX());
-                            event.setPitch(this.rotationVector.getY());
-                        }
-
-                        if (this.backRotationTicks > 10) {
-                            this.rotationVector = null;
-                        }
-
-                        this.backRotationTicks++;
-                    } else {
-                        this.rotationVector = null;
-                    }
-
-                    this.clickTimer.reset();
-                    this.attacks = 0;
-                    this.increaseClicks = 0;
-                    this.nextClickTime = 0;
-                    this.blockCount = 1;
-
-                    if (mc.thePlayer.isBlockingSword() || mc.thePlayer.isAnimateBlocking()) {
-                        unblock();
-                        mc.thePlayer.setBlockingSword(false);
-                        mc.thePlayer.setAnimateBlocking(false);
-                    }
+        if (this.target == null) {
+            if (this.antiSnap.getValue() && this.rotationVector != null) {
+                if (this.lockView.getValue()) {
+                    mc.thePlayer.rotationYaw = this.rotationVector.getX();
+                    mc.thePlayer.rotationPitch = this.rotationVector.getY();
                 } else {
-                    this.backRotationTicks = 0;
+                    event.setYaw(this.rotationVector.getX());
+                    event.setPitch(this.rotationVector.getY());
+                }
 
-                    if (this.rotationVector != null || !this.rotate.getValue()) {
-                        if (this.rotate.getValue()) {
-                            if (this.lockView.getValue()) {
-                                mc.thePlayer.rotationYaw = this.rotationVector.getX();
-                                mc.thePlayer.rotationPitch = this.rotationVector.getY();
-                            } else {
-                                event.setYaw(this.rotationVector.getX());
-                                event.setPitch(this.rotationVector.getY());
-                            }
-                        }
+                if (this.backRotationTicks > 10) {
+                    this.rotationVector = null;
+                }
 
-                        if (this.shouldClickMouse()) {
-                            if (mc.thePlayer.getDistanceToEntity(this.target) <= this.range.getValue().floatValue()) {
-                                if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
-                                        .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
-                                EntityLivingBase rayCastTarget = this.target;
+                this.backRotationTicks++;
+            } else {
+                this.rotationVector = null;
+            }
 
-                                if (this.rayCast.getValue()) {
-                                    Vec2f rayCastRotations = RotationUtils.getRotations(rayCastTarget);
+            this.clickTimer.reset();
+            this.attacks = 0;
+            this.increaseClicks = 0;
+            this.nextClickTime = 0;
+            this.blockCount = 1;
 
-                                    float yaw = this.rotationVector != null ? this.rotationVector.getX() :
-                                            rayCastRotations != null ? rayCastRotations.getX() : mc.thePlayer.rotationYaw;
+            if (mc.thePlayer.isBlockingSword() || mc.thePlayer.isAnimateBlocking()) {
+                unblock();
+                mc.thePlayer.setBlockingSword(false);
+                mc.thePlayer.setAnimateBlocking(false);
+            }
+        } else {
+            this.backRotationTicks = 0;
 
-                                    float pitch = this.rotationVector != null ? this.rotationVector.getY() :
-                                            rayCastRotations != null ? rayCastRotations.getY() : mc.thePlayer.rotationPitch;
+            if (this.rotationVector != null || !this.rotate.getValue()) {
+                if (this.rotate.getValue()) {
+                    if (this.lockView.getValue()) {
+                        mc.thePlayer.rotationYaw = this.rotationVector.getX();
+                        mc.thePlayer.rotationPitch = this.rotationVector.getY();
+                    } else {
+                        event.setYaw(this.rotationVector.getX());
+                        event.setPitch(this.rotationVector.getY());
+                    }
+                }
+                if (event.getEventState() == this.eventType.getValue()) {
+                    if (this.shouldClickMouse()) {
+                        if (mc.thePlayer.getDistanceToEntity(this.target) <= this.range.getValue().floatValue()) {
+                            if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
+                                    .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
+                            EntityLivingBase rayCastTarget = this.target;
 
-                                    EntityLivingBase rayCasted = PlayerUtils.rayCast(this.range.getValue().doubleValue(),
-                                            yaw, pitch
-                                    );
+                            if (this.rayCast.getValue()) {
+                                Vec2f rayCastRotations = RotationUtils.getRotations(rayCastTarget);
 
-                                    if (rayCasted instanceof EntityMob || rayCasted instanceof EntityPlayer) {
-                                        rayCastTarget = rayCasted;
-                                    }
+                                float yaw = this.rotationVector != null ? this.rotationVector.getX() :
+                                        rayCastRotations != null ? rayCastRotations.getX() : mc.thePlayer.rotationYaw;
+
+                                float pitch = this.rotationVector != null ? this.rotationVector.getY() :
+                                        rayCastRotations != null ? rayCastRotations.getY() : mc.thePlayer.rotationPitch;
+
+                                EntityLivingBase rayCasted = PlayerUtils.rayCast(this.range.getValue().doubleValue(),
+                                        yaw, pitch
+                                );
+
+                                if (rayCasted instanceof EntityMob || rayCasted instanceof EntityPlayer) {
+                                    rayCastTarget = rayCasted;
                                 }
-                                this.attack(rayCastTarget);
-
-                                mc.thePlayer.resetCooldown();
-                                mc.leftClickCounter = 0;
-                                this.timer.reset();
                             }
+                            this.attack(rayCastTarget);
+
+                            mc.thePlayer.resetCooldown();
+                            mc.leftClickCounter = 0;
+                            this.timer.reset();
                         }
                     }
                 }
@@ -719,6 +701,21 @@ public class KillAuraModule extends Module {
                     mc.thePlayer.setAnimateBlocking(true);
                     break;
 
+                case HYPIXEL:
+                    if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.ticksExisted % 3 == 0) {
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
+                                new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(),
+                                0.000000008124124f, 0.0000000004921712f, 0.000000001248912f
+                        ));
+                        if (this.target instanceof EntityPlayer) {
+                            mc.playerController.interactWithEntitySendPacket(mc.thePlayer, this.target);
+
+                            this.target.interactAt((EntityPlayer) this.target, new Vec3(-1, -1, -1));
+                        }
+                        mc.thePlayer.setBlockingSword(true);
+                    }
+                    break;
+
                 case NORMAL:
                     if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
                         mc.thePlayer.sendQueue.getNetworkManager()
@@ -765,7 +762,16 @@ public class KillAuraModule extends Module {
                     mc.thePlayer.setAnimateBlocking(false);
                     break;
 
-                case NORMAL: {
+                case HYPIXEL:
+                    if (mc.thePlayer.isBlockingSword()) {
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new
+                                C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
+                                BlockPos.ORIGIN, EnumFacing.DOWN));
+                        mc.thePlayer.setBlockingSword(false);
+                    }
+                    break;
+
+                case NORMAL:
                     if (mc.thePlayer.isBlockingSword()) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new
                                 C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
@@ -773,7 +779,6 @@ public class KillAuraModule extends Module {
                         mc.thePlayer.setBlockingSword(false);
                     }
                     break;
-                }
 
                 case VANILLA:
                     mc.playerController.syncCurrentPlayItem();
@@ -1179,6 +1184,7 @@ public class KillAuraModule extends Module {
         NORMAL("Normal"),
         SYNC("Sync"),
         VANILLA("Vanilla"),
+        HYPIXEL("Hypixel"),
         FAKE("Fake");
 
         private final String label;

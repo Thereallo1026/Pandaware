@@ -81,17 +81,17 @@ public class ModelSprite
         WorldRenderer worldrenderer = tess.getWorldRenderer();
         GL11.glNormal3f(0.0F, 0.0F, -1.0F);
         worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
-        worldrenderer.pos(0.0D, d1, 0.0D).func_181673_a((double)minU, (double)maxV).endVertex();
-        worldrenderer.pos(d0, d1, 0.0D).func_181673_a((double)maxU, (double)maxV).endVertex();
-        worldrenderer.pos(d0, 0.0D, 0.0D).func_181673_a((double)maxU, (double)minV).endVertex();
-        worldrenderer.pos(0.0D, 0.0D, 0.0D).func_181673_a((double)minU, (double)minV).endVertex();
+        worldrenderer.pos(0.0D, d1, 0.0D).tex((double)minU, (double)maxV).endVertex();
+        worldrenderer.pos(d0, d1, 0.0D).tex((double)maxU, (double)maxV).endVertex();
+        worldrenderer.pos(d0, 0.0D, 0.0D).tex((double)maxU, (double)minV).endVertex();
+        worldrenderer.pos(0.0D, 0.0D, 0.0D).tex((double)minU, (double)minV).endVertex();
         tess.draw();
         GL11.glNormal3f(0.0F, 0.0F, 1.0F);
         worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
-        worldrenderer.pos(0.0D, 0.0D, (double)width).func_181673_a((double)minU, (double)minV).endVertex();
-        worldrenderer.pos(d0, 0.0D, (double)width).func_181673_a((double)maxU, (double)minV).endVertex();
-        worldrenderer.pos(d0, d1, (double)width).func_181673_a((double)maxU, (double)maxV).endVertex();
-        worldrenderer.pos(0.0D, d1, (double)width).func_181673_a((double)minU, (double)maxV).endVertex();
+        worldrenderer.pos(0.0D, 0.0D, (double)width).tex((double)minU, (double)minV).endVertex();
+        worldrenderer.pos(d0, 0.0D, (double)width).tex((double)maxU, (double)minV).endVertex();
+        worldrenderer.pos(d0, d1, (double)width).tex((double)maxU, (double)maxV).endVertex();
+        worldrenderer.pos(0.0D, d1, (double)width).tex((double)minU, (double)maxV).endVertex();
         tess.draw();
         float f2 = 0.5F * f / (float)sizeX;
         float f3 = 0.5F * f1 / (float)sizeY;
@@ -102,10 +102,10 @@ public class ModelSprite
         {
             float f4 = (float)i / (float)sizeX;
             float f5 = minU + f * f4 + f2;
-            worldrenderer.pos((double)f4 * d0, d1, (double)width).func_181673_a((double)f5, (double)maxV).endVertex();
-            worldrenderer.pos((double)f4 * d0, d1, 0.0D).func_181673_a((double)f5, (double)maxV).endVertex();
-            worldrenderer.pos((double)f4 * d0, 0.0D, 0.0D).func_181673_a((double)f5, (double)minV).endVertex();
-            worldrenderer.pos((double)f4 * d0, 0.0D, (double)width).func_181673_a((double)f5, (double)minV).endVertex();
+            worldrenderer.pos((double)f4 * d0, d1, (double)width).tex((double)f5, (double)maxV).endVertex();
+            worldrenderer.pos((double)f4 * d0, d1, 0.0D).tex((double)f5, (double)maxV).endVertex();
+            worldrenderer.pos((double)f4 * d0, 0.0D, 0.0D).tex((double)f5, (double)minV).endVertex();
+            worldrenderer.pos((double)f4 * d0, 0.0D, (double)width).tex((double)f5, (double)minV).endVertex();
         }
 
         tess.draw();
@@ -117,10 +117,10 @@ public class ModelSprite
             float f7 = (float)j / (float)sizeX;
             float f10 = minU + f * f7 + f2;
             float f6 = f7 + 1.0F / (float)sizeX;
-            worldrenderer.pos((double)f6 * d0, 0.0D, (double)width).func_181673_a((double)f10, (double)minV).endVertex();
-            worldrenderer.pos((double)f6 * d0, 0.0D, 0.0D).func_181673_a((double)f10, (double)minV).endVertex();
-            worldrenderer.pos((double)f6 * d0, d1, 0.0D).func_181673_a((double)f10, (double)maxV).endVertex();
-            worldrenderer.pos((double)f6 * d0, d1, (double)width).func_181673_a((double)f10, (double)maxV).endVertex();
+            worldrenderer.pos((double)f6 * d0, 0.0D, (double)width).tex((double)f10, (double)minV).endVertex();
+            worldrenderer.pos((double)f6 * d0, 0.0D, 0.0D).tex((double)f10, (double)minV).endVertex();
+            worldrenderer.pos((double)f6 * d0, d1, 0.0D).tex((double)f10, (double)maxV).endVertex();
+            worldrenderer.pos((double)f6 * d0, d1, (double)width).tex((double)f10, (double)maxV).endVertex();
         }
 
         tess.draw();
@@ -132,10 +132,10 @@ public class ModelSprite
             float f8 = (float)k / (float)sizeY;
             float f11 = minV + f1 * f8 + f3;
             float f13 = f8 + 1.0F / (float)sizeY;
-            worldrenderer.pos(0.0D, (double)f13 * d1, (double)width).func_181673_a((double)minU, (double)f11).endVertex();
-            worldrenderer.pos(d0, (double)f13 * d1, (double)width).func_181673_a((double)maxU, (double)f11).endVertex();
-            worldrenderer.pos(d0, (double)f13 * d1, 0.0D).func_181673_a((double)maxU, (double)f11).endVertex();
-            worldrenderer.pos(0.0D, (double)f13 * d1, 0.0D).func_181673_a((double)minU, (double)f11).endVertex();
+            worldrenderer.pos(0.0D, (double)f13 * d1, (double)width).tex((double)minU, (double)f11).endVertex();
+            worldrenderer.pos(d0, (double)f13 * d1, (double)width).tex((double)maxU, (double)f11).endVertex();
+            worldrenderer.pos(d0, (double)f13 * d1, 0.0D).tex((double)maxU, (double)f11).endVertex();
+            worldrenderer.pos(0.0D, (double)f13 * d1, 0.0D).tex((double)minU, (double)f11).endVertex();
         }
 
         tess.draw();
@@ -146,10 +146,10 @@ public class ModelSprite
         {
             float f9 = (float)l / (float)sizeY;
             float f12 = minV + f1 * f9 + f3;
-            worldrenderer.pos(d0, (double)f9 * d1, (double)width).func_181673_a((double)maxU, (double)f12).endVertex();
-            worldrenderer.pos(0.0D, (double)f9 * d1, (double)width).func_181673_a((double)minU, (double)f12).endVertex();
-            worldrenderer.pos(0.0D, (double)f9 * d1, 0.0D).func_181673_a((double)minU, (double)f12).endVertex();
-            worldrenderer.pos(d0, (double)f9 * d1, 0.0D).func_181673_a((double)maxU, (double)f12).endVertex();
+            worldrenderer.pos(d0, (double)f9 * d1, (double)width).tex((double)maxU, (double)f12).endVertex();
+            worldrenderer.pos(0.0D, (double)f9 * d1, (double)width).tex((double)minU, (double)f12).endVertex();
+            worldrenderer.pos(0.0D, (double)f9 * d1, 0.0D).tex((double)minU, (double)f12).endVertex();
+            worldrenderer.pos(d0, (double)f9 * d1, 0.0D).tex((double)maxU, (double)f12).endVertex();
         }
 
         tess.draw();

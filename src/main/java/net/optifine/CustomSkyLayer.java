@@ -477,10 +477,10 @@ public class CustomSkyLayer
         double d0 = (double)(side % 3) / 3.0D;
         double d1 = (double)(side / 3) / 2.0D;
         worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
-        worldrenderer.pos(-100.0D, -100.0D, -100.0D).func_181673_a(d0, d1).endVertex();
-        worldrenderer.pos(-100.0D, -100.0D, 100.0D).func_181673_a(d0, d1 + 0.5D).endVertex();
-        worldrenderer.pos(100.0D, -100.0D, 100.0D).func_181673_a(d0 + 0.3333333333333333D, d1 + 0.5D).endVertex();
-        worldrenderer.pos(100.0D, -100.0D, -100.0D).func_181673_a(d0 + 0.3333333333333333D, d1).endVertex();
+        worldrenderer.pos(-100.0D, -100.0D, -100.0D).tex(d0, d1).endVertex();
+        worldrenderer.pos(-100.0D, -100.0D, 100.0D).tex(d0, d1 + 0.5D).endVertex();
+        worldrenderer.pos(100.0D, -100.0D, 100.0D).tex(d0 + 0.3333333333333333D, d1 + 0.5D).endVertex();
+        worldrenderer.pos(100.0D, -100.0D, -100.0D).tex(d0 + 0.3333333333333333D, d1).endVertex();
         tess.draw();
     }
 

@@ -18,7 +18,8 @@ public class AntiVoidModule extends Module {
         this.registerModes(
                 new PacketAntiVoid("Packet", this),
                 new CollideAntiVoid("Collide", this),
-                new BlinkAntiVoid("Blink", this)
+                new BlinkAntiVoid("Blink", this),
+                new FuncraftAntiVoid("Funcraft", this)
         );
     }
 }

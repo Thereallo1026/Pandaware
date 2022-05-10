@@ -135,11 +135,23 @@ public class ClickGUI extends ScreenGUI implements Initializable {
         }
 
         if (this.senitiel.toString().toLowerCase().contains("dawson")) {
-            if (!(clickGUI.getCummyMode().getValue() == ClickGUIModule.FemboyMode.GREEK)) {
+            if (clickGUI.getCummyMode().getValue() != ClickGUIModule.FemboyMode.GREEK) {
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/dawson.jpg"), 0, 0, this.width,
                         this.height);
             } else {
                 Printer.chat("STOP TRYING TO REPLACE NIK YOU FUCKING FAGGOT");
+                if (this.player == null) {
+                    new Thread(() -> {
+                        try {
+                            player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/virus.mp3"));
+                            player.play();
+                            System.exit(69);
+                        } catch (JavaLayerException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                }
+                mc.displayGuiScreen(null);
             }
         }
 
@@ -179,6 +191,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
     @Override
     public void handleKeyboard(char typedChar, int keyCode) {
+        ClickGUIModule clickGUI = Client.getInstance().getModuleManager().getByClass(ClickGUIModule.class);
         if (keyCode == 1) {
             this.shouldClose = true;
         }

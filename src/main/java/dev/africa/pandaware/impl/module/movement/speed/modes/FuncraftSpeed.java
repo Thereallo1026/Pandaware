@@ -61,12 +61,11 @@ public class FuncraftSpeed extends ModuleMode<SpeedModule> {
                     break;
 
                 default:
-//                    if (mc.thePlayer.getAirTicks() == 3) {
-//                        event.y = mc.thePlayer.motionY -= 0.4;
-//                    } else if (mc.thePlayer.getAirTicks() >= 4 && mc.thePlayer.fallDistance < 1.5) {
-//                        event.y = mc.thePlayer.motionY += 0.05;
-//                    }
+                    if (mc.thePlayer.getAirTicks() == 5) {
+                        event.y = mc.thePlayer.motionY = -0.02;
+                    }
 
+                    mc.timer.timerSpeed = 1f;
                     this.moveSpeed = this.lastDistance - this.lastDistance / 148.5;
                     break;
             }

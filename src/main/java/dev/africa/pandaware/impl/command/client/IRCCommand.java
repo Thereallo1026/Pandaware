@@ -37,7 +37,7 @@ public class IRCCommand extends Command {
 
             message = message.replaceAll("[^\\p{ASCII}]", "");
 
-            if (message.length() <= 1 || message.length() > 32) {
+            if (message.length() <= 1 || message.length() > 128) {
                 Printer.chat(EnumChatFormatting.RED + "Message is too long or short.");
             } else {
                 if ((now - this.lastMessage) > TimeUnit.SECONDS.toMillis(2)) {

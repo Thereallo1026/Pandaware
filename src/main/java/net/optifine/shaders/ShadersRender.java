@@ -508,10 +508,10 @@ public class ShadersRender
             float f5 = 0.2F;
             float f6 = (float)(System.currentTimeMillis() % 100000L) / 100000.0F;
             int i = 240;
-            worldrenderer.pos(x, y + (double)offset, z + 1.0D).func_181666_a(f1, f2, f3, 1.0F).func_181673_a((double)(f4 + f6), (double)(f4 + f6)).func_181671_a(i, i).endVertex();
-            worldrenderer.pos(x + 1.0D, y + (double)offset, z + 1.0D).func_181666_a(f1, f2, f3, 1.0F).func_181673_a((double)(f4 + f6), (double)(f5 + f6)).func_181671_a(i, i).endVertex();
-            worldrenderer.pos(x + 1.0D, y + (double)offset, z).func_181666_a(f1, f2, f3, 1.0F).func_181673_a((double)(f5 + f6), (double)(f5 + f6)).func_181671_a(i, i).endVertex();
-            worldrenderer.pos(x, y + (double)offset, z).func_181666_a(f1, f2, f3, 1.0F).func_181673_a((double)(f5 + f6), (double)(f4 + f6)).func_181671_a(i, i).endVertex();
+            worldrenderer.pos(x, y + (double)offset, z + 1.0D).func_181666_a(f1, f2, f3, 1.0F).tex((double)(f4 + f6), (double)(f4 + f6)).func_181671_a(i, i).endVertex();
+            worldrenderer.pos(x + 1.0D, y + (double)offset, z + 1.0D).func_181666_a(f1, f2, f3, 1.0F).tex((double)(f4 + f6), (double)(f5 + f6)).func_181671_a(i, i).endVertex();
+            worldrenderer.pos(x + 1.0D, y + (double)offset, z).func_181666_a(f1, f2, f3, 1.0F).tex((double)(f5 + f6), (double)(f5 + f6)).func_181671_a(i, i).endVertex();
+            worldrenderer.pos(x, y + (double)offset, z).func_181666_a(f1, f2, f3, 1.0F).tex((double)(f5 + f6), (double)(f4 + f6)).func_181671_a(i, i).endVertex();
             tessellator.draw();
             GlStateManager.enableLighting();
             return true;

@@ -449,4 +449,14 @@ public class RenderUtils implements MinecraftInstance {
 
         return framebuffer;
     }
+
+    public void preLight() {
+        mc.entityRenderer.disableLightmap();
+    }
+
+    public void postLight() {
+        mc.entityRenderer.enableLightmap();
+    }
+
+
 }

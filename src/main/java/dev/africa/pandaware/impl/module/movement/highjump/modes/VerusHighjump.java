@@ -20,12 +20,6 @@ public class VerusHighjump extends ModuleMode<HighJumpModule> {
     private boolean damage;
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.thePlayer.posY % 0.015625 != 0) {
-            parent.toggle(false);
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "You must be on ground", 3);
-            return;
-        }
-
         if (this.damage) {
             event.x = mc.thePlayer.motionX = 0;
             event.z = mc.thePlayer.motionZ = 0;
@@ -39,18 +33,16 @@ public class VerusHighjump extends ModuleMode<HighJumpModule> {
     };
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
+        if (damage) mc.gameSettings.keyBindJump.pressed = false;
         if (event.getEventState() == Event.EventState.PRE) {
             if (this.damage) {
-
-                event.setY(this.lastY);
-
                 if (this.ticks < 17) {
                     event.setOnGround(false);
-                    this.lastY = mc.thePlayer.posY + .5;
+                    event.setY(mc.thePlayer.posY + 0.5);
                 } else {
                     if (this.ticks < 25) {
                         event.setOnGround(true);
-                        this.lastY = this.groundY;
+                        event.setY(this.groundY);
                     }
 
                     if (this.ticks > 25) {
@@ -73,5 +65,9 @@ public class VerusHighjump extends ModuleMode<HighJumpModule> {
         this.lastY = mc.thePlayer.posY;
         this.groundY = mc.thePlayer.posY;
         this.damage = true;
+        if (mc.thePlayer.posY % 0.015625 != 0) {
+            parent.toggle(false);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "You must be on ground", 3);
+        }
     }
 }

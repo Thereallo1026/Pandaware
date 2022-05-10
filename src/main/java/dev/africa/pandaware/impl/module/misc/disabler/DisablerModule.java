@@ -17,7 +17,8 @@ public class DisablerModule extends Module {
                 new FuncraftDisabler("Funcraft Staff", this),
                 new VerusCombatDisabler("Verus Combat", this),
                 new CancelDmgPacketDisabler("Cancel Damage", this),
-                new InvalidPosDisabler("Invalid Position", this)
+                new InvalidPosDisabler("Invalid Position", this),
+                new PlaceDisabler("1.17+ Place", this)
         );
     }
 

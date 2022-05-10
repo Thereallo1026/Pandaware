@@ -1,5 +1,6 @@
 package net.minecraft.client.model;
 
+import dev.africa.pandaware.impl.ui.UISettings;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 
@@ -112,7 +113,9 @@ public class ModelPlayer extends ModelBiped
 
     public void renderCape(float p_178728_1_)
     {
-        this.bipedCape.render(p_178728_1_);
+        if (!UISettings.WAVEY_CAPES) {
+            this.bipedCape.render(p_178728_1_);
+        }
     }
 
     /**

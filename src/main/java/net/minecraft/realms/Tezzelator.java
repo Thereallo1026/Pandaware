@@ -30,7 +30,7 @@ public class Tezzelator
 
     public void normal(float p_normal_1_, float p_normal_2_, float p_normal_3_)
     {
-        t.getWorldRenderer().func_181663_c(p_normal_1_, p_normal_2_, p_normal_3_);
+        t.getWorldRenderer().normal(p_normal_1_, p_normal_2_, p_normal_3_);
     }
 
     public void begin(int p_begin_1_, RealmsVertexFormat p_begin_2_)
@@ -55,7 +55,7 @@ public class Tezzelator
 
     public Tezzelator tex(double p_tex_1_, double p_tex_3_)
     {
-        t.getWorldRenderer().func_181673_a(p_tex_1_, p_tex_3_);
+        t.getWorldRenderer().tex(p_tex_1_, p_tex_3_);
         return this;
     }
 }

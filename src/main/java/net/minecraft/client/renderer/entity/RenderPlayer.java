@@ -1,6 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.cape.layer.CustomCapeRenderLayer;
 import dev.africa.pandaware.impl.module.render.ChamsModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -36,6 +37,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
         this.addLayer(new LayerDeadmau5Head(this));
         this.addLayer(new LayerCape(this));
         this.addLayer(new LayerCustomHead(this.getMainModel().bipedHead));
+        this.addLayer(new CustomCapeRenderLayer(this));
     }
 
     public ModelPlayer getMainModel() {

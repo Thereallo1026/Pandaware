@@ -10,8 +10,10 @@ import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.notification.Notification;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
+import dev.africa.pandaware.utils.render.ColorUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -45,7 +47,7 @@ public class ChestStealerModule extends Module {
         if (mc.currentScreen instanceof GuiChest) {
             GuiChest chest = (GuiChest) mc.currentScreen;
 
-            if (chestCheck.getValue() && !isInvalidChest(chest)) {
+            if (chestCheck.getValue() && isValidChest(chest)) {
                 return;
             }
 
@@ -129,8 +131,15 @@ public class ChestStealerModule extends Module {
         return false;
     }
 
-    public boolean isInvalidChest(GuiScreen screen) {
+    public boolean isValidChest(GuiScreen screen) {
         GuiChest chest = (GuiChest) screen;
-        return Pattern.compile(Pattern.quote(chest.lowerChestInventory.getName()), Pattern.CASE_INSENSITIVE).matcher("chest").find();
+
+        String name = ColorUtils.stripColorCodes(chest.lowerChestInventory.getName())
+                .toLowerCase();
+
+        return !name.contains("chest") &&
+                !name.contains("coffre") &&
+                !name.contains("caja") &&
+                !name.contains("cassa");
     }
 }

@@ -69,6 +69,7 @@ public class ScaffoldModule extends Module {
     private final NumberSetting speedModifier = new NumberSetting("Speed modifier", 1.5, 0.1,
             1, 0.01, this.useSpeed::getValue);
     private final NumberSetting expand = new NumberSetting("Expand", 6, 0, 0, 0.1);
+    private final NumberSetting timerSpeed = new NumberSetting("Timer", 5, 1, 1, 0.1);
 
     private BlockEntry blockEntry;
     private BlockEntry aimBlockEntry;
@@ -98,6 +99,7 @@ public class ScaffoldModule extends Module {
                 this.safeWalk,
                 this.useSpeed,
                 this.speedModifier,
+                this.timerSpeed,
                 this.expand
         );
 
@@ -113,11 +115,12 @@ public class ScaffoldModule extends Module {
         this.startY = mc.thePlayer.posY;
 
         this.lastSlot = mc.thePlayer.inventory.currentItem;
+        mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
     }
 
     @Override
     public void onDisable() {
-        mc.timer.timerSpeed = 1.0F;
+        mc.timer.timerSpeed = 1.0f;
         this.blockEntry = null;
         this.aimBlockEntry = null;
         this.rotations = null;

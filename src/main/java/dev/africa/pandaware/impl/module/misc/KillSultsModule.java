@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-@ModuleInfo(name = "Kill Sults")
+@ModuleInfo(name = "Kill Sults", description = "stop looking through the src ty <3")
 public class KillSultsModule extends Module {
     private final NumberSetting delay = new NumberSetting("Delay", 5000, 0, 0, 50);
     private final BooleanSetting shout = new BooleanSetting("Shout", false);
