@@ -36,7 +36,7 @@ public class CubecraftSpeed extends ModuleMode<SpeedModule> {
                     }
                 }
 
-                MovementUtils.strafe(MovementUtils.getSpeed());
+                MovementUtils.strafe(Math.max(MovementUtils.getBaseMoveSpeed(), MovementUtils.getSpeed()));
             }
         }
     };

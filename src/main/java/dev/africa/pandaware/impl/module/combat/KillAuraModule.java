@@ -702,7 +702,7 @@ public class KillAuraModule extends Module {
                     break;
 
                 case HYPIXEL:
-                    if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.ticksExisted % 3 == 0) {
+                    if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.ticksExisted % 2 == 0) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
                                 new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(),
                                 0.000000008124124f, 0.0000000004921712f, 0.000000001248912f

@@ -1163,7 +1163,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         if (mc.currentScreen instanceof GuiChest) {
             GuiChest chest = (GuiChest) mc.currentScreen;
 
-            if (chestStealer.getChestCheck().getValue() && !chestStealer.isValidChest(chest)) {
+            if (chestStealer.getChestCheck().getValue() && !chestStealer.isInvalidChest(chest)) {
                 focus = false;
             }
         }

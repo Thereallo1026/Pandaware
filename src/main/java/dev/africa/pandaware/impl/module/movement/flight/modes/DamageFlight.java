@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.module.movement.flight.modes;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
@@ -10,6 +11,7 @@ import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -21,34 +23,47 @@ public class DamageFlight extends ModuleMode<FlightModule> {
     private final BooleanSetting startOnGround = new BooleanSetting("Start on ground", true);
     private final BooleanSetting groundSpoof = new BooleanSetting("GroundSpoof", false);
     private final BooleanSetting allowYChanges = new BooleanSetting("Allow Y changes", false);
+    private final BooleanSetting waitForDamage = new BooleanSetting("Wait for damage", false);
+    private final BooleanSetting manualDamage = new BooleanSetting("Manual damage", false, this.waitForDamage::getValue);
     private final NumberSetting motion = new NumberSetting("Motion", 0.42, 0, 0);
     private final NumberSetting speed = new NumberSetting("Speed", 10, 0.1, 2, 0.1);
+    private final NumberSetting deceleration = new NumberSetting("Deceleration", 10, 0, 1, 0.1);
 
     public DamageFlight(String name, FlightModule parent) {
         super(name, parent);
 
         this.registerSettings(
                 this.speed,
+                this.deceleration,
                 this.motion,
+                this.manualDamage,
                 this.jump,
                 this.clip,
                 this.startOnGround,
                 this.groundSpoof,
-                this.allowYChanges
+                this.allowYChanges,
+                this.waitForDamage
         );
     }
 
     private double moveSpeed;
     private double lastDistance;
     private int stage;
+    private boolean canFly;
 
     @Override
     public void onEnable() {
         this.moveSpeed = MovementUtils.getBaseMoveSpeed();
         this.lastDistance = MovementUtils.getBaseMoveSpeed();
         this.stage = 0;
+        this.canFly = false;
 
-        if (mc.thePlayer.onGround || !this.startOnGround.getValue()) {
+        if (!PlayerUtils.isMathGround() && this.startOnGround.getValue() && !this.manualDamage.getValue()) {
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Please start on ground", 2);
+            this.getParent().toggle(false);
+        }
+
+        if ((mc.thePlayer.onGround || !this.startOnGround.getValue()) && !this.manualDamage.getValue()) {
             double motion = 3.2;
             motion += PlayerUtils.getJumpBoostMotion();
 
@@ -73,6 +88,10 @@ public class DamageFlight extends ModuleMode<FlightModule> {
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
+        if (this.waitForDamage.getValue() && mc.thePlayer.hurtTime > 0) {
+            this.canFly = true;
+        }
+        if (this.waitForDamage.getValue() && !this.canFly) return;
         if (event.getEventState() == Event.EventState.PRE) {
             if (this.groundSpoof.getValue()) {
                 event.setOnGround(true);
@@ -84,11 +103,12 @@ public class DamageFlight extends ModuleMode<FlightModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
+        if (this.waitForDamage.getValue() && !this.canFly) return;
         if (this.allowYChanges.getValue()) {
             event.y = mc.thePlayer.motionY = mc.gameSettings.keyBindJump.isKeyDown() ? this.speed.getValue().doubleValue()
                     : mc.gameSettings.keyBindSneak.isKeyDown() ? -this.speed.getValue().doubleValue() : (this.stage % 2 == 0 ?
                     this.motion.getValue().doubleValue() : -this.motion.getValue().doubleValue());
-        } else {
+        } else if (!this.allowYChanges.getValue() && this.motion.getValue().doubleValue() > 0) {
             event.y = (this.stage % 2 == 0 ? this.motion.getValue().doubleValue() : -this.motion.getValue().doubleValue());
         }
 
@@ -109,8 +129,11 @@ public class DamageFlight extends ModuleMode<FlightModule> {
                 break;
 
             default:
-                //this.moveSpeed = this.lastDistance - (this.lastDistance / 100F);
-                this.moveSpeed = this.speed.getValue().doubleValue();
+                if (this.deceleration.getValue().floatValue() > 0) {
+                    this.moveSpeed = lastDistance - lastDistance / (this.deceleration.getValue().floatValue() * 100);
+                } else {
+                    this.moveSpeed = this.speed.getValue().floatValue();
+                }
                 break;
         }
 

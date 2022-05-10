@@ -123,7 +123,7 @@ public abstract class GuiContainer extends GuiScreen {
         if (mc.currentScreen instanceof GuiChest) {
             GuiChest chest = (GuiChest) mc.currentScreen;
 
-            if (chestStealer.getChestCheck().getValue() && !chestStealer.isValidChest(chest)) {
+            if (chestStealer.getChestCheck().getValue() && !chestStealer.isInvalidChest(chest)) {
                 focus = false;
             }
         }
@@ -138,7 +138,7 @@ public abstract class GuiContainer extends GuiScreen {
         }
 
         boolean shouldDraw = !chestStealer.getData().isEnabled() || (!chestStealer.getAim().getValue() ||
-                chestStealer.getChestCheck().getValue() && (mc.currentScreen instanceof GuiChest && !chestStealer.isValidChest(mc.currentScreen)));
+                chestStealer.getChestCheck().getValue() && (mc.currentScreen instanceof GuiChest && !chestStealer.isInvalidChest(mc.currentScreen)));
 
         if (mc.currentScreen instanceof GuiChest) {
             if (shouldDraw) {
