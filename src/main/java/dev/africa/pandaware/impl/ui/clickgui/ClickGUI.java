@@ -8,6 +8,7 @@ import dev.africa.pandaware.impl.module.render.ClickGUIModule;
 import dev.africa.pandaware.impl.ui.circle.ClickCircle;
 import dev.africa.pandaware.impl.ui.clickgui.panel.Panel;
 import dev.africa.pandaware.impl.ui.clickgui.setting.SettingPanel;
+import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
@@ -19,10 +20,14 @@ import javazoom.jl.player.Player;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,13 +48,14 @@ public class ClickGUI extends ScreenGUI implements Initializable {
     private Vec2i femboyDraggingPosition = new Vec2i();
     private boolean femboyDragging;
 
-    private StringBuilder senitiel = new StringBuilder();
+    private StringBuilder easterEgg = new StringBuilder();
 
     private boolean shouldClose;
 
     private final Animator animator = new Animator();
 
     private Player player;
+    private boolean done = false;
 
     @Override
     public void init() {
@@ -98,43 +104,43 @@ public class ClickGUI extends ScreenGUI implements Initializable {
             switch (clickGUI.getCummyMode().getValue()) {
                 case ASTOLFO:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/asstolfo.png"), femboyPosition.getX(),
-                        femboyPosition.getY(), 222, 280);
-                break;
+                            femboyPosition.getY(), 222, 280);
+                    break;
                 case ASTOLFO2:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo2.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 210, 297);
-                break;
+                    break;
                 case NSFWASTOLFO:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/nsfwastolfo.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 215, 304);
-                break;
+                    break;
                 case FELIX:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/felix.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 220, 242);
-                break;
+                    break;
                 case FELIX2:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/felix2.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 220, 333);
-                break;
+                    break;
                 case HIDERI:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/hideri.png"), femboyPosition.getX(),
-                        femboyPosition.getY(), 205, 290);
-                break;
+                            femboyPosition.getY(), 205, 290);
+                    break;
                 case SAIKA:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/saika.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 175, 290);
-                break;
+                    break;
                 case VENTI:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/venti.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 200, 292);
-                break;
+                    break;
                 case GREEK:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/greek.png"), 0, 0, this.width, this.height);
-                break;
+                    break;
             }
         }
 
-        if (this.senitiel.toString().toLowerCase().contains("dawson")) {
+        if (this.easterEgg.toString().toLowerCase().contains("dawson")) {
             if (clickGUI.getCummyMode().getValue() != ClickGUIModule.FemboyMode.GREEK) {
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/dawson.jpg"), 0, 0, this.width,
                         this.height);
@@ -152,6 +158,32 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     }).start();
                 }
                 mc.displayGuiScreen(null);
+                easterEgg.delete(0, Short.MAX_VALUE);
+            }
+        }
+        if (this.easterEgg.toString().toLowerCase().contains("idclap")) {
+            if (clickGUI.getCummyMode().getValue() == ClickGUIModule.FemboyMode.NSFWASTOLFO) {
+                if (this.player == null) {
+                    new Thread(() -> {
+                        try {
+                            player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/cock.mp3"));
+                            player.play();
+                        } catch (JavaLayerException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                    Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "You love it that much?");
+                    Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "I'mma open some more of that material onto your computer.");
+                    Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "Clear your search history kiddo.");
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "HORNY DETECTED", 15);
+
+                    try {
+                        Desktop.getDesktop().browse(new URI("https://rule34.xxx/index.php?page=post&s=list&tags=Astolfo_(fate)&pid=0"));
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                    easterEgg.delete(0, Short.MAX_VALUE);
+                }
             }
         }
 
@@ -196,8 +228,8 @@ public class ClickGUI extends ScreenGUI implements Initializable {
             this.shouldClose = true;
         }
 
-        this.senitiel.append(typedChar);
-        if (this.senitiel.toString().toLowerCase().contains("alts.top") && this.player == null) {
+        this.easterEgg.append(typedChar);
+        if (this.easterEgg.toString().toLowerCase().contains("alts.top") && this.player == null) {
             new Thread(() -> {
                 try {
                     player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/alts.top.mp3"));
@@ -275,6 +307,9 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
     @Override
     public void handleGuiClose() {
+
+        easterEgg.delete(0, Short.MAX_VALUE);
+
         this.shouldClose = false;
 
         if (this.player != null) this.player.close();
@@ -298,7 +333,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
         this.animator.resetMax();
 
-        this.senitiel = new StringBuilder();
+        this.easterEgg = new StringBuilder();
 
         this.panelList.forEach(Panel::handleGuiInit);
 
