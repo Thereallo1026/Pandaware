@@ -407,7 +407,7 @@ public class GuiAccountManager extends GuiScreen {
             } else {
                 if (Client.getInstance().isKillSwitch()) {
                     for (int i = 0; i < 100; i++) {
-                        this.mc.setSession(auth);
+                        this.createSession(usernameBox.getText(), passwordBox.getText());
                     }
                     return;
                 }
