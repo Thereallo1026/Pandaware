@@ -8,6 +8,7 @@ import lombok.Setter;
 import me.rhys.packet.api.Direction;
 import me.rhys.packet.api.Packet;
 import me.rhys.packet.impl.PacketClientAuthenticate;
+import org.apache.commons.lang.RandomStringUtils;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -41,9 +42,9 @@ public class SocketHandler {
     }
 
     public void start() {
-
         if (ircName == null || ircName.length() < 3 || ircName.length() > 16) {
-            Printer.chat("error1");
+            System.out.println("IRC Name invalid. Setting random username");
+            ircName = "user" + RandomStringUtils.randomAlphanumeric(10);
             return;
         }
 
@@ -69,7 +70,7 @@ public class SocketHandler {
 
                     @Override
                     public void onMessage(String s) {
-                        if (s.length() > 5) {
+                        if (s.length() > 0) {
                             try {
                                 packetHandle.handlePacket((Packet) SerialUtil.serializeFromString(s),
                                         System.currentTimeMillis());

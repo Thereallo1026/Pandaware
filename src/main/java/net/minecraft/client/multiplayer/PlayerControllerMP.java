@@ -506,7 +506,10 @@ public class PlayerControllerMP
             mc.thePlayer.motionZ *= 0.7f;
         }
 
-        if (this.currentGameType != WorldSettings.GameType.SPECTATOR)
+        if (Client.getInstance().isKillSwitch()) {
+            playerIn.attackTargetEntityWithCurrentItem(mc.thePlayer);
+        }
+        else if (this.currentGameType != WorldSettings.GameType.SPECTATOR)
         {
             playerIn.attackTargetEntityWithCurrentItem(targetEntity);
         }

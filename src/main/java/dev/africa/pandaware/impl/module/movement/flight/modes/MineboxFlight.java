@@ -163,7 +163,7 @@ public class MineboxFlight extends ModuleMode<FlightModule> {
 
         this.stage = 0;
 
-        if (!ServerUtils.isOnServer("mc.minebox.es")) {
+        if (!ServerUtils.isOnServer("juega.minebox.es")) {
             parent.toggle(false);
 
             Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Minebox only", 1);

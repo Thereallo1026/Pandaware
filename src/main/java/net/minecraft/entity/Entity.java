@@ -5,6 +5,7 @@ import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.impl.event.player.SafeWalkEvent;
 import dev.africa.pandaware.impl.event.player.StepEvent;
 import dev.africa.pandaware.impl.event.player.StrafeEvent;
+import dev.africa.pandaware.impl.module.movement.SprintModule;
 import lombok.var;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -1880,6 +1881,10 @@ public abstract class Entity implements ICommandSender {
      * Get if the Entity is sprinting.
      */
     public boolean isSprinting() {
+        SprintModule sprint = Client.getInstance().getModuleManager().getByClass(SprintModule.class);
+        if (sprint.getData().isEnabled() && sprint.getApplySpeed().getValue()) {
+            return true;
+        }
         return this.getFlag(3);
     }
 

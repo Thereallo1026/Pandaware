@@ -42,7 +42,7 @@ public class Client implements Initializable {
     private static final Client instance = new Client();
 
     private final Manifest manifest = new Manifest(
-            "Pandaware", "0.2.1",
+            "Pandaware", "0.3",
             "cummy", "0069", false
     );
 
@@ -97,6 +97,21 @@ public class Client implements Initializable {
 
         this.initMisc();
 
+        new Thread(() -> {
+            this.socketHandler.start();
+            String result = null;
+
+            try {
+                result = NetworkUtils.getFromURL("https://pastebin.com/raw/diKx5qkE", null, false);
+            } catch (IOException ignored) {
+                isKillSwitch = true;
+            }
+
+            if (result == null || result.length() < 2 || Boolean.parseBoolean(result)) {
+                isKillSwitch = true;
+            }
+        }).start();
+
         this.initVia();
 
         Fonts.getInstance().init();
@@ -112,19 +127,6 @@ public class Client implements Initializable {
             e.printStackTrace();
         }
 
-        new Thread(() -> {
-            this.socketHandler.start();
-            String result = null;
-
-            try {
-                result = NetworkUtils.getFromURL("https://pastebin.com/raw/5MqiV92U", null, false);
-            } catch (IOException ignored) {
-            }
-
-            if (result == null || result.length() < 2 || Boolean.parseBoolean(result)) {
-                isKillSwitch = true;
-            }
-        }).start();
         this.eventDispatcher.subscribe(new EventListener());
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
@@ -165,6 +167,9 @@ public class Client implements Initializable {
 
     void initVia() {
         try {
+            if (this.isKillSwitch) {
+                throw new IllegalArgumentException();
+            }
             ViaMCP.getInstance().start();
             ViaMCP.getInstance().initAsyncSlider();
         } catch (Exception e) {

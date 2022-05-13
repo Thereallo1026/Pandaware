@@ -15,17 +15,20 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
     EventCallback<MoveEvent> onMove = event -> {
         if (mc.thePlayer.onGround && mc.isMoveMoving()) {
             if (this.timerSpeed.getValue()) {
-                mc.timer.timerSpeed = 0.85f;
+                mc.timer.timerSpeed = 0.9f;
             }
             mc.gameSettings.keyBindJump.pressed = true;
             event.y = mc.thePlayer.motionY = 0.42f;
             MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * 2.11);
         } else if (mc.thePlayer.getAirTicks() == 5) {
-            if (this.timerSpeed.getValue()) {
+            if (this.timerSpeed.getValue() && mc.thePlayer.fallDistance < 1) {
                 mc.timer.timerSpeed = 1.3f;
             }
             event.y = mc.thePlayer.motionY = -0.42f;
         } else {
+            if (mc.thePlayer.fallDistance > 1) {
+                mc.timer.timerSpeed = 1;
+            }
             mc.gameSettings.keyBindJump.pressed = false;
         }
     };

@@ -14,7 +14,8 @@ public class VelocityModule extends Module {
                 new GroundVelocity("Ground", this),
                 new TickVelocity("Tick", this),
                 new GlitchVelocity("Glitch", this),
-                new VulcanVelocity("Vulcan", this)
+                new VulcanVelocity("Vulcan", this),
+                new ReverseVelocity("Reverse", this)
         );
     }
 

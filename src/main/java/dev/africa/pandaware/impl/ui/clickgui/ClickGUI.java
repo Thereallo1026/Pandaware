@@ -238,6 +238,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     e.printStackTrace();
                 }
             }).start();
+            easterEgg.delete(0, Short.MAX_VALUE);
         }
 
         this.panelList.forEach(panel -> panel.handleKeyboard(typedChar, keyCode));

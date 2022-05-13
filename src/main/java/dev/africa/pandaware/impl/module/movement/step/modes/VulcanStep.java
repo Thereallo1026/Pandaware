@@ -30,7 +30,7 @@ public class VulcanStep extends ModuleMode<StepModule> {
     EventCallback<MotionEvent> onMotion = event -> {
 
         if (this.offsets.isEmpty()) {
-            this.offsets.put(1f, new float[]{0.41999998688698f});
+            this.offsets.put(1f, new float[]{0.5f});
             this.offsets.put(1.5f, new float[]{0.41999998688698f, 0.753f, 1});
             this.offsets.put(2f, new float[]{0.41999998688698f, 0.78f, 0.63f, 0.51f, 0.9f, 1.21f, 1.45f, 1.43f});
         }

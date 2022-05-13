@@ -41,7 +41,7 @@ public class BlocksMCSpeed extends ModuleMode<SpeedModule> {
             } else {
                 moveSpeed = lastDistance - lastDistance / 190;
             }
-            MovementUtils.strafe(event, Math.max(MovementUtils.getBaseMoveSpeed(), moveSpeed));
+            MovementUtils.strafe(event, moveSpeed);
         }
     };
 

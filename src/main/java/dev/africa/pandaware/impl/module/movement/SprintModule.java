@@ -10,8 +10,10 @@ import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
+import lombok.Getter;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 
+@Getter
 @ModuleInfo(name = "Sprint", category = Category.MOVEMENT)
 public class SprintModule extends Module {
     private final BooleanSetting omniSprint = new BooleanSetting("OmniSprint", false);

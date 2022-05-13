@@ -91,6 +91,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 new AutoToolModule(),
                 new AntiVoidModule(),
                 new FastPlaceModule(),
+                new FastEatModule(),
 
                 // Misc
                 new DisablerModule(),

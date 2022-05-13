@@ -89,13 +89,13 @@ public class HUDModule extends Module {
 
         this.registerSettings(
                 this.colorMode,
+                this.capeMode,
                 this.arraylist,
                 this.label,
                 this.watermark,
                 this.informations,
                 this.irc,
                 this.showCape,
-                this.capeMode,
                 this.customFont,
                 this.borderlessFullscreen,
                 this.arraylistLine,

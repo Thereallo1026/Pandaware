@@ -120,4 +120,6 @@ public class MovementUtils implements MinecraftInstance {
 
         return rotationYaw;
     }
+
+    public final double MODULO_GROUND = 1 / 64D;
 }
