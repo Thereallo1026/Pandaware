@@ -28,6 +28,7 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 
@@ -168,6 +169,9 @@ public class TargetHudModule extends Module {
                             this.height - 16, 3, Color.WHITE);
                     StencilUtils.stencilStage(StencilUtils.StencilStage.ENABLE_DRAW);
                     RenderUtils.renderSkinHead(this.cachedEntity, 3, 3, this.height - 16);
+                    ESPModule esp = Client.getInstance().getModuleManager().getByClass(ESPModule.class);
+                    if (esp.getData().isEnabled() && esp.getMode().getValue() == ESPModule.Mode.FEMBOY && esp.getFemboyMode().getValue() == ESPModule.Femboy.MIXED_NUTS)
+                        RenderUtils.drawImage(new ResourceLocation("pandaware/icons/mixednuts.png"), 3, 3, this.width - 16, this.height - 16);
                     StencilUtils.stencilStage(StencilUtils.StencilStage.DISABLE);
 
                     HUDModule hudModule = Client.getInstance().getModuleManager().getByClass(HUDModule.class);

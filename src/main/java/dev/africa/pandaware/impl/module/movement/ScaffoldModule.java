@@ -19,6 +19,7 @@ import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.TimeHelper;
+import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
@@ -37,6 +38,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0APacketAnimation;
+import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -79,6 +81,7 @@ public class ScaffoldModule extends Module {
     private Vec2f smoothRotations;
     private Vec2f currentRotation;
     private final TimeHelper towerTimer = new TimeHelper();
+    private final TimeHelper vulcanTimer = new TimeHelper();
 
     public ScaffoldModule() {
         this.registerSettings(
@@ -124,6 +127,10 @@ public class ScaffoldModule extends Module {
         this.blockEntry = null;
         this.aimBlockEntry = null;
         this.rotations = null;
+
+        if (this.scaffoldMode.getValue() == ScaffoldMode.VULCAN) {
+            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
+        }
 
         if (this.itemSpoof.getValue() && this.spoofMode.getValue() == SpoofMode.SWITCH) {
             mc.thePlayer.inventory.currentItem = this.lastSlot;
@@ -424,6 +431,24 @@ public class ScaffoldModule extends Module {
                 mc.thePlayer.motionX *= (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1);
                 mc.thePlayer.motionZ *= (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1);
                 break;
+            case VULCAN:
+                if (mc.thePlayer.inventory.getCurrentItem() == null) return;
+                if (mc.thePlayer.onGround && mc.isMoveMoving()) {
+                    if (mc.thePlayer.inventory.getCurrentItem().stackSize >= 5) {
+                        event.y = mc.thePlayer.motionY = 0.42f;
+                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.11);
+                    } else {
+                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed());
+                    }
+                } else if (mc.isMoveMoving()) {
+                    if (this.vulcanTimer.reach(500)) {
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SNEAKING));
+                        vulcanTimer.reset();
+                    }
+                    if (this.vulcanTimer.getMs() == 50 + RandomUtils.nextInt(0, 50)) {
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
+                    }
+                }
         }
 
         if (mc.isMoveMoving()) {
@@ -961,7 +986,8 @@ public class ScaffoldModule extends Module {
     private enum ScaffoldMode {
         NORMAL("Normal"),
         BLOCKSMC("BlocksMC"),
-        HYPIXEL("Hypixel");
+        HYPIXEL("Hypixel"),
+        VULCAN("Vulcan");
 
         private final String label;
     }

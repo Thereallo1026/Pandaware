@@ -44,7 +44,7 @@ public class InventoryManagerModule extends Module {
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
         AutoArmorModule autoArmor = Client.getInstance().getModuleManager().getByClass(AutoArmorModule.class);
-        if (autoArmor.getData().isEnabled() && (System.currentTimeMillis() - autoArmor.lastCycle) < 300) return;
+        if (autoArmor.getData().isEnabled() && (System.currentTimeMillis() - autoArmor.lastCycle) < 150) return;
         final long time = delay.getValue().intValue() + (random.getValue() ? RandomUtils.nextInt(randomMin.getValue().intValue(), randomMax.getValue().intValue()) : 0);
 
         if (this.cleanMode.getValue() == CleanMode.OPEN && !(mc.currentScreen instanceof GuiInventory))

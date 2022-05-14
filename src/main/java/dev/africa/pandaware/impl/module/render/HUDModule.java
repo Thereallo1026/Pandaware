@@ -81,8 +81,10 @@ public class HUDModule extends Module {
 
     private boolean lastFullscreen;
     private int animated = 1;
+    private int caranimated = 1;
     private final TimeHelper timer = new TimeHelper();
     private ResourceLocation animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(1).gif");
+    private ResourceLocation car = new ResourceLocation("pandaware/icons/capes/car/car1.png");
 
     public HUDModule() {
         this.toggle(true);
@@ -144,12 +146,17 @@ public class HUDModule extends Module {
             case RENDER_3D:
                 if (timer.reach(69)) {
                     this.animated++;
+                    this.caranimated++;
                     timer.reset();
                 }
                 if (animated > 16) {
                     animated = 1;
                 }
+                if (caranimated > 16) {
+                    caranimated = 2;
+                }
                 this.animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(" + animated + ").gif");
+                this.car = new ResourceLocation("pandaware/icons/capes/car/car" + caranimated + ".png");
                 break;
         }
     };
@@ -398,7 +405,8 @@ public class HUDModule extends Module {
         MINECON2015("Minecon 2015", new ResourceLocation("pandaware/icons/capes/2015.png")),
         MINECON2016("Minecon 2016", new ResourceLocation("pandaware/icons/capes/2016.png")),
         MOJANG("Mojang", new ResourceLocation("pandaware/icons/capes/mojang.png")),
-        YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png"));
+        YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png")),
+        CAR("Car", new ResourceLocation("pandaware/icons/capes/car.png"));
 
         private final String label;
         private final ResourceLocation resource;

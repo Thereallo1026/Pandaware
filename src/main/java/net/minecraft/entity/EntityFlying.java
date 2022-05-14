@@ -1,5 +1,7 @@
 package net.minecraft.entity;
 
+import dev.africa.pandaware.switcher.protocols.ProtocolCollection;
+import dev.africa.pandaware.utils.network.ProtocolUtils;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -50,7 +52,12 @@ public abstract class EntityFlying extends EntityLiving
                 f = this.worldObj.getBlockState(new BlockPos(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.getEntityBoundingBox().minY) - 1, MathHelper.floor_double(this.posZ))).getBlock().slipperiness * 0.91F;
             }
 
-            float f1 = 0.16277136F / (f * f * f);
+            float f1;
+            if (ProtocolUtils.isMoreOrEqual(ProtocolCollection.R1_16)) {
+                f1 = 0.16277137F / (f * f * f);
+            } else {
+                f1 = 0.16277136F / (f * f * f);
+            }
             this.moveFlying(strafe, forward, this.onGround ? 0.1F * f1 : 0.02F);
             f = 0.91F;
 
