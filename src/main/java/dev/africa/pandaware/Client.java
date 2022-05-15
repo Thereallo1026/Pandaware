@@ -20,6 +20,7 @@ import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.impl.socket.util.HWIDUtil;
 import dev.africa.pandaware.utils.client.ServerUtils;
+import dev.africa.pandaware.utils.java.FileUtils;
 import dev.africa.pandaware.utils.network.GameListener;
 import dev.africa.pandaware.utils.network.NetworkUtils;
 import joptsimple.OptionParser;
@@ -28,8 +29,10 @@ import joptsimple.OptionSpec;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.main.Main;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -95,6 +98,7 @@ public class Client implements Initializable {
             }
         }).start();
 
+        this.initTitle();
         this.initMisc();
 
         new Thread(() -> {
@@ -162,7 +166,6 @@ public class Client implements Initializable {
         } catch (Exception ignored) {
         }
 
-        Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion());
     }
 
     void initVia() {
@@ -174,6 +177,27 @@ public class Client implements Initializable {
             ViaMCP.getInstance().initAsyncSlider();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    void initTitle() {
+        //TODO: Needs fixing.
+        String randomTitleText = null;
+        ResourceLocation titlesText = new ResourceLocation("minecraft/pandaware/titles.txt");
+        System.out.println(titlesText.getResourcePath());
+        try {
+            randomTitleText = FileUtils.randomFileLine("assets/minecraft/pandaware/titles.txt");
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(randomTitleText != null) {
+            Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion() + randomTitleText);
+            System.out.println("Set Title.");
+        }else {
+            Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion());
+            System.out.println("Failed to set title, set default title.");
         }
     }
 }

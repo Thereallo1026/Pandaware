@@ -43,6 +43,7 @@ public class HUDModule extends Module {
 
     private final BooleanSetting arraylist = new BooleanSetting("Arraylist", true);
     private final BooleanSetting watermark = new BooleanSetting("Watermark", true);
+    public final BooleanSetting transparentChat = new BooleanSetting("Transparent Chat", false);
     private final BooleanSetting label = new BooleanSetting("Show Labels", true, this.arraylist::getValue);
     private final BooleanSetting informations = new BooleanSetting("Information", true);
     private final BooleanSetting customFont = new BooleanSetting("Custom font", true);
@@ -89,6 +90,7 @@ public class HUDModule extends Module {
 
         this.registerSettings(
                 this.colorMode,
+                this.transparentChat,
                 this.capeMode,
                 this.arraylist,
                 this.label,
@@ -354,6 +356,8 @@ public class HUDModule extends Module {
 
             case RAINBOW:
                 return ColorUtils.rainbow(index * 20, 0.7f, 3.5);
+            case ASTOLFO:
+                return ColorUtils.rainbow(index * 20, 0.4f, 3.5);
         }
     }
 
@@ -366,6 +370,10 @@ public class HUDModule extends Module {
                 UISettings.SECOND_COLOR = UISettings.DEFAULT_SECOND_COLOR;
                 break;
             case RAINBOW:
+                UISettings.FIRST_COLOR = color;
+                UISettings.SECOND_COLOR = color;
+                break;
+            case ASTOLFO:
                 UISettings.FIRST_COLOR = color;
                 UISettings.SECOND_COLOR = color;
                 break;
@@ -382,7 +390,8 @@ public class HUDModule extends Module {
         CUSTOM("Custom"),
         PANDAWARE("Pandaware"),
         SHADE("Shade"),
-        RAINBOW("Rainbow");
+        RAINBOW("Rainbow"),
+        ASTOLFO("Astolfo");
 
         private final String label;
     }
@@ -397,7 +406,10 @@ public class HUDModule extends Module {
         MINECON2013("Minecon 2013", new ResourceLocation("pandaware/icons/capes/2013.png")),
         MINECON2015("Minecon 2015", new ResourceLocation("pandaware/icons/capes/2015.png")),
         MINECON2016("Minecon 2016", new ResourceLocation("pandaware/icons/capes/2016.png")),
-        MOJANG("Mojang", new ResourceLocation("pandaware/icons/capes/mojang.png")),
+        MOJANG_OLD("Old Mojang (2010 - 2015)", new ResourceLocation("pandaware/icons/capes/old_mojang.png")),
+        MOJANG("Mojang (2015 - 2021)", new ResourceLocation("pandaware/icons/capes/mojang.png")),
+        MOJANG_NEW("New Mojang (2021 - Now)", new ResourceLocation("pandaware/icons/capes/mojang_studios.png")),
+
         YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png"));
 
         private final String label;

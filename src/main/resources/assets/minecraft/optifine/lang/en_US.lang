@@ -39,7 +39,7 @@ of.message.shaders.an2=Please set Other -> 3D Anaglyph to OFF.
 of.message.shaders.nv1=This shader pack requires a newer OptiFine version: %s
 of.message.shaders.nv2=Are you sure you want to continue?
 
-of.message.newVersion=A new §eOptiFine§f version is available: §e%s§f
+of.message.newVersion=The Developers of Pandaware need to update §eOptiFine§f to §e%s§f.
 of.message.java64Bit=You can install §e64-bit Java§f to increase performance.
 of.message.openglError=§eOpenGL Error§f: %s (%s)
 

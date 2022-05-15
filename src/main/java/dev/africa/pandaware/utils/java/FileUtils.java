@@ -8,12 +8,18 @@ import net.minecraft.util.ResourceLocation;
 import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 @UtilityClass
 public class FileUtils implements MinecraftInstance {
+
+    String randomLine;
+
     public File openFilePicker(boolean betterGui) throws Exception {
         if (Minecraft.getMinecraft().isFullScreen()) {
             Minecraft.getMinecraft().toggleFullscreen();
@@ -96,4 +102,24 @@ public class FileUtils implements MinecraftInstance {
         }
         return builder.toString();
     }
+
+    //TODO: FIX
+    public String randomFileLine(String originalFilePath) throws Exception {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(originalFilePath));
+            String line = reader.readLine();
+            List<String> lines = new ArrayList<String>();
+            while (line != null) {
+                lines.add(line);
+                line = reader.readLine();
+            }
+            Random r = new Random();
+            randomLine = lines.get(r.nextInt(lines.size()));
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return randomLine;
+    }
+
 }

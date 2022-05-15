@@ -3,6 +3,11 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
+
+import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.module.render.ClickGUIModule;
+import dev.africa.pandaware.impl.module.render.HUDModule;
+import dev.africa.pandaware.impl.setting.BooleanSetting;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -302,7 +307,11 @@ public class GuiChat extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        drawRect(2, this.height - 14, this.width - 2, this.height - 2, Integer.MIN_VALUE);
+        HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+
+        if(!hud.getTransparentChat().getValue()) {
+            drawRect(2, this.height - 14, this.width - 2, this.height - 2, Integer.MIN_VALUE);
+        }
         this.inputField.drawTextBox();
         IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
 
