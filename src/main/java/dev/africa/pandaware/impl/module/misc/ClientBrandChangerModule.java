@@ -47,6 +47,15 @@ public class ClientBrandChangerModule extends Module {
                     case CHEATBREAKER:
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent((new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString("CB"))));
                         break;
+                    case FEATHER_FORGE:
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent((new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString("Feather Forge"))));
+                        break;
+                    case FEATHER_FABRIC:
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent((new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString("Feather Fabric"))));
+                        break;
+                    case PANDAWARE:
+                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent((new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString("Pandaware"))));
+                        break;
                 }
             }
         }
@@ -59,7 +68,10 @@ public class ClientBrandChangerModule extends Module {
         LUNAR("Lunar"),
         PVPLOUNGE("PVP Lounge"),
         CHEATBREAKER("Cheatbreaker"),
-        COLOR_CODES("Color Codes");
+        COLOR_CODES("Color Codes"),
+        FEATHER_FORGE("Feather (Forge - 1.8.9 & 1.12.2)"),
+        FEATHER_FABRIC("Feather (Fabric - 1.17.1 & 1.18.x)"),
+        PANDAWARE("Pandaware");
 
         private final String label;
     }

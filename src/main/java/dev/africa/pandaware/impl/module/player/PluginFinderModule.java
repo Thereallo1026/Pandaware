@@ -44,8 +44,8 @@ public class PluginFinderModule extends Module {
                 ++size;
                 message = message.isEmpty() ? message + pluginName : message + ", " + EnumChatFormatting.GREEN + pluginName;
             }
-            if (message.isEmpty()) {
-                Printer.chat("No plugins or anti tab complete installed");
+            if(message.isEmpty()) {
+                Printer.chat("No plugins OR Server has AntiTabComplete Plugin Installed.");
             } else {
                 Printer.chat(String.format("Plugins: (%s) ", new Object[]{String.valueOf(size)}) + EnumChatFormatting.GREEN + message);
             }
