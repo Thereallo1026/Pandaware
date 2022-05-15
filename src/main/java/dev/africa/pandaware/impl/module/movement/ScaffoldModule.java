@@ -434,11 +434,11 @@ public class ScaffoldModule extends Module {
             case VULCAN:
                 if (mc.thePlayer.inventory.getCurrentItem() == null) return;
                 if (mc.thePlayer.onGround && mc.isMoveMoving()) {
-                    if (mc.thePlayer.inventory.getCurrentItem().stackSize >= 5) {
+                    if (mc.thePlayer.inventory.getCurrentItem().stackSize >= 7) {
                         event.y = mc.thePlayer.motionY = 0.42f;
                         MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.11);
                     } else {
-                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed());
+                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.7);
                     }
                 } else if (mc.isMoveMoving()) {
                     if (this.vulcanTimer.reach(500)) {
