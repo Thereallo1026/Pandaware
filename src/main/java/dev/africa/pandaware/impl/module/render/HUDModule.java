@@ -51,7 +51,7 @@ public class HUDModule extends Module {
             this.arraylist::getValue);
     private final BooleanSetting borderlessFullscreen = new BooleanSetting("Borderless Fulscreen", true);
     private final BooleanSetting showCape = new BooleanSetting("Show Cape", true);
-    private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.MINECON2016, this.showCape::getValue);
+    private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.CAR, this.showCape::getValue);
 
     private final NumberSetting colorTime = new NumberSetting("Color time",
             10000, 100, 3000, 1, () -> this.colorMode.getValue() == ColorMode.PANDAWARE

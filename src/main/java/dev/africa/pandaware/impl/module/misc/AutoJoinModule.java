@@ -26,7 +26,8 @@ public class AutoJoinModule extends Module {
             S02PacketChat packet = (S02PacketChat) event.getPacket();
 
             String message = packet.getChatComponent().getUnformattedText();
-            if (message.contains("1st Killer -") || message.contains("You died! Want to play again? Click here!") || message.contains("You won! Want to play again?")) {
+            if (message.contains("1st Killer -") || message.contains("You died! Want to play again? Click here!") ||
+                    message.contains("You won! Want to play again?")) {
                 startTimer = true;
                 startDelay = System.currentTimeMillis();
             }

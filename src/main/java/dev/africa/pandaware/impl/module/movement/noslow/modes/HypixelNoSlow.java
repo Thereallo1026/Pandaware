@@ -26,8 +26,7 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
     EventCallback<MotionEvent> onMotion = event -> {
         boolean usingItem = mc.thePlayer.isUsingItem() && mc.thePlayer.getCurrentEquippedItem() != null && mc.isMoveMoving();
 
-        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
+        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
             if (usingItem && mc.isMoveMoving() &&
                     !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()
                     && event.getEventState() == Event.EventState.PRE &&
@@ -42,8 +41,7 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
     EventCallback<StepEvent> onStep = event -> {
         boolean usingItem = mc.thePlayer.isUsingItem() && mc.thePlayer.getCurrentEquippedItem() != null && mc.isMoveMoving();
 
-        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
+        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
             if ((usingItem && mc.isMoveMoving()) && this.slabSafe.getValue() &&
                     !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()) {
                 event.setStepHeight(0);

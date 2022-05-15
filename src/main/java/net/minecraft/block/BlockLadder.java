@@ -1,5 +1,6 @@
 package net.minecraft.block;
 
+import dev.africa.pandaware.utils.network.ProtocolUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -43,7 +44,7 @@ public class BlockLadder extends Block
 
         if (iblockstate.getBlock() == this)
         {
-            float f = 0.125F;
+            float f = ProtocolUtils.isOneDotEight() ? 0.125F : 0.1875F;
 
             switch ((EnumFacing)iblockstate.getValue(FACING))
             {

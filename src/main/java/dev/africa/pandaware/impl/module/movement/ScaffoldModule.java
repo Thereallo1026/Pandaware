@@ -240,8 +240,8 @@ public class ScaffoldModule extends Module {
             }
         }
 
-
-        if (this.itemSpoof.getValue() && this.spoofMode.getValue() == SpoofMode.SWITCH && slot != -1) {
+        if ((this.itemSpoof.getValue() && this.spoofMode.getValue() == SpoofMode.SWITCH ||
+                mc.thePlayer.inventory.getCurrentItem().stackSize <= 0) && slot != -1) {
             mc.thePlayer.inventory.currentItem = slot;
         }
 
@@ -445,7 +445,7 @@ public class ScaffoldModule extends Module {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SNEAKING));
                         vulcanTimer.reset();
                     }
-                    if (this.vulcanTimer.getMs() == 50 + RandomUtils.nextInt(0, 50)) {
+                    if (this.vulcanTimer.getMs() == 75 + RandomUtils.nextInt(0, 100)) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
                     }
                 }
