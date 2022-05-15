@@ -2,7 +2,13 @@ package net.minecraft.client.gui.inventory;
 
 import com.google.common.collect.Sets;
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.module.combat.KillAuraModule;
+import dev.africa.pandaware.impl.module.combat.TPAuraModule;
+import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
+import dev.africa.pandaware.impl.module.player.AutoArmorModule;
 import dev.africa.pandaware.impl.module.player.ChestStealerModule;
+import dev.africa.pandaware.impl.module.player.InventoryManagerModule;
+import dev.africa.pandaware.impl.ui.menu.button.CustomInvButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -96,6 +102,24 @@ public abstract class GuiContainer extends GuiScreen {
     private boolean doubleClick;
     private ItemStack shiftClickedSlot;
 
+    private final CustomInvButton auraButton = new CustomInvButton("Toggle Aura",
+    2, 2, 150, 20, true, () -> {
+        Client.getInstance().getModuleManager().getByClass(KillAuraModule.class).toggle(false);
+        Client.getInstance().getModuleManager().getByClass(TPAuraModule.class).toggle(false);
+    });
+
+    private final CustomInvButton invButton = new CustomInvButton("Toggle Inventory Modules",
+            2, 24, 150, 20, true, () -> {
+        Client.getInstance().getModuleManager().getByClass(ChestStealerModule.class).toggle(false);
+        Client.getInstance().getModuleManager().getByClass(InventoryManagerModule.class).toggle(false);
+        Client.getInstance().getModuleManager().getByClass(AutoArmorModule.class).toggle(false);
+    });
+
+    private final CustomInvButton disablerButton = new CustomInvButton("Toggle Disabler",
+            2, 46, 150, 20, true, () -> {
+        Client.getInstance().getModuleManager().getByClass(DisablerModule.class).toggle(false);
+    });
+
     public GuiContainer(Container inventorySlotsIn) {
         this.inventorySlots = inventorySlotsIn;
         this.ignoreMouseUp = true;
@@ -147,6 +171,10 @@ public abstract class GuiContainer extends GuiScreen {
         } else {
             this.drawDefaultBackground();
         }
+
+        /*this.auraButton.render(mouseX, mouseY);
+        this.invButton.render(mouseX, mouseY);
+        this.disablerButton.render(mouseX, mouseY);*/
 
         int i = this.guiLeft;
         int j = this.guiTop;

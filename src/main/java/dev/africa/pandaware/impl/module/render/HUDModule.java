@@ -52,7 +52,7 @@ public class HUDModule extends Module {
             this.arraylist::getValue);
     private final BooleanSetting borderlessFullscreen = new BooleanSetting("Borderless Fulscreen", true);
     private final BooleanSetting showCape = new BooleanSetting("Show Cape", true);
-    private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.MINECON2016, this.showCape::getValue);
+    private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.CAR, this.showCape::getValue);
 
     private final NumberSetting colorTime = new NumberSetting("Color time",
             10000, 100, 3000, 1, () -> this.colorMode.getValue() == ColorMode.PANDAWARE
@@ -82,8 +82,10 @@ public class HUDModule extends Module {
 
     private boolean lastFullscreen;
     private int animated = 1;
+    private int caranimated = 1;
     private final TimeHelper timer = new TimeHelper();
     private ResourceLocation animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(1).gif");
+    private ResourceLocation car = new ResourceLocation("pandaware/icons/capes/car/car1.png");
 
     public HUDModule() {
         this.toggle(true);
@@ -146,12 +148,17 @@ public class HUDModule extends Module {
             case RENDER_3D:
                 if (timer.reach(69)) {
                     this.animated++;
+                    this.caranimated++;
                     timer.reset();
                 }
                 if (animated > 16) {
                     animated = 1;
                 }
+                if (caranimated > 16) {
+                    caranimated = 2;
+                }
                 this.animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(" + animated + ").gif");
+                this.car = new ResourceLocation("pandaware/icons/capes/car/car" + caranimated + ".png");
                 break;
         }
     };
@@ -411,6 +418,7 @@ public class HUDModule extends Module {
         MOJANG_NEW("New Mojang (2021 - Now)", new ResourceLocation("pandaware/icons/capes/mojang_studios.png")),
 
         YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png"));
+        CAR("Car", new ResourceLocation("pandaware/icons/capes/car.png"));
 
         private final String label;
         private final ResourceLocation resource;

@@ -49,7 +49,7 @@ public abstract class EntityLivingBase extends Entity {
      */
     private final ItemStack[] previousEquipment = new ItemStack[5];
 
-    /**
+    /**J
      * Whether an arm swing is currently in progress.
      */
     public boolean isSwingInProgress;

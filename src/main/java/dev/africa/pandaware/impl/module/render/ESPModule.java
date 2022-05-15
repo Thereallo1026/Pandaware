@@ -76,6 +76,7 @@ public class ESPModule extends Module {
 
     private final ResourceLocation femboy = new ResourceLocation("pandaware/icons/esp.png");
     private final ResourceLocation femboy2 = new ResourceLocation("pandaware/icons/esp2.png");
+    private final ResourceLocation mixednuts = new ResourceLocation("pandaware/icons/mixednuts.png");
 
     private double interp(final double newPos, final double oldPos) {
         return oldPos + (newPos - oldPos) * mc.timer.renderPartialTicks;
@@ -238,8 +239,17 @@ public class ESPModule extends Module {
                             GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
                             GlStateManager.scale(-0.1, -0.1, 0.0);
 
-                            if (femboyMode.getValue() == Femboy.ASTOLFO) mc.getTextureManager().bindTexture(femboy);
-                            else mc.getTextureManager().bindTexture(femboy2);
+                            switch (femboyMode.getValue()) {
+                                case ASTOLFO:
+                                    mc.getTextureManager().bindTexture(femboy);
+                                    break;
+                                case FELIX:
+                                    mc.getTextureManager().bindTexture(femboy2);
+                                    break;
+                                case MIXED_NUTS:
+                                    mc.getTextureManager().bindTexture(mixednuts);
+                                    break;
+                            }
 
                             Gui.drawScaledCustomSizeModalRect((int) (player.width / 2.0 - distance / 3.0),
                                     (int) (-player.height - distance), 0.0f, 0.0f, (int) 1.0, (int) 1.0,
@@ -310,9 +320,10 @@ public class ESPModule extends Module {
     }
 
     @AllArgsConstructor
-    enum Femboy {
+    public enum Femboy {
         ASTOLFO("Astolfo"),
-        FELIX("Felix");
+        FELIX("Felix"),
+        MIXED_NUTS("Mixed Nuts");
 
         private final String label;
     }

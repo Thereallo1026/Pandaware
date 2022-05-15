@@ -158,7 +158,6 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     }).start();
                 }
                 mc.displayGuiScreen(null);
-                easterEgg.delete(0, Short.MAX_VALUE);
             }
         }
         if (this.easterEgg.toString().toLowerCase().contains("idclap")) {
@@ -182,7 +181,6 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     } catch (IOException | URISyntaxException e) {
                         e.printStackTrace();
                     }
-                    easterEgg.delete(0, Short.MAX_VALUE);
                 }
             }
         }

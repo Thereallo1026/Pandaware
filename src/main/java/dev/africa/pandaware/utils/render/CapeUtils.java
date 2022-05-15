@@ -29,6 +29,9 @@ public class CapeUtils {
             if (hud.getCapeMode().getValue() == HUDModule.CapeMode.PANDAWARE) {
                 resource = hud.getAnimatedCape();
             }
+            if (hud.getCapeMode().getValue() == HUDModule.CapeMode.CAR) {
+                resource = hud.getCar();
+            }
             renderPlayer.bindTexture(resource);
         } else {
             renderPlayer.bindTexture(abstractClientPlayer.getLocationCape());

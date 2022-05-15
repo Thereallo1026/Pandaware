@@ -459,7 +459,7 @@ public class GuiAccountManager extends GuiScreen {
                 auth.logIn();
             } catch (AuthenticationException ignored) {
             }
-            return new Session("errror", "idk", auth.getAuthenticatedToken(), "mojang");
+            return new Session("error", "idk", auth.getAuthenticatedToken(), "mojang");
         }
     }
 

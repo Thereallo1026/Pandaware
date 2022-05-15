@@ -19,8 +19,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private double movespeed;
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
-        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
+        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
             if (event.getEventState() == Event.EventState.PRE) {
                 if (mc.isMoveMoving()) {
                     this.lastDistance = MovementUtils.getLastDistance();
@@ -32,8 +31,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     protected final EventCallback<MoveEvent> onMove = event -> {
-        if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.endsWith("hypixel.net") &&
-                !(mc.currentScreen instanceof GuiMultiplayer) && !(ServerUtils.compromised)) {
+        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
             if (mc.thePlayer.isInWater() || mc.thePlayer.isInLava()) return;
             if (mc.thePlayer.onGround && mc.isMoveMoving()) {
                 double motion = 0.4F;
