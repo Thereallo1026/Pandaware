@@ -27,7 +27,7 @@ public class ClickCircle extends Container<ClickCircle.Circle> {
         private final double startRadius;
         private final double maxRadius;
         private final double speed;
-        private final Color color;
+        private Color color;
 
         private double radius;
         private int alpha;

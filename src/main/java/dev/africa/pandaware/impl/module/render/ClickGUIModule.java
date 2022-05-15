@@ -6,6 +6,7 @@ import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
+import dev.africa.pandaware.impl.ui.clickgui.GUIClickColor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.lwjgl.input.Keyboard;
@@ -16,11 +17,14 @@ public class ClickGUIModule extends Module {
     private final BooleanSetting showCummyMen = new BooleanSetting("Show Femboys", true);
     private final EnumSetting<FemboyMode> cummyMode = new EnumSetting<>("Femboy Mode", FemboyMode.GREEK,
             this.showCummyMen::getValue);
+    private final EnumSetting<GUIClickColor> clickColor = new EnumSetting<>("Click Color", GUIClickColor.WHITE);
 
     public ClickGUIModule() {
         this.registerSettings(
                 this.showCummyMen,
-                this.cummyMode
+                this.cummyMode,
+                this.clickColor
+
         );
     }
 

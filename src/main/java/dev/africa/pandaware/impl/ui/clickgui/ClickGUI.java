@@ -12,6 +12,7 @@ import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
+import dev.africa.pandaware.utils.render.ColorUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
 import dev.africa.pandaware.utils.render.animator.Easing;
@@ -34,6 +35,8 @@ import java.util.List;
 @Setter
 @Getter
 public class ClickGUI extends ScreenGUI implements Initializable {
+
+
     private final List<Panel> panelList = new LinkedList<>();
     private final ClickCircle clickCircle = new ClickCircle();
 
@@ -74,7 +77,6 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
     @Override
     public void handleRender(Vec2i mousePosition, float pTicks) {
-        ClickGUIModule clickGUI = Client.getInstance().getModuleManager().getByClass(ClickGUIModule.class);
         GlStateManager.pushMatrix();
         if (this.femboyDragging) {
             this.femboyPosition.setX(mousePosition.getX() + this.femboyDraggingPosition.getX());
@@ -99,6 +101,8 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                 mc.setIngameFocus();
             }
         }
+
+        ClickGUIModule clickGUI = Client.getInstance().getModuleManager().getByClass(ClickGUIModule.class);
 
         if (clickGUI.getShowCummyMen().getValue()) {
             switch (clickGUI.getCummyMode().getValue()) {
@@ -252,7 +256,49 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
     @Override
     public void handleClick(Vec2i mousePosition, int button) {
+
+        ClickGUIModule clickGUI = Client.getInstance().getModuleManager().getByClass(ClickGUIModule.class);
+
         if (button == 0 || button == 1) {
+            switch(clickGUI.getClickColor().getValue()) {
+                case WHITE:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, Color.WHITE);
+                    break;
+                case RAINBOW:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, ColorUtils.rainbow(20, 0.7f, 3.5));
+                    break;
+                case ASTOLFO:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, ColorUtils.rainbow(20, 0.4f, 3.5));
+                    break;
+                case RED:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, Color.RED);
+                    break;
+                case GREEN:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, Color.GREEN);
+                    break;
+                case BLUE:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, Color.BLUE);
+                    break;
+                case YELLOW:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, Color.YELLOW);
+                    break;
+                case PINK:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, Color.PINK);
+                    break;
+                case ORANGE:
+                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
+                            0, 20, 1.6, Color.ORANGE);
+                    break;
+
+            }
             this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
                     0, 20, 1.6, Color.WHITE);
         }

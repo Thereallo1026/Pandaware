@@ -417,7 +417,7 @@ public class HUDModule extends Module {
         MOJANG("Mojang (2015 - 2021)", new ResourceLocation("pandaware/icons/capes/mojang.png")),
         MOJANG_NEW("New Mojang (2021 - Now)", new ResourceLocation("pandaware/icons/capes/mojang_studios.png")),
 
-        YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png"));
+        YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png")),
         CAR("Car", new ResourceLocation("pandaware/icons/capes/car.png"));
 
         private final String label;
