@@ -6,6 +6,7 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
+import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
@@ -45,7 +46,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 this.jumped = false;
             } else {
                 this.movespeed = this.lastDistance - this.lastDistance / 94.3;
-                if (mc.thePlayer.moveStrafing > 0) {
+                if (mc.thePlayer.moveStrafing > 0 || TargetStrafeModule.isStrafing()) {
                     double multi = (MovementUtils.getSpeed() - this.lastDistance) * MovementUtils.getBaseMoveSpeed();
 
                     this.movespeed += multi;

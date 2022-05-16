@@ -510,7 +510,7 @@ public class ScaffoldModule extends Module {
                             boolean shouldRun = !mc.isMoveMoving() || towerMove;
 
                             if (this.blockEntry != null && shouldRun) {
-                                event.y = mc.thePlayer.motionY = 0.419999999f;
+                                event.y = mc.thePlayer.motionY = onHypixel ? 0.419999999f : 0.42;
 
                                 long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
 

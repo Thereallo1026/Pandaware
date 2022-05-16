@@ -77,18 +77,17 @@ public class TargetStrafeModule extends Module {
                         .getByClass(SpeedModule.class).getData().isEnabled();
 
         if (this.canStrafe && mc.isMoveMoving() && modulesEnabled && this.shouldStrafe) {
-            if ((!this.checkVoid.getValue() || PlayerUtils.isBlockUnder()) && !PlayerUtils.inLiquid() &&
-                    !mc.thePlayer.isOnLadder()) {
+            if (!PlayerUtils.inLiquid() && !mc.thePlayer.isOnLadder()) {
                 strafing = true;
 
                 float strafeYaw;
                 double strafeSpeed;
                 double strafeForward;
 
-                if (mc.thePlayer.isCollidedHorizontally || !PlayerUtils.isBlockUnder()) {
+                if (mc.thePlayer.isCollidedHorizontally || this.checkVoid.getValue() && !PlayerUtils.isBlockUnder()) {
                     if (this.moveDirection == -1) {
                         this.moveDirection = 1;
-                    } else if (this.moveDirection == 1) {
+                    } else {
                         this.moveDirection = -1;
                     }
                 }

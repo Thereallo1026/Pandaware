@@ -27,7 +27,6 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
     EventCallback<TickEvent> onTick = event -> {
         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
             if (this.packets <= 97) {
-                mc.thePlayer.inventory.currentItem = 0;
                 mc.gameSettings.keyBindAttack.pressed = false;
                 mc.gameSettings.keyBindUseItem.pressed = false;
             }
@@ -51,6 +50,7 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
                     event.getPacket() instanceof C07PacketPlayerDigging ||
                     event.getPacket() instanceof C0APacketAnimation ||
                     event.getPacket() instanceof C02PacketUseEntity)) {
+                mc.thePlayer.inventory.currentItem = 0;
                 event.cancel();
 
                 if (event.getPacket() instanceof C03PacketPlayer) {

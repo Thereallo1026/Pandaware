@@ -4,21 +4,27 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.module.combat.criticals.CriticalsModule;
 import dev.africa.pandaware.impl.module.combat.criticals.ICriticalsMode;
+import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
-import net.minecraft.client.gui.GuiMultiplayer;
+import lombok.AllArgsConstructor;
 import net.minecraft.util.BlockPos;
 
 public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICriticalsMode {
+    private final EnumSetting<HypixelMode> mode = new EnumSetting<>("Hypixel Mode", HypixelMode.SAFE);
+
     public HypixelCriticals(String name, CriticalsModule parent) {
         super(name, parent);
+
+        this.registerSettings(this.mode);
     }
 
     private int stage;
 
     @Override
     public void handle(MotionEvent event, int ticksExisted) {
+
         boolean yGround = mc.thePlayer.posY % 0.015625 == 0;
         boolean isSolidGround = (mc.thePlayer.posY == Math.round(mc.thePlayer.posY));
         boolean isSlab = (mc.thePlayer.posY - Math.round(mc.thePlayer.posY - 1) == 0.5);
@@ -35,15 +41,32 @@ public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICr
                 event.setOnGround(false);
                 this.stage++;
 
-                if (this.stage == 0) {
-                    event.setY(event.getY() + .20200003768373);
-                } else if (this.stage == 1) {
-                    event.setY(event.getY() + 0.001635979112147);
-                } else if (this.stage == 2) {
-                    event.setY(event.getY() + 0.13150004615783);
-                } else if (this.stage == 3) {
-                    event.setY(event.getY() + 0.01855504270223);
-                    this.stage = 0;
+                switch (this.mode.getValue()) {
+                    case SAFE:
+                        if (this.stage == 0) {
+                            event.setY(event.getY() + .20200003768373);
+                        } else if (this.stage == 1) {
+                            event.setY(event.getY() + 0.001635979112147);
+                        } else if (this.stage == 2) {
+                            event.setY(event.getY() + 0.13150004615783);
+                        } else if (this.stage == 3) {
+                            event.setY(event.getY() + 0.01855504270223);
+                            this.stage = 0;
+                        }
+                        break;
+
+                    case MELT:
+                        if (this.stage == 0) {
+                            event.setY(event.getY() + .20200003768373);
+                        } else if (this.stage == 1) {
+                            event.setY(event.getY() + 0.01135979112147);
+                        } else if (this.stage == 2) {
+                            event.setY(event.getY() + 0.053150004615783);
+                        } else if (this.stage == 3) {
+                            event.setY(event.getY() + 0.02855504270225);
+                            this.stage = 0;
+                        }
+                        break;
                 }
 
                 event.setY(event.getY() + RandomUtils.nextDouble(1.2E-9, 1.2E-7));
@@ -54,5 +77,13 @@ public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICr
     @Override
     public void entityIsNull() {
         this.stage = 0;
+    }
+
+    @AllArgsConstructor
+    private enum HypixelMode {
+        SAFE("Safe"),
+        MELT("Melt");
+
+        private final String label;
     }
 }
