@@ -134,7 +134,7 @@ public class KillAuraModule extends Module {
     public double ticks = 0;
     public long lastFrame = 0;
     private int backRotationTicks;
-    private EntityLivingBase target;
+    public EntityLivingBase target;
     private int attacks;
 
     public KillAuraModule() {

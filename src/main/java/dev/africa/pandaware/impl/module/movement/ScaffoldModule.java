@@ -496,7 +496,8 @@ public class ScaffoldModule extends Module {
 
                     case HYPIXEL:
                         if (!mc.thePlayer.isPotionActive(Potion.jump)) {
-                            boolean onHypixel = ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net");
+                            boolean onHypixel = (ServerUtils.isOnServer("mc.hypixel.net") ||
+                                    ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised;
 
                             if (!mc.isMoveMoving()) {
                                 MovementUtils.strafe(event, 0);
@@ -510,7 +511,7 @@ public class ScaffoldModule extends Module {
                             boolean shouldRun = !mc.isMoveMoving() || towerMove;
 
                             if (this.blockEntry != null && shouldRun) {
-                                event.y = mc.thePlayer.motionY = onHypixel ? 0.419999999f : 0.42;
+                                event.y = mc.thePlayer.motionY = onHypixel ? 0.419999999f : 0.38f;
 
                                 long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
 

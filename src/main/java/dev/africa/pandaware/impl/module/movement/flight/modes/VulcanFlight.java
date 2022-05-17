@@ -23,6 +23,10 @@ public class VulcanFlight extends ModuleMode<FlightModule> {
                 } else {
                     mc.thePlayer.motionY += 0.0132;
                 }
+
+                if (mc.thePlayer.ticksExisted % 41 == 0) {
+                    mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + (0.42f + 0.1 + (1E-8D)), mc.thePlayer.posZ);
+                }
             }
         }
     };

@@ -2,6 +2,7 @@ package net.minecraft.client.multiplayer;
 
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.game.ServerJoinEvent;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import lombok.var;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -53,6 +54,7 @@ public class GuiConnecting extends GuiScreen {
                 try {
                     var serverJoinEvent = new ServerJoinEvent(ip, port);
                     Client.getInstance().getEventDispatcher().dispatch(serverJoinEvent);
+                    ServerUtils.checkHosts();
 
                     if (serverJoinEvent.isCancelled()) return;
 
