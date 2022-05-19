@@ -13,6 +13,7 @@ import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -126,8 +127,10 @@ public class AutoArmorModule extends Module {
     }
 
     public void drop(int slot) {
-        mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, slot, 1, 4, mc.thePlayer);
-        lastCycle = System.currentTimeMillis();
+        if (!(mc.currentScreen instanceof GuiContainer) && mc.thePlayer != null && mc.theWorld != null) {
+            mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, slot, 1, 4, mc.thePlayer);
+            lastCycle = System.currentTimeMillis();
+        }
     }
 
     private float getProtValue(ItemStack stack) {

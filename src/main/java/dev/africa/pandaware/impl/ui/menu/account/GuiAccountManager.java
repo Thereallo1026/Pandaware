@@ -14,12 +14,14 @@ import dev.africa.pandaware.impl.module.misc.StreamerModule;
 import dev.africa.pandaware.impl.ui.menu.button.CustomButton;
 import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.MouseUtils;
-import dev.africa.pandaware.utils.java.FileUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.network.NetworkUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
+import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
+import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
 import io.netty.util.internal.ThreadLocalRandom;
+import lombok.val;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.MathHelper;
@@ -33,9 +35,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
@@ -51,6 +50,8 @@ public class GuiAccountManager extends GuiScreen {
     private Account loggedInAccount;
     private Account selectedAccount;
     private double accountsY, scrolling;
+
+    private final MicrosoftAuthenticator auth = new MicrosoftAuthenticator();
 
     @Override
     public void initGui() {
@@ -68,14 +69,13 @@ public class GuiAccountManager extends GuiScreen {
         }
 
         usernameBox = new UsernameTextBox(0, width - 230, 55, 175, 17);
-        passwordBox = new PasswordTextBox(1, width - 230, 55 + 20, 175, 17);
-        customButtons.add(new CustomButton(0, width - 230, 55 + 20 + 20, 175, 17, "Login", true));
-        customButtons.add(new CustomButton(1, width - 230, 55 + 20 + 20 + 20, 175, 17, "Import mail:password", true));
-        customButtons.add(new CustomButton(2, width - 230, 55 + 20 + 20 + 20 + 20, 175, 17, "Random username login", true));
-        customButtons.add(new CustomButton(3, width - 230, 55 + 20 + 20 + 20 + 20 + 20, 175, 17, "Anticheat login", true));
-        customButtons.add(new CustomButton(4, width - 230, 55 + 20 + 20 + 20 + 20 + 20 + 20, 175, 17, "Add account", true));
-        customButtons.add(new CustomButton(5, width - 230, 55 + 20 + 20 + 20 + 20 + 20 + 20 + 20, 175, 17, "Add Microsoft account", true));
-        customButtons.add(new CustomButton(6, width - 230, 55 + 20 + 20 + 20 + 20 + 20 + 20 + 20 + 20, 175, 17, "Import accounts", true));
+        passwordBox = new PasswordTextBox(1, width - 230, 75, 175, 17);
+        customButtons.add(new CustomButton(0, width - 230, 95, 175, 17, "Login", true));
+        customButtons.add(new CustomButton(1, width - 230, 115, 175, 17, "Import mail:password", true));
+        customButtons.add(new CustomButton(2, width - 230, 135, 175, 17, "Random username login", true));
+        customButtons.add(new CustomButton(3, width - 230, 155, 175, 17, "Anticheat login", true));
+        customButtons.add(new CustomButton(4, width - 230, 175, 175, 17, "Add account", true));
+        customButtons.add(new CustomButton(5, width - 230, 195, 175, 17, "Add Microsoft account", true));
     }
 
     @Override
@@ -170,7 +170,7 @@ public class GuiAccountManager extends GuiScreen {
 
         if (loggedInAccount != null) {
             StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
-            Fonts.getInstance().getProductSansBig().drawCenteredStringWithShadow("Current: §7" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + (loggedInAccount.isCracked() ? " §c(Cracked)" : ""), width - 235 + 92, 55 + 20 + 20 + 20 + 20 + 20 + 20 + 20 + 20 + 20, -1);
+            Fonts.getInstance().getProductSansBig().drawCenteredStringWithShadow("Current: §7" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + (loggedInAccount.isCracked() ? " §c(Cracked)" : ""), width - 235 + 92, 215, -1);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -296,43 +296,27 @@ public class GuiAccountManager extends GuiScreen {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Cannot add a blank username", 5);
                 }
                 break;
-            case 5:
-                Client.getInstance().getMicrosoftProvider().openUrl();
-                break;
-            case 6:
-                Client.getInstance().getExecutor().execute(() -> {
-                    try {
-                        File altFile = FileUtils.openFilePicker(true);
-
-                        if (altFile != null) {
-                            FileReader fileReader = new FileReader(altFile);
-                            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-                            String line;
-                            while ((line = bufferedReader.readLine().replaceFirst("\\[NFA]", "")) != null) {
-                                String[] accountData = line.split(":");
-                                String[] splitMail = accountData[0].split(" ");
-                                String[] splitPassword = accountData[1].split(" ");
-
-                                String mail = splitMail[0].split("\\|")[0];
-                                String password = splitPassword[0].split("\\|")[0];
-
-                                Account account = new Account(mail, "", password, "", "", false, false, false);
-
-                                if (!Client.getInstance().getAccountManager().getItems().contains(account)) {
-                                    Client.getInstance().getAccountManager().getItems().add(account);
-                                }
-                            }
-                            fileReader.close();
-                            bufferedReader.close();
-
-                            Client.getInstance().getFileManager().saveAll();
-                            Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Successfully imported accounts!", 5);
+            case 5: //TODO: fix not working when building with intelligay
+                /*if (usernameBox.getText().length() > 0 && passwordBox.getText().length() > 0) {
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Logging in...", 3);
+                    new Thread(() -> {
+                        Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "thread created", 1);
+                        try {
+                            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "try", 1);
+                            val authrequest = auth.loginWithCredentials(usernameBox.getText(), passwordBox.getText());
+                            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, authrequest.getProfile().getName(), 1);
+                            createMicrosoftSession(authrequest.getProfile().getName(), authrequest.getProfile().getId(), authrequest.getAccessToken());
+                        } catch (MicrosoftAuthenticationException e) {
+                            System.out.println(usernameBox.getText());
+                            System.out.println(passwordBox.getText());
+                            e.printStackTrace();
+                            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Invalid Credentials", 5);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+                    }).start();
+                } else {
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Input login credentials retard", 3);
+                }*/
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Unfinished", 3);
                 break;
         }
 
@@ -431,7 +415,7 @@ public class GuiAccountManager extends GuiScreen {
             }
             Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Logging in...", 5);
 
-            Session auth = createSession(username, password);
+            Session auth = microsoft ? createMicrosoftSession(username, uuid, getTokenMicrosoft(refreshToken)) : createSession(username, password);
 
             if (auth == null) {
                 Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Login failed!", 5);

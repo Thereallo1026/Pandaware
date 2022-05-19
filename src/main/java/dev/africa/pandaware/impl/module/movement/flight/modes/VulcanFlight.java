@@ -19,9 +19,13 @@ public class VulcanFlight extends ModuleMode<FlightModule> {
                     mc.thePlayer.fallDistance = 0;
                 }
                 if (mc.thePlayer.ticksExisted % 3 != 0) {
-                    mc.thePlayer.motionY = -0.097 - (1E-8D);
+                    mc.thePlayer.motionY = -0.1 - (1E-8D);
                 } else {
                     mc.thePlayer.motionY += 0.0132;
+                }
+
+                if (mc.thePlayer.ticksExisted % 41 == 0) {
+                    mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + (0.42f + 0.1 + (1E-8D)), mc.thePlayer.posZ);
                 }
             }
         }

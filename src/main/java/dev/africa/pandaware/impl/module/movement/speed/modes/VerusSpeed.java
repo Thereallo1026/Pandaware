@@ -1,11 +1,13 @@
 package dev.africa.pandaware.impl.module.movement.speed.modes;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
+import dev.africa.pandaware.impl.module.combat.KillAuraModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
@@ -167,15 +169,16 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
                 if (!mc.gameSettings.keyBindJump.pressed && this.shouldSpeed) {
                     if (stage >= 7 && mc.isMoveMoving()) {
                         float add = mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.12f : -0.05f;
+                        KillAuraModule aura = Client.getInstance().getModuleManager().getByClass(KillAuraModule.class);
+                        boolean targetIsNull = aura.getTarget() == null;
+
                         boolean strafing = mc.gameSettings.keyBindLeft.pressed || mc.gameSettings.keyBindRight.pressed ||
                                 mc.gameSettings.keyBindBack.pressed;
-                        float sideways = (strafing) ? mc.thePlayer.isPotionActive(Potion.moveSpeed) ? -0.12f : -0.06f : 0f;
+                        float sideways = (strafing || !targetIsNull) ? mc.thePlayer.isPotionActive(Potion.moveSpeed) ? -0.12f : -0.06f : 0f;
 
-                        if (strafing) {
-                            mc.thePlayer.setSprinting(false);
-                        }
+                        mc.thePlayer.setSprinting(!strafing && targetIsNull);
 
-                        MovementUtils.strafe(event, MovementUtils.getSpeed(event) + ((0.25f + add) + sideways));
+                        MovementUtils.strafe(event, MovementUtils.getSpeed(event) + ((0.25f + add) + sideways + (targetIsNull ? 0 : -0.05)));
                         MovementUtils.strafe(event, MovementUtils.getSpeed(event) - RandomUtils.nextFloat(0.012f, 0.02f));
                     }
                 }
