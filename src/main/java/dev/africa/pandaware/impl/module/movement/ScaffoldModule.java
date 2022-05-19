@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.module.movement;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
@@ -13,6 +14,7 @@ import dev.africa.pandaware.impl.event.player.SafeWalkEvent;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
+import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
@@ -49,6 +51,8 @@ import org.lwjgl.input.Keyboard;
 @ModuleInfo(name = "Scaffold", category = Category.MOVEMENT)
 public class ScaffoldModule extends Module {
     private final EnumSetting<ScaffoldMode> scaffoldMode = new EnumSetting<>("Mode", ScaffoldMode.HYPIXEL);
+    private final EnumSetting<HypixelMode> hypixelMode = new EnumSetting<>("Hypixel Mode", HypixelMode.NORMAL, () ->
+            this.scaffoldMode.getValue() == ScaffoldMode.HYPIXEL);
     private final BooleanSetting itemSpoof = new BooleanSetting("Item Spoof", true);
     private final BooleanSetting tower = new BooleanSetting("Tower", true);
     private final EnumSetting<RotationMode> rotationMode = new EnumSetting<>("Rotation mode", RotationMode.NEW);
@@ -82,10 +86,13 @@ public class ScaffoldModule extends Module {
     private Vec2f currentRotation;
     private final TimeHelper towerTimer = new TimeHelper();
     private final TimeHelper vulcanTimer = new TimeHelper();
+    private boolean jumped;
+    private double lastDistance;
 
     public ScaffoldModule() {
         this.registerSettings(
                 this.scaffoldMode,
+                this.hypixelMode,
                 this.spoofMode,
                 this.rotationMode,
                 this.towerMode,
@@ -284,6 +291,8 @@ public class ScaffoldModule extends Module {
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.POST) return;
 
+        lastDistance = MovementUtils.getLastDistance();
+
         if (this.rotate.getValue() && this.rotations != null) {
             switch (this.rotationMode.getValue()) {
                 case SNAP:
@@ -405,6 +414,19 @@ public class ScaffoldModule extends Module {
                     break;
             }
         }
+
+        if (this.scaffoldMode.getValue() == ScaffoldMode.HYPIXEL && this.hypixelMode.getValue() == HypixelMode.NORMAL) {
+            if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
+                if (mc.isMoveMoving() &&
+                        !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()
+                        && (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) &&
+                        !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) && PlayerUtils.isMathGround() &&
+                        mc.thePlayer.ticksExisted % 2 == 0) {
+                    event.setY(event.getY() + 0.05);
+                    event.setOnGround(false);
+                }
+            }
+        }
     };
 
     @EventHandler
@@ -412,11 +434,38 @@ public class ScaffoldModule extends Module {
         if (getItemSlot(true) == -1) return;
         switch (scaffoldMode.getValue()) {
             case HYPIXEL:
-                if (mc.thePlayer.onGround && mc.isMoveMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
-                        && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
-                    event.y = mc.thePlayer.motionY = 0.4f;
-                    MovementUtils.strafe((MovementUtils.getBaseMoveSpeed() * 0.75) *
-                            (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
+                switch (this.hypixelMode.getValue()) {
+                    case NORMAL:
+                        if (PlayerUtils.isMathGround() && !mc.gameSettings.keyBindSneak.isKeyDown()) {
+                            MovementUtils.strafe(event, 0.287 *
+                                    (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
+                        } else if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
+                            mc.thePlayer.motionX *= 0.7;
+                            mc.thePlayer.motionZ *= 0.7;
+                        }
+                        break;
+                    case KEEPY:
+                        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
+                            if (mc.thePlayer.onGround && mc.isMoveMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
+                                    && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
+                                event.y = mc.thePlayer.motionY = 0.4f;
+                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 0.75 *
+                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.65 : 1) *
+                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.5 : 0.8) *
+                                        (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
+                                jumped = true;
+                            } else if (jumped) {
+                                MovementUtils.strafe((lastDistance - 0.66F * (lastDistance - MovementUtils.getBaseMoveSpeed()))
+                                        * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.65 : 0.75));
+                                jumped = false;
+                            }
+                            if (!Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()) && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
+                                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
+                            }
+                        } else {
+                            event.y = mc.thePlayer.motionY = Math.random();
+                        }
+                        break;
                 }
                 break;
             case BLOCKSMC:
@@ -478,7 +527,7 @@ public class ScaffoldModule extends Module {
                         if (this.blockEntry != null) {
                             if (mc.thePlayer.onGround) {
                                 event.y = mc.thePlayer.motionY = 0.42f;
-                            } else if (mc.thePlayer.getAirTicks() == 5) {
+                            } else if (mc.thePlayer.getAirTicks() == 5 && !mc.isMoveMoving()) {
                                 event.y = mc.thePlayer.motionY = -0.4f;
                             }
                         }
@@ -511,7 +560,7 @@ public class ScaffoldModule extends Module {
                             boolean shouldRun = !mc.isMoveMoving() || towerMove;
 
                             if (this.blockEntry != null && shouldRun) {
-                                event.y = mc.thePlayer.motionY = onHypixel ? 0.419999999f : 0.38f;
+                                event.y = mc.thePlayer.motionY = onHypixel ? 0.41999999f : 0.38f;
 
                                 long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
 
@@ -582,6 +631,12 @@ public class ScaffoldModule extends Module {
                         : new BlockPos(mc.thePlayer.posX + dX, blockBelowY, mc.thePlayer.posZ + dZ).down();
 
                 this.blockEntry = this.getBlockEntry(new BlockPos(blockBelow1));
+
+                if (this.blockEntry != null) {
+                    if (this.blockEntry.facing == EnumFacing.UP || this.blockEntry.facing == EnumFacing.DOWN) {
+                        return;
+                    }
+                }
 
                 if (BlockUtils.getBlockAtPos(blockBelow1) == Blocks.air) {
                     this.placeBlock(this.blockEntry, slot, spoofItem);
@@ -989,6 +1044,14 @@ public class ScaffoldModule extends Module {
         BLOCKSMC("BlocksMC"),
         HYPIXEL("Hypixel"),
         VULCAN("Vulcan");
+
+        private final String label;
+    }
+
+    @AllArgsConstructor
+    private enum HypixelMode {
+        NORMAL("Normal"),
+        KEEPY("KeepY");
 
         private final String label;
     }

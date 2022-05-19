@@ -2,6 +2,7 @@ package dev.africa.pandaware.utils.player;
 
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
+import dev.africa.pandaware.utils.math.MathUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.potion.Potion;
@@ -119,6 +120,24 @@ public class MovementUtils implements MinecraftInstance {
             rotationYaw += 90F * forward;
 
         return rotationYaw;
+    }
+
+    public double getLowHopMotion(double motion) {
+        double base = MathUtils.roundToDecimal(mc.thePlayer.posY - (int) mc.thePlayer.posY, 2);
+
+        if (base == 0.4) {
+            return 0.31f;
+        } else if (base == 0.71) {
+            return 0.04f;
+        } else if (base == 0.75) {
+            return -0.2f;
+        } else if (base == 0.55) {
+            return -0.19f;
+        } else if (base == 0.41) {
+            return -0.2f;
+        }
+
+        return motion;
     }
 
     public final double MODULO_GROUND = 1 / 64D;

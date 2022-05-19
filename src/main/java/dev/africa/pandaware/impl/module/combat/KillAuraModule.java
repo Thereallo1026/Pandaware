@@ -128,6 +128,7 @@ public class KillAuraModule extends Module {
     private final BooleanSetting unblockOnAttack = new BooleanSetting("Unblock on attack", false, this.autoBlock::getValue);
     private final BooleanSetting rayCast = new BooleanSetting("Raycast", false);
     private final BooleanSetting rayTrace = new BooleanSetting("Raytrace", false);
+    private final BooleanSetting vulcant = new BooleanSetting("Funny Packet", false);
 
     private final TimeHelper clickTimer = new TimeHelper();
     private final SecureRandom random = new SecureRandom();
@@ -162,6 +163,7 @@ public class KillAuraModule extends Module {
                 this.unblockOnAttack,
                 this.rotate,
                 this.antiSnap,
+                this.vulcant,
                 this.returnOnScaffold,
                 this.middleRotation,
                 this.randomizeAimPoint,
@@ -392,6 +394,14 @@ public class KillAuraModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+        if (this.vulcant.getValue()) {
+            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
+                    mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ,
+                    this.lastRotation.getX() == 0 ? mc.thePlayer.rotationYaw : this.lastRotation.getX(),
+                    this.lastRotation.getY() == 0 ? mc.thePlayer.rotationPitch : this.lastRotation.getY(),
+                    mc.thePlayer.onGround
+            ));
+        }
 
         this.attacks = 0;
         this.blockCount = 0;
@@ -702,10 +712,10 @@ public class KillAuraModule extends Module {
                     break;
 
                 case HYPIXEL:
-                    if (!mc.thePlayer.isBlockingSword() && mc.thePlayer.ticksExisted % 3 == 0) {
+                    if (!mc.thePlayer.isBlockingSword()) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
-                                new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(),
-                                0.000000008124124f, 0.0000000004921712f, 0.000000001248912f
+                                new BlockPos(-1, -1, -1), 254, mc.thePlayer.inventory.getCurrentItem(),
+                                0.008124124f, 0.00004921712f, 0.0081248912f
                         ));
                         if (this.target instanceof EntityPlayer) {
                             mc.playerController.interactWithEntitySendPacket(mc.thePlayer, this.target);
@@ -949,10 +959,10 @@ public class KillAuraModule extends Module {
             }
 
             case FULL_RANDOM: {
-                double min = this.aps.getFirstValue().doubleValue();
-                double max = this.aps.getSecondValue().doubleValue();
+                double min = this.aps.getFirstValue().doubleValue() * RandomUtils.nextDouble(0, 1);
+                double max = this.aps.getSecondValue().doubleValue() * RandomUtils.nextDouble(0, 1);
 
-                double time = (max / min) * ((max / RandomUtils.nextDouble(1, 2)));
+                double time = (max / min) * (RandomUtils.nextDouble(min, max));
 
                 return this.timer.reach((float) (1000L / time));
             }

@@ -8,16 +8,20 @@ import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.setting.EnumSetting;
+import dev.africa.pandaware.utils.player.MovementUtils;
+import dev.africa.pandaware.utils.player.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.var;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.AxisAlignedBB;
 
 public class CollideFlight extends ModuleMode<FlightModule> {
     private final EnumSetting<Mode> mode = new EnumSetting<>("Mode", Mode.NORMAL);
 
     private double startY;
+    private int stage;
 
     public CollideFlight(String name, FlightModule parent) {
         super(name, parent);
@@ -36,6 +40,7 @@ public class CollideFlight extends ModuleMode<FlightModule> {
                 }
                 break;
             case JUMP:
+            case YPORT:
                 if (mc.gameSettings.keyBindSneak.isKeyDown() && mc.thePlayer.posY <= startY) {
                     startY = Math.floor(mc.thePlayer.posY);
                 }
@@ -49,10 +54,55 @@ public class CollideFlight extends ModuleMode<FlightModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (this.mode.getValue() == Mode.JUMP) {
-            if (mc.thePlayer.posY <= startY) {
-                event.y = mc.thePlayer.motionY = 0.42f;
-            }
+        switch (this.mode.getValue()) {
+            case JUMP:
+                if (PlayerUtils.isMathGround()) {
+                    double speedAmplifier = (mc.thePlayer.isPotionActive(Potion.moveSpeed)
+                            ? ((mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * 0.15) : 0);
+
+                    mc.gameSettings.keyBindJump.pressed = false;
+                    event.y = mc.thePlayer.motionY = 0.42f;
+                    MovementUtils.strafe(event, 0.49 + speedAmplifier);
+                } else {
+                    MovementUtils.strafe(event, MovementUtils.getSpeed());
+                }
+                break;
+            case YPORT:
+                if (mc.isMoveMoving()) {
+                    if (mc.thePlayer.isCollidedHorizontally) {
+                        if (PlayerUtils.isMathGround()) {
+                            this.stage = 0;
+                            event.y = mc.thePlayer.motionY = 0.42F;
+                        }
+                    } else {
+                        double speedAmplifier = (mc.thePlayer.isPotionActive(Potion.moveSpeed)
+                                ? ((mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * 0.2) : 0);
+
+                        mc.gameSettings.keyBindJump.pressed = false;
+                        double baseSpeed = 0.2873D;
+
+                        if (mc.thePlayer.onGround) {
+                            this.stage++;
+                            double sped = 2.2 + speedAmplifier;
+                            if (this.stage < 2) {
+                                sped -= 0.9;
+                            }
+
+                            MovementUtils.strafe(event, baseSpeed * sped);
+                            event.y = 0.42f;
+                            mc.thePlayer.motionY = 0;
+                        } else {
+                            if (mc.thePlayer.getAirTicks() == 1) {
+                                mc.thePlayer.motionY = -0.078400001525879;
+                            }
+                        }
+
+                        MovementUtils.strafe();
+                    }
+                } else {
+                    this.stage = 0;
+                }
+                break;
         }
     };
 
@@ -76,6 +126,7 @@ public class CollideFlight extends ModuleMode<FlightModule> {
     @Override
     public void onEnable() {
         startY = Math.floor(mc.thePlayer.posY);
+        stage = 0;
     }
 
     @Override
@@ -89,7 +140,8 @@ public class CollideFlight extends ModuleMode<FlightModule> {
     private enum Mode {
         NORMAL("Normal"),
         JUMP("Jump"),
-        SILENT_ACCEPT("Silent Accept");
+        SILENT_ACCEPT("Silent Accept"),
+        YPORT("Yport");
 
         private final String label;
     }

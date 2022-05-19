@@ -56,15 +56,20 @@ public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICr
                         break;
 
                     case MELT:
-                        if (this.stage == 0) {
-                            event.setY(event.getY() + .20200003768373);
-                        } else if (this.stage == 1) {
-                            event.setY(event.getY() + 0.01135979112147);
-                        } else if (this.stage == 2) {
-                            event.setY(event.getY() + 0.053150004615783);
-                        } else if (this.stage == 3) {
-                            event.setY(event.getY() + 0.02855504270225);
-                            this.stage = 0;
+                        double offset = RandomUtils.nextFloat(0.0001f, 0.0003f);
+                        switch (this.stage) {
+                            case 0:
+                                event.setY(event.getY() + 0.0012412948712);
+                                break;
+                            case 1:
+                                event.setY(event.getY() + 0.024671798242);
+                                break;
+                            case 2:
+                                event.setY(event.getY() + 0.00742167842112);
+                                break;
+                            case 3:
+                                event.setY(event.getY() + 0.02124121242);
+                                break;
                         }
                         break;
                 }
