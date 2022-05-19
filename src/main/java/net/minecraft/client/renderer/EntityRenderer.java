@@ -9,6 +9,7 @@ import dev.africa.pandaware.impl.module.combat.AimAssistModule;
 import dev.africa.pandaware.impl.module.combat.ReachModule;
 import dev.africa.pandaware.impl.module.player.ChestStealerModule;
 import dev.africa.pandaware.impl.module.render.TracersModule;
+import dev.africa.pandaware.impl.ui.menu.mainmenu.GuiNewMainMenu;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import net.minecraft.block.Block;
@@ -2385,8 +2386,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             }
         }
 
-        if (this.mc.currentScreen instanceof GuiMainMenu) {
-            this.updateMainMenu((GuiMainMenu) this.mc.currentScreen);
+        if (this.mc.currentScreen instanceof GuiNewMainMenu) {
+            this.updateMainMenu((GuiNewMainMenu) this.mc.currentScreen);
         }
 
         if (this.updatedWorld != world) {
@@ -2418,7 +2419,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
     }
 
-    private void updateMainMenu(GuiMainMenu p_updateMainMenu_1_) {
+    private void updateMainMenu(GuiNewMainMenu p_updateMainMenu_1_) {
         try {
             String s = null;
             Calendar calendar = Calendar.getInstance();
@@ -2438,7 +2439,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 return;
             }
 
-            Reflector.setFieldValue(p_updateMainMenu_1_, Reflector.GuiMainMenu_splashText, s);
+            Reflector.setFieldValue(p_updateMainMenu_1_, Reflector.GuiNewMainMenu_splashText, s);
         } catch (Throwable var6) {
             ;
         }

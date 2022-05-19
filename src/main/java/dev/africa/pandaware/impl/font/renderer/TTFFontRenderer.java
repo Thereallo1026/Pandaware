@@ -218,6 +218,10 @@ public class TTFFontRenderer {
         drawStringWithShadow(text, x - getStringWidth(text) / 2, y, color);
     }
 
+    public void drawCenteredRainbowStringWithShadow(String text, float x, float y, int fade, int speed) {
+        drawRainbowStringWithShadow(text, x - getStringWidth(text) / 2, y, fade, speed);
+    }
+
     private void renderString(String text, double x, double y, int color, boolean shadow) {
         if (text.length() <= 0) {
             return;

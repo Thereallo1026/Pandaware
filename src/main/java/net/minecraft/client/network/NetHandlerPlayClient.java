@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.mojang.authlib.GameProfile;
+import dev.africa.pandaware.impl.ui.menu.mainmenu.GuiNewMainMenu;
 import dev.africa.pandaware.utils.network.NetworkUtils;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
@@ -554,7 +555,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
                 this.gameController.displayGuiScreen(new GuiDisconnected(this.guiScreenServer, "disconnect.lost", reason));
             }
         } else {
-            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(new GuiMainMenu()), "disconnect.lost", reason));
+            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(new GuiNewMainMenu()), "disconnect.lost", reason));
         }
     }
 

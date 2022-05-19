@@ -182,19 +182,11 @@ public class Client implements Initializable {
 
     void initTitle() {
         //TODO: Needs fixing.
-        String randomTitleText = null;
-        ResourceLocation titlesText = new ResourceLocation("minecraft/pandaware/titles.txt");
-        System.out.println(titlesText.getResourcePath());
-        try {
-            randomTitleText = FileUtils.randomFileLine("assets/minecraft/pandaware/titles.txt");
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        String randomTitleText = FileUtils.getRandomTitleLine();
 
         if(randomTitleText != null) {
-            Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion() + randomTitleText);
-            System.out.println("Set Title.");
+            Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion() + " - " + randomTitleText);
+            System.out.println("Set Title to: " + randomTitleText + ".");
         }else {
             Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion());
             System.out.println("Failed to set title, set default title.");

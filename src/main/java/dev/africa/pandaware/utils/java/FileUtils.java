@@ -8,8 +8,6 @@ import net.minecraft.util.ResourceLocation;
 import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -104,22 +102,54 @@ public class FileUtils implements MinecraftInstance {
     }
 
     //TODO: FIX
-    public String randomFileLine(String originalFilePath) throws Exception {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(originalFilePath));
-            String line = reader.readLine();
-            List<String> lines = new ArrayList<String>();
-            while (line != null) {
-                lines.add(line);
-                line = reader.readLine();
-            }
-            Random r = new Random();
-            randomLine = lines.get(r.nextInt(lines.size()));
+    public String getRandomTitleLine() {
 
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return randomLine;
+        String[] lines = {"Try death!",
+                "Now on a computer near you!",
+                "*Insert Dead Joke*",
+                "KA is Overpowered",
+                "The Return of Tenebrous!",
+                "Hypixel: The Documentary.",
+                "Brainless monkey moment.",
+                "NCP + Verus + AAC",
+                "The Grass is Greener on This Side",
+                "Cheats: Not for Children Under the Age of 13.",
+                "Bro...",
+                "What the fuck?",
+                "You have been banned from this server for 364d 23h 59m 59s!",
+                "Sentinel Cheat Detection",
+                "A staff member witnessed the use of cheats.",
+                "The Water Fall Of Content!",
+                "CRACKED BY xXxXGaMerBrO34xXxXx",
+                "Novoline Ain't Got Nuthin on Me",
+                "All's Well That Ends Well",
+                "*Casual Reference to Your Mother*",
+                "Yes, but no",
+                "Freak.",
+                "So when's the last time you showered huh?",
+                "Ok.",
+                "Now with more things to kill you!",
+                "Now compatible with the IBM Model M.",
+                "I Pity the Tools...",
+                "The ban hammer has SPOKEN!",
+                "So remember when I asked?",
+                "Subscribe to CallumUncensored",
+                "Pandas... yeah, cool animals right?",
+                "Coming soon to a computer near you",
+                "Dividing by zero!",
+                "Now with EPIC BLUR AND GLOW!",
+                "Press alt-f4",
+                "I Pity the skidders.",
+                "You ok bro?",
+                "NOT THE BEES!!!",
+                "Legend of Novoline",
+                "Also try Terraria!",
+                "Shut Up and Play!",
+                "2: Electric Boogaloo"};
+        Random r =new Random();
+        int randomNumber = r.nextInt(lines.length);
+        return lines[randomNumber];
     }
+
 
 }

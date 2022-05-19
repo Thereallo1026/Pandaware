@@ -13,6 +13,7 @@ import dev.africa.pandaware.impl.event.game.GameLoopEvent;
 import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.module.player.FastPlaceModule;
+import dev.africa.pandaware.impl.ui.menu.mainmenu.GuiNewMainMenu;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.Setter;
 import net.minecraft.block.Block;
@@ -497,9 +498,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.ingameGUI = new GuiIngame(this);
 
         if (this.serverName != null) {
-            this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
+            this.displayGuiScreen(new GuiConnecting(new GuiNewMainMenu(), this, this.serverName, this.serverPort));
         } else {
-            this.displayGuiScreen(new GuiMainMenu());
+            this.displayGuiScreen(new GuiNewMainMenu());
         }
 
         this.renderEngine.deleteTexture(this.mojangLogo);
@@ -821,12 +822,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         }
 
         if (guiScreenIn == null && this.theWorld == null) {
-            guiScreenIn = new GuiMainMenu();
+            guiScreenIn = new GuiNewMainMenu();
         } else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F) {
             guiScreenIn = new GuiGameOver();
         }
 
-        if (guiScreenIn instanceof GuiMainMenu) {
+        if (guiScreenIn instanceof GuiNewMainMenu) {
             this.gameSettings.showDebugInfo = false;
             this.ingameGUI.getChatGUI().clearChatMessages();
         }
