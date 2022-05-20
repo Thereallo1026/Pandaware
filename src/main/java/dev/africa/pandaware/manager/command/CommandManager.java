@@ -22,6 +22,7 @@ public class CommandManager extends Container<Command> implements Initializable 
                 new HelpCommand(),
                 new ConfigCommand(),
                 new ToggleCommand(),
+                new ScriptCommand(),
 
                 new VClipCommand(),
                 new IRCCommand(),

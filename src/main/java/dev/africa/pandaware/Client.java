@@ -17,6 +17,7 @@ import dev.africa.pandaware.manager.file.FileManager;
 import dev.africa.pandaware.manager.ignore.IgnoreManager;
 import dev.africa.pandaware.manager.module.ModuleManager;
 import dev.africa.pandaware.manager.notification.NotificationManager;
+import dev.africa.pandaware.manager.script.ScriptManager;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.impl.socket.util.HWIDUtil;
 import dev.africa.pandaware.utils.client.ServerUtils;
@@ -56,7 +57,8 @@ public class Client implements Initializable {
     private final FileManager fileManager = new FileManager();
     private final ModuleManager moduleManager = new ModuleManager();
     private final CommandManager commandManager = new CommandManager();
-    private final ClickGUI clickGUI = new ClickGUI();
+    @Setter
+    private ClickGUI clickGUI = new ClickGUI();
 
     private final ConfigManager configManager = new ConfigManager();
     private final AccountManager accountManager = new AccountManager();
@@ -68,6 +70,7 @@ public class Client implements Initializable {
     private final SocketHandler socketHandler = new SocketHandler();
     private final HWIDUtil hwidUtil = new HWIDUtil();
     private final GameListener gameListener = new GameListener();
+    private final ScriptManager scriptManager = new ScriptManager();
 
     @Setter
     private boolean isKillSwitch;
@@ -121,9 +124,10 @@ public class Client implements Initializable {
         Fonts.getInstance().init();
 
         this.moduleManager.init();
+        this.fileManager.init();
+        this.scriptManager.init();
         this.commandManager.init();
         this.clickGUI.init();
-        this.fileManager.init();
         this.configManager.init();
         try {
             this.microsoftProvider.getAuthManagerWebServer().start();

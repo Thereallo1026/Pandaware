@@ -126,6 +126,12 @@ public class ScaffoldModule extends Module {
 
         this.lastSlot = mc.thePlayer.inventory.currentItem;
         mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
+        if (this.scaffoldMode.getValue() == ScaffoldMode.VULCAN) {
+            if (!mc.thePlayer.onGround) {
+                mc.thePlayer.motionX *= 0.7;
+                mc.thePlayer.motionZ *= 0.7;
+            }
+        }
     }
 
     @Override
@@ -451,7 +457,7 @@ public class ScaffoldModule extends Module {
                                 event.y = mc.thePlayer.motionY = 0.4f;
                                 MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 0.75 *
                                         (mc.thePlayer.getDiagonalTicks() > 0 ? 0.65 : 1) *
-                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.5 : 0.8) *
+                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.45 : 0.7) *
                                         (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                                 jumped = true;
                             } else if (jumped) {
@@ -485,7 +491,7 @@ public class ScaffoldModule extends Module {
                 if (mc.thePlayer.onGround && mc.isMoveMoving()) {
                     if (mc.thePlayer.inventory.getCurrentItem().stackSize >= 7) {
                         event.y = mc.thePlayer.motionY = 0.42f;
-                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.11);
+                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.1);
                     } else {
                         MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.7);
                     }
@@ -560,7 +566,7 @@ public class ScaffoldModule extends Module {
                             boolean shouldRun = !mc.isMoveMoving() || towerMove;
 
                             if (this.blockEntry != null && shouldRun) {
-                                event.y = mc.thePlayer.motionY = onHypixel ? 0.41999999f : 0.38f;
+                                event.y = mc.thePlayer.motionY = onHypixel ? 0.419f : 0.38f;
 
                                 long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
 

@@ -65,7 +65,8 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
                 }
             }
         } else {
-            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C18PacketSpectate(mc.thePlayer.getUniqueID()));
+            if (mc.thePlayer != null && mc.theWorld != null)
+            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(false));
         }
     };
 }

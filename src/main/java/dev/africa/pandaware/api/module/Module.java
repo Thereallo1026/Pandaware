@@ -10,9 +10,11 @@ import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.api.setting.Setting;
 import dev.africa.pandaware.impl.module.render.ClickGUIModule;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.setting.ModeSetting;
 import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.Printer;
+import dev.africa.pandaware.utils.client.SoundUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,18 +39,29 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
 
     private TaskedEventListener<?> taskedEvent;
 
+    private boolean script;
+
     public Module() {
-        if (this.getClass().isAnnotationPresent(ModuleInfo.class)) {
-            ModuleInfo moduleInfo = this.getClass().getAnnotation(ModuleInfo.class);
+        this("", "", null, 0, false);
+    }
 
+    public Module(String name, String description, Category category, int key, boolean script) {
+        if (this.getClass().isAnnotationPresent(ModuleInfo.class) || script) {
+            if (script) {
+                this.data = new ModuleData(name, description, category, key, false, false);
 
-            this.data = new ModuleData(
-                    moduleInfo.name(),
-                    moduleInfo.description(),
-                    moduleInfo.category(),
-                    moduleInfo.key(),
-                    false, false
-            );
+                this.script = true;
+            } else {
+                ModuleInfo moduleInfo = this.getClass().getAnnotation(ModuleInfo.class);
+
+                this.data = new ModuleData(
+                        moduleInfo.name(),
+                        moduleInfo.description(),
+                        moduleInfo.category(),
+                        moduleInfo.key(),
+                        false, false
+                );
+            }
 
             this.settings = new LinkedHashMap<>();
 
@@ -64,10 +77,15 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
     public void toggle(boolean enabled) {
         this.data.setEnabled(enabled);
 
-        if (enabled) {
-            Client.getInstance().getEventDispatcher().subscribe(this);
+        HUDModule hudModule = mc.thePlayer == null ? null :
+                Client.getInstance().getModuleManager().getByClass(HUDModule.class);
 
-            if (this.modeSetting != null && this.modeSetting.getValue() != null) {
+        if (enabled) {
+            if (!this.script) {
+                Client.getInstance().getEventDispatcher().subscribe(this);
+            }
+
+            if (this.modeSetting != null && this.modeSetting.getValue() != null && !this.script) {
                 this.currentMode = this.modeSetting.getValue();
 
                 if (this.currentMode != null) {
@@ -81,18 +99,31 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
             }
 
             if (mc.thePlayer != null) {
-                if (!(this instanceof ClickGUIModule)) {
+                if (hudModule != null && hudModule.getToggleSound().getValue() &&
+                        !(this instanceof ClickGUIModule)) {
+                    SoundUtils.playSound(SoundUtils.CustomSound.ENABLE);
+                }
+
+                if (!(this instanceof ClickGUIModule) && hudModule != null && hudModule.getToggleNotifications().getValue()) {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION,
                             "§aEnabled §7" + this.getData().getName(), 2);
                 }
-                this.onEnable();
+
+                if (this.script) {
+                    Client.getInstance().getScriptManager().invokeEvent("enable", null);
+                } else {
+                    this.onEnable();
+                }
             }
         } else {
-            Client.getInstance().getEventDispatcher().unsubscribe(this);
+            if (!this.script) {
+                Client.getInstance().getEventDispatcher().unsubscribe(this);
+            }
 
-            if (this.modeSetting != null && this.modeSetting.getValue() != null) {
+            if (this.modeSetting != null && this.modeSetting.getValue() != null && !this.script) {
                 if (this.currentMode != null) {
                     Client.getInstance().getEventDispatcher().unsubscribe(this.currentMode);
+
                     if (mc.thePlayer != null) {
                         this.currentMode.onDisable();
                     }
@@ -108,11 +139,21 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
             }
 
             if (mc.thePlayer != null) {
-                if (!(this instanceof ClickGUIModule)) {
+                if (hudModule != null && hudModule.getToggleSound().getValue() &&
+                        !(this instanceof ClickGUIModule)) {
+                    SoundUtils.playSound(SoundUtils.CustomSound.DISABLE);
+                }
+
+                if (!(this instanceof ClickGUIModule) && hudModule != null && hudModule.getToggleNotifications().getValue()) {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION,
                             "§4Disabled §7" + this.getData().getName(), 2);
                 }
-                this.onDisable();
+
+                if (this.script) {
+                    Client.getInstance().getScriptManager().invokeEvent("disable", null);
+                } else {
+                    this.onDisable();
+                }
             }
         }
     }
@@ -137,7 +178,7 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
         }
     }
 
-    protected void registerSettings(Setting<?>... settings) {
+    public void registerSettings(Setting<?>... settings) {
         for (Setting<?> setting : settings) {
             this.settings.put(setting, setting.getName());
         }

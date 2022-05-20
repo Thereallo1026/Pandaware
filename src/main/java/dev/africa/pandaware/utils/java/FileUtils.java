@@ -1,6 +1,7 @@
 package dev.africa.pandaware.utils.java;
 
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
+import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -8,7 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -101,9 +101,7 @@ public class FileUtils implements MinecraftInstance {
         return builder.toString();
     }
 
-    //TODO: FIX
     public String getRandomTitleLine() {
-
         String[] lines = {"Try death!",
                 "Now on a computer near you!",
                 "*Insert Dead Joke*",
@@ -111,16 +109,15 @@ public class FileUtils implements MinecraftInstance {
                 "The Return of Tenebrous!",
                 "Hypixel: The Documentary.",
                 "Brainless monkey moment.",
-                "NCP + Verus + AAC",
+                "NCP , Verus , AAC",
                 "The Grass is Greener on This Side",
                 "Cheats: Not for Children Under the Age of 13.",
                 "Bro...",
                 "What the fuck?",
                 "You have been banned from this server for 364d 23h 59m 59s!",
-                "Sentinel Cheat Detection",
                 "A staff member witnessed the use of cheats.",
                 "The Water Fall Of Content!",
-                "CRACKED BY xXxXGaMerBrO34xXxXx",
+                "CRACKED BY xAnalPvP69x",
                 "Novoline Ain't Got Nuthin on Me",
                 "All's Well That Ends Well",
                 "*Casual Reference to Your Mother*",
@@ -145,10 +142,22 @@ public class FileUtils implements MinecraftInstance {
                 "Legend of Novoline",
                 "Also try Terraria!",
                 "Shut Up and Play!",
-                "2: Electric Boogaloo"};
-        Random r =new Random();
-        int randomNumber = r.nextInt(lines.length);
-        return lines[randomNumber];
+                "2: Electric Boogaloo",
+                "Now with more shitcode",
+                "Not skidded from Tenacity",
+                "Sentinel caught you cheating (Anticheat)",
+                "Now with more else-if chains!",
+                "Cracked by coinful & kant",
+                "Roy Hwang edition",
+                "Ryan Davies edition",
+                "مثل دسار ديك أسود",
+                "ching chong",
+                "アストルフォ抱き枕を送ってください",
+                "Developed at 2710 English Ivy Ct. Longwood, Florida",
+                "no autoblock?",
+                "Do you like my ascii penis?",
+                "RIP your chances at losing your virginity"};
+        return lines[RandomUtils.nextInt(0, lines.length)];
     }
 
 

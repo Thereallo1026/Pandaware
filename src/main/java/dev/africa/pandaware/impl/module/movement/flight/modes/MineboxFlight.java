@@ -97,12 +97,10 @@ public class MineboxFlight extends ModuleMode<FlightModule> {
 
         if (this.stage > 0) {
 
-            event.y = mc.thePlayer.motionY = (GameSettings.isKeyDown(mc.gameSettings.keyBindJump) ? 0.42f :
-                    (GameSettings.isKeyDown(mc.gameSettings.keyBindSneak) ? -0.42f : (mc.thePlayer.onGround ? 0.42f : 0f)));
+            event.y = mc.thePlayer.motionY = (GameSettings.isKeyDown(mc.gameSettings.keyBindJump) ? this.speed.getValue().floatValue() :
+                    (GameSettings.isKeyDown(mc.gameSettings.keyBindSneak) ? -this.speed.getValue().floatValue() : (mc.thePlayer.onGround ? 0.42f : 0f)));
 
-            if (mc.isMoveMoving()) {
-                MovementUtils.strafe(event, this.speed.getValue().doubleValue());
-            }
+            MovementUtils.strafe(event, this.speed.getValue().doubleValue());
         } else {
             event.x = mc.thePlayer.motionX = 0;
             event.z = mc.thePlayer.motionZ = 0;
