@@ -42,9 +42,10 @@ public class GuiNewMainMenu extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.initGui();
-        this.drawDefaultBackground();
+        this.drawDefaultBackground(); // Incase of failiure to find wallpaper
+        RenderUtils.drawImage(new ResourceLocation("/pandaware/icons/wallpaper.jpg"), 0, 0, width, height);
 
-        RenderUtils.drawHorizontalGradientRect(0, 0, width, height, new Color(156, 54, 97, 215), new Color(41, 76, 91, 100));
+        RenderUtils.drawHorizontalGradientRect(0, 0, width, height, new Color(255, 255, 255, 126), new Color(0, 0, 0, 136));
 
         RenderUtils.drawImage(new ResourceLocation("/pandaware/icons/panda.png"), width / 2f - 105, 35, 204, 90);
 
@@ -52,6 +53,8 @@ public class GuiNewMainMenu extends GuiScreen {
         normFont.drawCenteredStringWithShadow(Client.getInstance().getManifest().getClientVersion(), width / 2f + 40, 22, -1);
 
         smallFont.drawCenteredStringWithShadow("By Anticheat Alert & Others.", width / 2f, 10, -1);
+
+        normFont.drawCenteredStringWithShadow("Minecraft is a copyright of Mojang, which Pandaware is based on.", width / 2f, 228, -1);
 
         for (GuiButton guiButton : this.buttonList) {
             ((GuiButton) guiButton).drawButton(this.mc, mouseX, mouseY);
@@ -104,15 +107,4 @@ public class GuiNewMainMenu extends GuiScreen {
 
     }
 
-    public static void wait(int ms)
-    {
-        try
-        {
-            Thread.sleep(ms);
-        }
-        catch(InterruptedException ex)
-        {
-            Thread.currentThread().interrupt();
-        }
-    }
 }

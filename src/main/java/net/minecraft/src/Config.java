@@ -2296,7 +2296,7 @@ public class Config
     {
         try
         {
-            ResourceLocation resourcelocation = new ResourceLocation("textures/gui/title/mojang.png");
+            ResourceLocation resourcelocation = new ResourceLocation("pandaware/icons/panda_startup.png");
             InputStream inputstream = getResourceStream(resourcelocation);
 
             if (inputstream == null)

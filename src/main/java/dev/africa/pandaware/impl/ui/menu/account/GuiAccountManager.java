@@ -80,7 +80,9 @@ public class GuiAccountManager extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        this.drawDefaultBackground();
+        this.drawDefaultBackground(); // Incase of failiure to find wallpaper
+        RenderUtils.drawImage(new ResourceLocation("/pandaware/icons/wallpaper.jpg"), 0, 0, width, height);
+        RenderUtils.drawHorizontalGradientRect(0, 0, width, height, new Color(255, 255, 255, 126), new Color(0, 0, 0, 136));
 
         bigFont.drawCenteredStringWithShadow("Account Manager", width / 2f, 20, -1);
 
