@@ -159,19 +159,19 @@ public class Notification {
 
         switch (type) {
             case WARNING:
-                this.typeColor = new Color(0, 217, 255, 255);
+                this.typeColor = new Color(166, 238, 252, 255);
                 icon = path + "warning.png";
                 break;
             case INFORMATION:
-                this.typeColor = new Color(153, 0, 255, 255);
+                this.typeColor = new Color(249, 107, 252, 255);
                 icon = path + "information.png";
                 break;
             case ERROR:
-                this.typeColor = new Color(255, 0, 0, 255);
+                this.typeColor = new Color(255, 79, 79, 255);
                 icon = path + "error.png";
                 break;
             case SUCCESS:
-                this.typeColor = new Color(16, 255, 0, 255);
+                this.typeColor = new Color(111, 255, 102, 255);
                 icon = path + "success.png";
                 break;
             case SPOTIFY:

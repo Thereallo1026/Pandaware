@@ -1139,7 +1139,7 @@ public class KillAuraModule extends Module {
 
     @Override
     public String getSuffix() {
-        return this.eventType.getValue().getLabel() + " §7" + this.entities.size();
+        return this.targetMode.getValue().label + " §7" + this.entities.size();
     }
 
     @AllArgsConstructor

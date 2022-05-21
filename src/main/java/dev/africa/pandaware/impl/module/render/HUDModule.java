@@ -42,6 +42,7 @@ public class HUDModule extends Module {
     private final EnumSetting<ColorMode> colorMode = new EnumSetting<>("Color mode", ColorMode.PANDAWARE);
 
     private final BooleanSetting arraylist = new BooleanSetting("Arraylist", true);
+    //private final BooleanSetting showRenderModules = new BooleanSetting("Show Render Modules", true); idk how to do lol
     private final BooleanSetting watermark = new BooleanSetting("Watermark", true);
     public final BooleanSetting transparentChat = new BooleanSetting("Transparent Chat", false);
     private final BooleanSetting label = new BooleanSetting("Show Labels", true, this.arraylist::getValue);
@@ -93,6 +94,7 @@ public class HUDModule extends Module {
         this.toggle(true);
 
         this.registerSettings(
+                this.showRenderModules,
                 this.colorMode,
                 this.capeMode,
                 this.arraylist,

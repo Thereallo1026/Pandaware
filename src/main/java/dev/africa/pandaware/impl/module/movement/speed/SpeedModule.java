@@ -25,6 +25,7 @@ public class SpeedModule extends Module {
                 new BlocksMCSpeed("BlocksMC", this),
                 new DEVSpeed("DEV", this)
         );
+
     }
 
     @Override

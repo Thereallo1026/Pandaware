@@ -40,6 +40,15 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
                 this.packets = 0;
             }
 
+            /*
+            HYPIXEL TIMER DISABLER GIVEN BY ALAN32. (Up to 1.3 Timer).
+             */
+
+            final C03PacketPlayer c03 = (C03PacketPlayer) event.getPacket();
+            if (event.getPacket() instanceof C03PacketPlayer && !(c03.isMoving()) && !(mc.thePlayer.isSwingInProgress || mc.thePlayer.isUsingItem())) {
+                event.cancel();
+            }
+
             if (this.packets <= 97 && (event.getPacket() instanceof C0FPacketConfirmTransaction ||
                     event.getPacket() instanceof C00PacketKeepAlive ||
                     event.getPacket() instanceof C03PacketPlayer ||

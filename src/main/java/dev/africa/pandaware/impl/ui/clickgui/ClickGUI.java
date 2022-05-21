@@ -77,6 +77,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
     @Override
     public void handleRender(Vec2i mousePosition, float pTicks) {
+        RenderUtils.drawRect(0, 0, width, height, new Color(0, 0, 0, 120).getRGB());
         GlStateManager.pushMatrix();
         if (this.femboyDragging) {
             this.femboyPosition.setX(mousePosition.getX() + this.femboyDraggingPosition.getX());

@@ -29,6 +29,7 @@ import dev.africa.pandaware.impl.module.player.nofall.NoFallModule;
 import dev.africa.pandaware.impl.module.render.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -121,6 +122,10 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                 .stream()
                 .filter(module -> module.getData().getCategory() == category)
                 .collect(Collectors.toList());
+    }
+
+    public List<Module> getAllModules() {
+        return new ArrayList<>(this.getMap().values());
     }
 
     public <T extends Module> T getByClass(Class<? extends Module> clazz) {

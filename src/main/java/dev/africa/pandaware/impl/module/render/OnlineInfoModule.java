@@ -116,7 +116,7 @@ public class OnlineInfoModule extends Module {
 
             Date date = Calendar.getInstance().getTime();
 
-            text = "Time: §7" + new SimpleDateFormat("HH:mm").format(date);
+            text = "Time: §7" + new SimpleDateFormat("HH:mm:ss").format(date);
             Fonts.getInstance().getArialBdNormal().drawStringWithShadow(text,
                     this.posX.getValue().doubleValue() + 4,
                     this.posY.getValue().doubleValue() + 34,
