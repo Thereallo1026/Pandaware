@@ -55,7 +55,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 motion += PlayerUtils.getJumpBoostMotion();
 
                 event.y = mc.thePlayer.motionY = motion;
-                this.movespeed = (MovementUtils.getBaseMoveSpeed() * 1.55);
+                this.movespeed = (MovementUtils.getBaseMoveSpeed() * 1.75);
                 this.jumped = true;
             } else if (this.jumped) {
                 this.movespeed = this.lastDistance - 0.66F * (this.lastDistance - MovementUtils.getBaseMoveSpeed());
@@ -69,7 +69,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                     this.movespeed -= 0.01f;
                 }
             }
-            if (mc.thePlayer.getAirTicks() == 2 && !mc.thePlayer.isPotionActive(Potion.jump) &&
+            if (mc.thePlayer.getAirTicks() == 5 && !mc.thePlayer.isPotionActive(Potion.jump) &&
                     Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
                 event.y = mc.thePlayer.motionY = -0.1;
             }

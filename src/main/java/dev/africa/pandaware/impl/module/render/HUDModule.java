@@ -94,7 +94,6 @@ public class HUDModule extends Module {
         this.toggle(true);
 
         this.registerSettings(
-                this.showRenderModules,
                 this.colorMode,
                 this.capeMode,
                 this.arraylist,
