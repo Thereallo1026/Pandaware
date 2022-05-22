@@ -6,6 +6,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import net.minecraft.network.play.client.*;
@@ -44,7 +45,10 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
             HYPIXEL TIMER DISABLER GIVEN BY ALAN32. (Up to 1.3 Timer).
              */
 
-            final C03PacketPlayer c03 = (C03PacketPlayer) event.getPacket();
+            C03PacketPlayer c03 = null;
+            if(event.getPacket() instanceof  C03PacketPlayer) {
+                c03 = (C03PacketPlayer) event.getPacket();
+            }
             if (event.getPacket() instanceof C03PacketPlayer && !(c03.isMoving()) && !(mc.thePlayer.isSwingInProgress || mc.thePlayer.isUsingItem())) {
                 event.cancel();
             }
