@@ -18,7 +18,6 @@ import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.TimeHelper;
-import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
@@ -471,7 +470,7 @@ public class ScaffoldModule extends Module {
                                     && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
                                 event.y = mc.thePlayer.motionY = 0.4f;
 
-                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 1.19 *
+                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 0.75 *
                                         (mc.thePlayer.getDiagonalTicks() > 0 ? 0.65 : 1.05) *
                                         (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.45 : 0.75) *
                                         (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
@@ -583,7 +582,7 @@ public class ScaffoldModule extends Module {
                             boolean shouldRun = !mc.isMoveMoving() || towerMove;
 
                             if (this.blockEntry != null && shouldRun) {
-                                event.y = mc.thePlayer.motionY = onHypixel ? 0.42f : 0.38f;
+                                event.y = mc.thePlayer.motionY = onHypixel ? 0.419f : 0.38f;
 
                                 long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
 

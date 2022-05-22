@@ -41,7 +41,7 @@ public class SoundUtils implements MinecraftInstance {
             clip.open(AudioSystem.getAudioInputStream(soundStream));
 
             // normalize volume and clamp it
-            float normalizedVolume = MathHelper.clamp_float(volume / 100f, 0f, 1f);
+            float normalizedVolume = (volume / 100f);
 
             // get gain control
             FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);

@@ -194,13 +194,12 @@ public class Client implements Initializable {
     }
 
     void initTitle() {
-        //TODO: Needs fixing.
         String randomTitleText = FileUtils.getRandomTitleLine();
 
-        if(randomTitleText != null) {
+        if (randomTitleText != null) {
             Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion() + " - " + randomTitleText);
             System.out.println("Set Title to: " + randomTitleText + ".");
-        }else {
+        } else {
             Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion());
             System.out.println("Failed to set title, set default title.");
         }

@@ -29,18 +29,7 @@ log/
 target/
 
 # Minecraft
-workspace/.json
-workspace/.txt
-workspace/.dat
-workspace/.properties
-workspace/ViaMCP/
-workspace/logs/
-workspace/shaderpacks/
-workspace/saves/
-workspace/Pandaware/
-workspace/screenshots/
-workspace/resourcepacks/
-workspace/crash-reports/
+workspace/
 out/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml

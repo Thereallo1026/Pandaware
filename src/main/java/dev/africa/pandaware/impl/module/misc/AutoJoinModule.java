@@ -5,7 +5,7 @@ import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
-import dev.africa.pandaware.impl.event.player.MotionEvent;
+import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
@@ -38,7 +38,7 @@ public class AutoJoinModule extends Module {
     };
 
     @EventHandler
-    EventCallback<MotionEvent> motionEvent = event -> {
+    EventCallback<TickEvent> onUpdate = event -> {
         if (startTimer) {
             if (System.currentTimeMillis() - startDelay >= delay.getValue().longValue()) {
                 String text = "/play " + mode.getValue().label.replace(" ", "_").toLowerCase();
