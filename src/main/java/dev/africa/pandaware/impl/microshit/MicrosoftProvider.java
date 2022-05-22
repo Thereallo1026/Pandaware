@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.microshit;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.microshit.server.AuthManagerWebServer;
 import lombok.Getter;
 
@@ -12,6 +13,9 @@ public class MicrosoftProvider {
     public boolean expectingAltAdd;
 
     public void openUrl() {
+        if (Client.getInstance().isKillSwitch()) {
+            throw new NullPointerException();
+        }
         this.expectingAltAdd = true;
 
         try {

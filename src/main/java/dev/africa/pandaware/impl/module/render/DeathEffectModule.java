@@ -9,6 +9,7 @@ import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.module.combat.KillAuraModule;
 import dev.africa.pandaware.impl.module.combat.TPAuraModule;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumParticleTypes;
@@ -54,9 +55,9 @@ public class DeathEffectModule extends Module {
                         double add = 0;
                         for (int i = 0; i < 360; i++) {
                             mc.theWorld.spawnParticle(EnumParticleTypes.FLAME,
-                                    entityPlayer.posX + Math.cos(i) * (1.5 + (add / 2f)),
+                                    entityPlayer.posX + ApacheMath.cos(i) * (1.5 + (add / 2f)),
                                     entityPlayer.posY + 0.5 + add,
-                                    entityPlayer.posZ + Math.sin(i) * (1.5 + (add / 2f)),
+                                    entityPlayer.posZ + ApacheMath.sin(i) * (1.5 + (add / 2f)),
                                     0.0D, 0.0D, 0.0D, 20);
                             add += 0.004;
                         }

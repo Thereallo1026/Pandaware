@@ -13,6 +13,7 @@ import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.player.RotationUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
@@ -70,7 +71,7 @@ public class TargetStrafeModule extends Module {
     };
 
     public MoveEvent editMovement(double x, double y, double z) {
-        double movementSpeed = Math.sqrt(x * x + z * z) * slowdown.getValue().doubleValue();
+        double movementSpeed = ApacheMath.sqrt(x * x + z * z) * slowdown.getValue().doubleValue();
         boolean modulesEnabled = Client.getInstance().getModuleManager()
                         .getByClass(FlightModule.class).getData().isEnabled() ||
                 Client.getInstance().getModuleManager()
@@ -116,8 +117,8 @@ public class TargetStrafeModule extends Module {
                     strafe = -1D;
                 }
 
-                double mx = Math.cos(Math.toRadians(yaw + 90));
-                double mz = Math.sin(Math.toRadians(yaw + 90));
+                double mx = ApacheMath.cos(ApacheMath.toRadians(yaw + 90));
+                double mz = ApacheMath.sin(ApacheMath.toRadians(yaw + 90));
 
                 x = mc.thePlayer.motionX = (forward * movementSpeed * mx + strafe * movementSpeed * mz) * 0.987;
                 z = mc.thePlayer.motionZ = (forward * movementSpeed * mz - strafe * movementSpeed * mx) * 0.98;
@@ -153,8 +154,8 @@ public class TargetStrafeModule extends Module {
             ColorUtils.glColor(Color.WHITE);
             double div = 11D;
 
-            GL11.glVertex3d(posX + radius * Math.cos((double) i * Math.PI * 2 / div),
-                    posY, posZ + radius * Math.sin((double) i * Math.PI * 2 / div));
+            GL11.glVertex3d(posX + radius * ApacheMath.cos((double) i * ApacheMath.PI * 2 / div),
+                    posY, posZ + radius * ApacheMath.sin((double) i * ApacheMath.PI * 2 / div));
         }
 
         GL11.glEnd();

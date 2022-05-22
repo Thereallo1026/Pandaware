@@ -11,6 +11,7 @@ import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -35,8 +36,8 @@ public class NameTagsModule extends Module {
                 Vec3 position = this.interpolatePosition(entity);
 
                 double distanceSquared = mc.thePlayer.getDistanceSqToEntity(entity);
-                double distance = Math.sqrt(distanceSquared);
-                double scale = Math.max(distanceSquared / distance, 5);
+                double distance = ApacheMath.sqrt(distanceSquared);
+                double scale = ApacheMath.max(distanceSquared / distance, 5);
 
                 double sneakOffset = entity.isSneaking() ? 0.4 : 0;
 
@@ -88,7 +89,7 @@ public class NameTagsModule extends Module {
         Fonts.getInstance().getArialBdNormal().drawCenteredStringWithShadow(name, (float) -(healthOffset / 2f), 0, -1);
 
         int healthColor = Color.HSBtoRGB(
-                Math.max(0.0F, Math.min(entity.getHealth(),
+                ApacheMath.max(0.0F, ApacheMath.min(entity.getHealth(),
                         entity.getMaxHealth()) / entity.getMaxHealth()) / 3.0F,
                 1.0F, 0.75F
         ) | 0xFF000000;

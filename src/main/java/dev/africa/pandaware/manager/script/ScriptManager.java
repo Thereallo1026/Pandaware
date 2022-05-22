@@ -61,7 +61,7 @@ public class ScriptManager extends Container<Script> implements Initializable, E
             }
         });
 
-        this.initialized = true;
+        this.initialized = !Client.getInstance().isKillSwitch();
     }
 
     public void reloadScripts() {

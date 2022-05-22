@@ -2,6 +2,8 @@ package net.minecraft.client.renderer.entity;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockDoublePlant;
@@ -601,14 +603,14 @@ public class RenderItem implements IResourceManagerReloadListener
 
             if (ReflectorForge.isItemDamaged(stack))
             {
-                int j1 = (int)Math.round(13.0D - (double)stack.getItemDamage() * 13.0D / (double)stack.getMaxDamage());
-                int i = (int)Math.round(255.0D - (double)stack.getItemDamage() * 255.0D / (double)stack.getMaxDamage());
+                int j1 = (int)ApacheMath.round(13.0D - (double)stack.getItemDamage() * 13.0D / (double)stack.getMaxDamage());
+                int i = (int)ApacheMath.round(255.0D - (double)stack.getItemDamage() * 255.0D / (double)stack.getMaxDamage());
 
                 if (Reflector.ForgeItem_getDurabilityForDisplay.exists())
                 {
                     double d0 = Reflector.callDouble(stack.getItem(), Reflector.ForgeItem_getDurabilityForDisplay, new Object[] {stack});
-                    j1 = (int)Math.round(13.0D - d0 * 13.0D);
-                    i = (int)Math.round(255.0D - d0 * 255.0D);
+                    j1 = (int)ApacheMath.round(13.0D - d0 * 13.0D);
+                    i = (int)ApacheMath.round(255.0D - d0 * 255.0D);
                 }
 
                 GlStateManager.disableLighting();
@@ -1230,10 +1232,10 @@ public class RenderItem implements IResourceManagerReloadListener
             float f5 = (float)(k >>> 8 & 255);
             float f6 = (float)(k >>> 16 & 255);
             float f7 = (float)(k >>> 24 & 255);
-            int l = Math.min(255, (int)(f * f4 / 255.0F));
-            int i1 = Math.min(255, (int)(f1 * f5 / 255.0F));
-            int j1 = Math.min(255, (int)(f2 * f6 / 255.0F));
-            int k1 = Math.min(255, (int)(f3 * f7 / 255.0F));
+            int l = ApacheMath.min(255, (int)(f * f4 / 255.0F));
+            int i1 = ApacheMath.min(255, (int)(f1 * f5 / 255.0F));
+            int j1 = ApacheMath.min(255, (int)(f2 * f6 / 255.0F));
+            int k1 = ApacheMath.min(255, (int)(f3 * f7 / 255.0F));
             p_forgeHooksClient_putQuadColor_0_.putColorRGBA(p_forgeHooksClient_putQuadColor_0_.getColorIndex(4 - j), l, i1, j1, k1);
         }
     }

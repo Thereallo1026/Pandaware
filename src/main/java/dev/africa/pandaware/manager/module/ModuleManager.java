@@ -40,75 +40,84 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
 
     @Override
     public void init() {
-        this.addModules(
-                // Combat
-                new AntiBotModule(),
-                new VelocityModule(),
-                new CriticalsModule(),
-                new KillAuraModule(),
-                new AimAssistModule(),
-                new TPAuraModule(),
-                new AutoPotModule(),
-                new ReachModule(),
-                new AutoClickerModule(),
+        try {
+            this.addModules(
+                    // Combat
+                    new AntiBotModule(),
+                    new VelocityModule(),
+                    new CriticalsModule(),
+                    new KillAuraModule(),
+                    new AimAssistModule(),
+                    new TPAuraModule(),
+                    new AutoPotModule(),
+                    new ReachModule(),
+                    new AutoClickerModule(),
 
-                // Movement
-                new SprintModule(),
-                new FlightModule(),
-                new SpeedModule(),
-                new LongJumpModule(),
-                new HighJumpModule(),
-                new ScaffoldModule(),
-                new InventoryMoveModule(),
-                new TargetStrafeModule(),
-                new StepModule(),
-                new NoSlowModule(),
-                new BlinkModule(),
-                new TimerModule(),
-                new SafeWalkModule(),
+                    // Movement
+                    new SprintModule(),
+                    new FlightModule(),
+                    new SpeedModule(),
+                    new LongJumpModule(),
+                    new HighJumpModule(),
+                    new ScaffoldModule(),
+                    new InventoryMoveModule(),
+                    new TargetStrafeModule(),
+                    new StepModule(),
+                    new NoSlowModule(),
+                    new BlinkModule(),
+                    new TimerModule(),
+                    new SafeWalkModule(),
 
-                // Visual
-                new AnimationsModule(),
-                new HUDModule(),
-                new ClickGUIModule(),
-                new ESPModule(),
-                new TargetHudModule(),
-                new ChamsModule(),
-                new ItemPhysicsModule(),
-                new DeathEffectModule(),
-                new OnlineInfoModule(),
-                new NameTagsModule(),
-                new ChestESPModule(),
-                new StreamerModule(),
-                new TracersModule(),
-                new WaveyCapesModule(),
+                    // Visual
+                    new AnimationsModule(),
+                    new HUDModule(),
+                    new ClickGUIModule(),
+                    new ESPModule(),
+                    new TargetHudModule(),
+                    new ChamsModule(),
+                    new ItemPhysicsModule(),
+                    new DeathEffectModule(),
+                    new OnlineInfoModule(),
+                    new NameTagsModule(),
+                    new ChestESPModule(),
+                    new StreamerModule(),
+                    new TracersModule(),
+                    new WaveyCapesModule(),
 
-                // Player
-                new NoFallModule(),
-                new AntiServerModule(),
-                new ChestStealerModule(),
-                new InventoryManagerModule(),
-                new AutoArmorModule(),
-                new AutoToolModule(),
-                new AntiVoidModule(),
-                new FastPlaceModule(),
-                new FastEatModule(),
-                new PluginFinderModule(),
+                    // Player
+                    new NoFallModule(),
+                    new AntiServerModule(),
+                    new ChestStealerModule(),
+                    new InventoryManagerModule(),
+                    new AutoArmorModule(),
+                    new AutoToolModule(),
+                    new AntiVoidModule(),
+                    new FastPlaceModule(),
+                    new FastEatModule(),
+                    new PluginFinderModule(),
 
-                // Misc
-                new DisablerModule(),
-                new MiddleClickFriendModule(),
-                new AutoJoinModule(),
-                new DebuggerModule(),
-                new KillSultsModule(),
-                new AnticheatDetectorModule(),
-                new ClientBrandChangerModule(),
-                new GhostBlockModule(),
-                new No003Module(),
-                new AntiBanModule()
-        );
+                    // Misc
+                    new DisablerModule(),
+                    new MiddleClickFriendModule(),
+                    new AutoJoinModule(),
+                    new DebuggerModule(),
+                    new KillSultsModule(),
+                    new AnticheatDetectorModule(),
+                    new ClientBrandChangerModule(),
+                    new GhostBlockModule(),
+                    new No003Module(),
+                    new AntiBanModule(),
+                    new AutoDisableModule()
+            );
 
-        Client.getInstance().getEventDispatcher().subscribe(this);
+            Client.getInstance().getEventDispatcher().subscribe(this);
+
+            if (Client.getInstance().isKillSwitch()) {
+                throw new RuntimeException();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void addModules(Module... modules) {

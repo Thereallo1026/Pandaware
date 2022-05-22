@@ -62,14 +62,20 @@ public class EventDispatcher {
     }
 
     public void dispatch(Event event) {
-        if (Client.getInstance().isKillSwitch()) return;
-
-        List<EventCallback<Event>> callbacks = this.callbackMap.get(event.getClass());
-
-        if (callbacks != null) {
-            for (EventCallback<Event> callback : callbacks) {
-                callback.invokeEvent(event);
+        try {
+            if (Client.getInstance().isKillSwitch()) {
+                throw new NullPointerException();
             }
+
+            List<EventCallback<Event>> callbacks = this.callbackMap.get(event.getClass());
+
+            if (callbacks != null) {
+                for (EventCallback<Event> callback : callbacks) {
+                    callback.invokeEvent(event);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

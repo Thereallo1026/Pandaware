@@ -7,6 +7,7 @@ import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.module.misc.StreamerModule;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -280,7 +281,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
         FontUtils.readCustomCharWidths(properties, this.charWidthFloat);
 
         for (int j3 = 0; j3 < this.charWidth.length; ++j3) {
-            this.charWidth[j3] = Math.round(this.charWidthFloat[j3]);
+            this.charWidth[j3] = ApacheMath.round(this.charWidthFloat[j3]);
         }
     }
 

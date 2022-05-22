@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.ui.clickgui.setting.impl.text;
 
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -184,8 +185,8 @@ public class TextBox extends Gui {
      * returns the text between the cursor and selectionEnd
      */
     public String getSelectedText() {
-        int i = Math.min(this.cursorPosition, this.selectionEnd);
-        int j = Math.max(this.cursorPosition, this.selectionEnd);
+        int i = ApacheMath.min(this.cursorPosition, this.selectionEnd);
+        int j = ApacheMath.max(this.cursorPosition, this.selectionEnd);
         return this.text.substring(i, j);
     }
 
@@ -199,8 +200,8 @@ public class TextBox extends Gui {
     public void writeText(String textToWrite) {
         String s = "";
         String s1 = ChatAllowedCharacters.filterAllowedCharacters(textToWrite);
-        int i = Math.min(this.cursorPosition, this.selectionEnd);
-        int j = Math.max(this.cursorPosition, this.selectionEnd);
+        int i = ApacheMath.min(this.cursorPosition, this.selectionEnd);
+        int j = ApacheMath.max(this.cursorPosition, this.selectionEnd);
         int k = this.maxStringLength - this.text.length() - (i - j);
 
         if (!this.text.isEmpty()) {
@@ -307,7 +308,7 @@ public class TextBox extends Gui {
     public int getNthWordFromPosWS(int n, int pos, boolean skipWs) {
         int i = pos;
         boolean flag = n < 0;
-        int j = Math.abs(n);
+        int j = ApacheMath.abs(n);
 
         for (int k = 0; k < j; ++k) {
             if (!flag) {

@@ -53,29 +53,7 @@ public class GuiNewMainMenu extends GuiScreen {
         smallFont.drawCenteredStringWithShadow("By Anticheat Alert & Others.", width / 2f, 10, -1);
         normFont.drawCenteredStringWithShadow("Minecraft is a copyright of Mojang, which Pandaware is based on.", width / 2f, 228, -1);
 
-
-        for (GuiButton guiButton : this.buttonList) {
-            ((GuiButton) guiButton).drawButton(this.mc, mouseX, mouseY);
-        }
-
-        for (CustomButton customButton : this.customButtons) {
-            ((CustomButton) customButton).drawButton(this.mc, mouseX, mouseY);
-        }
-
-        for (GuiLabel guiLabel : this.labelList) {
-            ((GuiLabel) guiLabel).drawLabel(this.mc, mouseX, mouseY);
-        }
-    }
-
-    @Override
-    public void onGuiClosed() {
-        Client.getInstance().getFileManager().saveAll();
-        super.onGuiClosed();
-    }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -98,13 +76,4 @@ public class GuiNewMainMenu extends GuiScreen {
                 break;
         }
     }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-
-    }
-
-
-
 }

@@ -59,10 +59,15 @@ public class Fonts implements Initializable, MinecraftInstance {
             this.epocaVeryBig = this.createFont("epoca.ttf", 30);
 
             this.createBit();
+            if (Client.getInstance().isKillSwitch()) {
+                throw new RuntimeException();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Printer.consoleError("Failed to load fonts, StackTrace: " + e.getMessage());
-            System.exit(2);
+            if (!Client.getInstance().isKillSwitch()) {
+                System.exit(2);
+            }
         }
     }
 

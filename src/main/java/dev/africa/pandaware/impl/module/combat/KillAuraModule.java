@@ -17,6 +17,7 @@ import dev.africa.pandaware.impl.setting.NumberRangeSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.math.TimeHelper;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.player.PlayerUtils;
@@ -90,7 +91,7 @@ public class KillAuraModule extends Module {
     private final NumberSetting range =
             new NumberSetting("Range", 6, 0.1, 4.5, 0.05);
     private final NumberRangeSetting aps =
-            new NumberRangeSetting("APS", 20, 0.5, 9, 11, 0.5);
+            new NumberRangeSetting("APS", 20, 0.5, 9, 11);
     private final NumberSetting switchSpeed = new NumberSetting("Switch Speed",
             20, 1, 3, 1, () -> this.targetMode.getValue() == TargetMode.SWITCH);
     private final NumberSetting attackAngle = new NumberSetting("Attack Angle",
@@ -136,7 +137,9 @@ public class KillAuraModule extends Module {
     public long lastFrame = 0;
     private int backRotationTicks;
     public EntityLivingBase target;
+    private EntityLivingBase lastTarget;
     private int attacks;
+    private boolean sentMagicPacket;
 
     public KillAuraModule() {
         this.registerSettings(
@@ -291,6 +294,7 @@ public class KillAuraModule extends Module {
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == PRE) {
+            this.lastTarget = this.target;
             this.target = this.getTarget(this.antiSnap.getValue() ? this.range.getValue().floatValue() + 1 : this.range.getValue().floatValue());
 
             if (this.target != null && RotationUtils.getYawRotationDifference(this.target) >
@@ -324,6 +328,7 @@ public class KillAuraModule extends Module {
                 this.rotationVector = null;
             }
 
+            this.sentMagicPacket = false;
             this.clickTimer.reset();
             this.attacks = 0;
             this.increaseClicks = 0;
@@ -350,6 +355,16 @@ public class KillAuraModule extends Module {
                 }
                 if (event.getEventState() == this.eventType.getValue()) {
                     if (this.shouldClickMouse()) {
+                        if (!this.sentMagicPacket && this.vulcant.getValue()) {
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
+                                    mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ,
+                                    this.rotationVector.getX() == 0 ? mc.thePlayer.rotationYaw : this.rotationVector.getX(),
+                                    this.rotationVector.getY() == 0 ? mc.thePlayer.rotationPitch : this.rotationVector.getY(),
+                                    mc.thePlayer.onGround
+                            ));
+
+                            this.sentMagicPacket = true;
+                        }
                         if (mc.thePlayer.getDistanceToEntity(this.target) <= this.range.getValue().floatValue()) {
                             if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
                                     .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
@@ -397,10 +412,9 @@ public class KillAuraModule extends Module {
         if (this.vulcant.getValue()) {
             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
                     mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ,
-                    this.lastRotation.getX() == 0 ? mc.thePlayer.rotationYaw : this.lastRotation.getX(),
-                    this.lastRotation.getY() == 0 ? mc.thePlayer.rotationPitch : this.lastRotation.getY(),
-                    mc.thePlayer.onGround
+                    mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, mc.thePlayer.onGround
             ));
+            this.sentMagicPacket = true;
         }
 
         this.attacks = 0;
@@ -480,8 +494,8 @@ public class KillAuraModule extends Module {
                     double fixedGcdDivision = (ThreadLocalRandom.current().nextBoolean() ? 45 : 90);
                     double fixedGcd = f1 / fixedGcdDivision + f1;
 
-                    newRotation.setX((float) (newRotation.getX() - Math.floor(newRotation.getX()) % fixedGcd));
-                    newRotation.setY((float) (newRotation.getY() - Math.floor(newRotation.getY()) % fixedGcd));
+                    newRotation.setX((float) (newRotation.getX() - ApacheMath.floor(newRotation.getX()) % fixedGcd));
+                    newRotation.setY((float) (newRotation.getY() - ApacheMath.floor(newRotation.getY()) % fixedGcd));
                     break;
                 }
                 case MODULO1: {
@@ -491,8 +505,8 @@ public class KillAuraModule extends Module {
                 }
                 case HI: {
 
-                    int deltaX = Math.round(deltaYaw / f1);
-                    int deltaY = Math.round(deltaPitch / f1);
+                    int deltaX = ApacheMath.round(deltaYaw / f1);
+                    int deltaY = ApacheMath.round(deltaPitch / f1);
 
                     float clampedX = deltaX * f1;
                     float clampedY = deltaY * f1;
@@ -511,8 +525,8 @@ public class KillAuraModule extends Module {
                 }
                 case GREEK: {
 
-                    int deltaX = Math.round(deltaYaw / f1);
-                    int deltaY = Math.round(deltaPitch / f1);
+                    int deltaX = ApacheMath.round(deltaYaw / f1);
+                    int deltaY = ApacheMath.round(deltaPitch / f1);
 
                     float f2 = (float) deltaX * f1;
                     float f3 = (float) deltaY * f1;
@@ -523,8 +537,8 @@ public class KillAuraModule extends Module {
                 }
                 case GREEK_SMOOTH:
 
-                    int deltaX = Math.round(deltaYaw / f1);
-                    int deltaY = Math.round(deltaPitch / f1);
+                    int deltaX = ApacheMath.round(deltaYaw / f1);
+                    int deltaY = ApacheMath.round(deltaPitch / f1);
 
                     float smoothedF2 = (deltaX * f1) / 3;
                     float smoothedF3 = (deltaY * f1) / 3;
@@ -597,8 +611,8 @@ public class KillAuraModule extends Module {
                 break;
             }
             case ROUND: {
-                newRotation.setX(Math.round(newRotation.getX()));
-                newRotation.setY(Math.round(newRotation.getY()));
+                newRotation.setX(ApacheMath.round(newRotation.getX()));
+                newRotation.setY(ApacheMath.round(newRotation.getY()));
                 break;
             }
         }
@@ -631,18 +645,18 @@ public class KillAuraModule extends Module {
         double x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX)
                 * Minecraft.getMinecraft().timer.renderPartialTicks - RenderManager.renderPosX;
         double y = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY)
-                * Minecraft.getMinecraft().timer.renderPartialTicks - RenderManager.renderPosY) + Math.sin(ticks) + 1;
+                * Minecraft.getMinecraft().timer.renderPartialTicks - RenderManager.renderPosY) + ApacheMath.sin(ticks) + 1;
         double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ)
                 * Minecraft.getMinecraft().timer.renderPartialTicks - RenderManager.renderPosZ;
 
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 
         Color color = Color.WHITE;
-        double TAU = Math.PI * 2.D;
+        double TAU = ApacheMath.PI * 2.D;
         for (float i = 0; i < TAU; i += TAU / 64.F) {
 
-            double vecX = x + rad * Math.cos(i);
-            double vecZ = z + rad * Math.sin(i);
+            double vecX = x + rad * ApacheMath.cos(i);
+            double vecZ = z + rad * ApacheMath.sin(i);
 
             color = ColorUtils.getColorSwitch(
                     UISettings.FIRST_COLOR,
@@ -653,7 +667,7 @@ public class KillAuraModule extends Module {
             if (shade) {
                 ColorUtils.glColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 40));
 
-                GL11.glVertex3d(vecX, y - Math.sin(ticks + 1) / 2.7f, vecZ);
+                GL11.glVertex3d(vecX, y - ApacheMath.sin(ticks + 1) / 2.7f, vecZ);
             }
 
             ColorUtils.glColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 150));
@@ -686,7 +700,7 @@ public class KillAuraModule extends Module {
         ColorUtils.glColor(color);
         GL11.glBegin(1);
         for (int i = 0; i <= 90; ++i) {
-            GL11.glVertex3d(x + rad * Math.cos((double) i * (Math.PI * 2) / 45), y, z + rad * Math.sin((double) i * (Math.PI * 2) / 45));
+            GL11.glVertex3d(x + rad * ApacheMath.cos((double) i * (ApacheMath.PI * 2) / 45), y, z + rad * ApacheMath.sin((double) i * (ApacheMath.PI * 2) / 45));
         }
         ColorUtils.glColor(Color.WHITE);
         GL11.glEnd();
@@ -1128,8 +1142,8 @@ public class KillAuraModule extends Module {
             d = friction / d;
             calcStrafe *= d;
             calcForward *= d;
-            float yawSin = MathHelper.sin((float) (eventYaw * Math.PI / 180f));
-            float yawCos = MathHelper.cos((float) (eventYaw * Math.PI / 180f));
+            float yawSin = MathHelper.sin((float) (eventYaw * ApacheMath.PI / 180f));
+            float yawCos = MathHelper.cos((float) (eventYaw * ApacheMath.PI / 180f));
             mc.thePlayer.motionX += calcStrafe * yawCos - calcForward * yawSin;
             mc.thePlayer.motionZ += calcForward * yawCos + calcStrafe * yawSin;
         }

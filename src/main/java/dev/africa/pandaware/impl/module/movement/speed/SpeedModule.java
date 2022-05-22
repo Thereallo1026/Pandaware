@@ -1,11 +1,14 @@
 package dev.africa.pandaware.impl.module.movement.speed;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.module.movement.speed.modes.*;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.player.MovementUtils;
+import dev.africa.pandaware.utils.player.PlayerUtils;
 import lombok.Getter;
 
 @Getter
@@ -30,6 +33,9 @@ public class SpeedModule extends Module {
 
     @Override
     public void onDisable() {
+        if (PlayerUtils.inLiquid() && this.getCurrentMode() instanceof HypixelSpeed) {
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Disabled speed to prevent flags", 1);
+        }
         MovementUtils.slowdown();
         mc.timer.timerSpeed = 1f;
     }

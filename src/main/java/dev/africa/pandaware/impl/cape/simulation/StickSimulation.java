@@ -2,6 +2,7 @@ package dev.africa.pandaware.impl.cape.simulation;
 
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.module.render.WaveyCapesModule;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.render.matrix.Mth;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class StickSimulation {
                 angle += 360;
             }
 
-            double abs = Math.abs(angle);
+            double abs = ApacheMath.abs(angle);
             if (abs < 180 - this.maxBend) {
                 this.points.get(i + 1).position = this.getReplacement(points.get(i).position, points.get(i - 1).position, angle, 180 - this.maxBend + 1);
             }
@@ -88,14 +89,14 @@ public class StickSimulation {
         if (angle < 0) {
             theta *= -1;
         }
-        double cs = Math.cos(theta);
-        double sn = Math.sin(theta);
+        double cs = ApacheMath.cos(theta);
+        double sn = ApacheMath.sin(theta);
         return new Vector2((float) ((x * cs) - (y * sn) + middle.x), (float) ((x * sn) + (y * cs) + middle.y));
     }
 
     private double getAngle(Vector2 middle, Vector2 prev, Vector2 next) {
-        return Math.atan2(next.y - middle.y, next.x - middle.x) -
-                Math.atan2(prev.y - middle.y, prev.x - middle.x);
+        return ApacheMath.atan2(next.y - middle.y, next.x - middle.x) -
+                ApacheMath.atan2(prev.y - middle.y, prev.x - middle.x);
     }
 
     public static class Point {
@@ -167,7 +168,7 @@ public class StickSimulation {
         }
 
         public Vector2 normalize() {
-            float f = (float) Math.sqrt(this.x * this.x + this.y * this.y);
+            float f = (float) ApacheMath.sqrt(this.x * this.x + this.y * this.y);
             if (f < 1.0E-4F) {
                 this.x = 0;
                 this.y = 0;

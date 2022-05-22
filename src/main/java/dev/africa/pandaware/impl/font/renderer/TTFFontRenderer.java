@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.module.misc.StreamerModule;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.render.ColorUtils;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
@@ -343,7 +344,7 @@ public class TTFFontRenderer {
                     }
                 } else if (character <= '\u00ff') {
                     CharacterData charData = characterData[character];
-                    height = Math.max(height, charData.height);
+                    height = ApacheMath.max(height, charData.height);
                 }
             }
         }

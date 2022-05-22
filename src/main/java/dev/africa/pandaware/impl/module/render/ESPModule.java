@@ -15,6 +15,7 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.impl.ui.shader.impl.GlowShader;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -122,10 +123,10 @@ public class ESPModule extends Module {
                                     if (position == null) {
                                         position = new Vector4d(vector.x, vector.y, vector.z, 0.0);
                                     }
-                                    position.x = Math.min(vector.x, position.x);
-                                    position.y = Math.min(vector.y, position.y);
-                                    position.z = Math.max(vector.x, position.z);
-                                    position.w = Math.max(vector.y, position.w);
+                                    position.x = ApacheMath.min(vector.x, position.x);
+                                    position.y = ApacheMath.min(vector.y, position.y);
+                                    position.z = ApacheMath.max(vector.x, position.z);
+                                    position.w = ApacheMath.max(vector.y, position.w);
                                 }
                             }
                             if (!Config.isShaders()) {
@@ -271,7 +272,7 @@ public class ESPModule extends Module {
     };
 
     private int getHealthColor(float health, float maxHealth) {
-        return Color.HSBtoRGB(Math.max(0.0F, Math.min(health, maxHealth) / maxHealth) / 3.0F, 1.0F, 0.75F) | 0xFF000000;
+        return Color.HSBtoRGB(ApacheMath.max(0.0F, ApacheMath.min(health, maxHealth) / maxHealth) / 3.0F, 1.0F, 0.75F) | 0xFF000000;
     }
 
     private Vector3d project(double x, double y, double z) {

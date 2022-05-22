@@ -28,7 +28,7 @@ public class CriticalsModule extends Module {
                 new HypixelCriticals("Hypixel", this),
                 new VerusCriticals("Verus", this),
                 new FuncraftCriticals("Funcraft", this),
-                new OldVulcanCriticals("Old Vulcan", this)
+                new VulcanCriticals("Vulcan", this)
         );
     }
 

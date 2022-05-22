@@ -142,6 +142,10 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                 case GREEK:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/greek.png"), 0, 0, this.width, this.height);
                     break;
+                case PANDA:
+                    RenderUtils.drawImage(new ResourceLocation("pandaware/icons/cummypanda.png"), femboyPosition.getX(),
+                            femboyPosition.getY(), 400, 200);
+                    break;
             }
         }
 
@@ -149,7 +153,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
             if (clickGUI.getCummyMode().getValue() != ClickGUIModule.FemboyMode.GREEK) {
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/dawson.jpg"), 0, 0, this.width,
                         this.height);
-            } else {
+            } else if (clickGUI.getShowCummyMen().getValue()) {
                 Printer.chat("STOP TRYING TO REPLACE NIK YOU FUCKING FAGGOT");
                 if (this.player == null) {
                     new Thread(() -> {

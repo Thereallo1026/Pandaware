@@ -45,7 +45,8 @@ public class ClickGUIModule extends Module {
         HIDERI("Hideri"),
         SAIKA("Saika"),
         VENTI("Venti"),
-        GREEK("Greek");
+        GREEK("Greek"),
+        PANDA("APandaWithAKnife");
 
         private final String label;
     }

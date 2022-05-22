@@ -16,6 +16,7 @@ import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.client.SoundUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
+import javazoom.jl.player.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,8 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
     private ModeSetting modeSetting;
 
     private TaskedEventListener<?> taskedEvent;
+
+    private Player player;
 
     private boolean script;
 
@@ -101,7 +104,7 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
             if (mc.thePlayer != null) {
                 if (hudModule != null && hudModule.getToggleSound().getValue() &&
                         !(this instanceof ClickGUIModule)) {
-                    SoundUtils.playSound(SoundUtils.CustomSound.ENABLE);
+                    SoundUtils.playSound(SoundUtils.CustomSound.ENABLE, hudModule.getSoundVolume().getValue().intValue());
                 }
 
                 if (!(this instanceof ClickGUIModule) && hudModule != null && hudModule.getToggleNotifications().getValue()) {
@@ -141,7 +144,7 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
             if (mc.thePlayer != null) {
                 if (hudModule != null && hudModule.getToggleSound().getValue() &&
                         !(this instanceof ClickGUIModule)) {
-                    SoundUtils.playSound(SoundUtils.CustomSound.DISABLE);
+                    SoundUtils.playSound(SoundUtils.CustomSound.DISABLE, hudModule.getSoundVolume().getValue().intValue());
                 }
 
                 if (!(this instanceof ClickGUIModule) && hudModule != null && hudModule.getToggleNotifications().getValue()) {

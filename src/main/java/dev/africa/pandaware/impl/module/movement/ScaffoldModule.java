@@ -8,10 +8,7 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.event.TaskedEventListener;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
-import dev.africa.pandaware.impl.event.player.MotionEvent;
-import dev.africa.pandaware.impl.event.player.MoveEvent;
-import dev.africa.pandaware.impl.event.player.SafeWalkEvent;
-import dev.africa.pandaware.impl.event.player.UpdateEvent;
+import dev.africa.pandaware.impl.event.player.*;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
@@ -21,6 +18,7 @@ import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.TimeHelper;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
@@ -34,11 +32,13 @@ import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.var;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.potion.Potion;
@@ -53,12 +53,10 @@ public class ScaffoldModule extends Module {
     private final EnumSetting<ScaffoldMode> scaffoldMode = new EnumSetting<>("Mode", ScaffoldMode.HYPIXEL);
     private final EnumSetting<HypixelMode> hypixelMode = new EnumSetting<>("Hypixel Mode", HypixelMode.NORMAL, () ->
             this.scaffoldMode.getValue() == ScaffoldMode.HYPIXEL);
-    private final BooleanSetting itemSpoof = new BooleanSetting("Item Spoof", true);
     private final BooleanSetting tower = new BooleanSetting("Tower", true);
     private final EnumSetting<RotationMode> rotationMode = new EnumSetting<>("Rotation mode", RotationMode.NEW);
     private final BooleanSetting sprint = new BooleanSetting("Sprint", true);
-    private final EnumSetting<SpoofMode> spoofMode = new EnumSetting<>("Spoof mode", SpoofMode.SPOOF,
-            this.itemSpoof::getValue);
+    private final EnumSetting<SpoofMode> spoofMode = new EnumSetting<>("Spoof mode", SpoofMode.SPOOF);
     private final EnumSetting<TowerMode> towerMode = new EnumSetting<>("Tower mode", TowerMode.NCP,
             this.tower::getValue);
     private final BooleanSetting swing = new BooleanSetting("Swing", false);
@@ -100,7 +98,6 @@ public class ScaffoldModule extends Module {
                 this.rotate,
                 this.overwriteAura,
                 this.keepRotation,
-                this.itemSpoof,
                 this.replaceBlocks,
                 this.downwards,
                 this.tower,
@@ -145,7 +142,7 @@ public class ScaffoldModule extends Module {
             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
         }
 
-        if (this.itemSpoof.getValue() && this.spoofMode.getValue() == SpoofMode.SWITCH) {
+        if (this.spoofMode.getValue() == SpoofMode.SWITCH) {
             mc.thePlayer.inventory.currentItem = this.lastSlot;
         }
     }
@@ -253,9 +250,12 @@ public class ScaffoldModule extends Module {
             }
         }
 
-        if ((this.itemSpoof.getValue() && this.spoofMode.getValue() == SpoofMode.SWITCH ||
-                mc.thePlayer.inventory.getCurrentItem().stackSize <= 0) && slot != -1) {
-            mc.thePlayer.inventory.currentItem = slot;
+        if (slot != -1) {
+            if (this.spoofMode.getValue() == SpoofMode.SWITCH) {
+                mc.thePlayer.inventory.currentItem = slot;
+            } else {
+                mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(slot));
+            }
         }
 
         if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && downwards.getValue() ||
@@ -289,7 +289,22 @@ public class ScaffoldModule extends Module {
 
         if (this.blockEntry == null) return;
         if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air) {
-            this.place(slot, this.itemSpoof.getValue());
+            this.place(slot);
+        }
+    };
+
+    @EventHandler
+    EventCallback<PacketEvent> onPacket = event -> {
+        if (this.spoofMode.getValue() == SpoofMode.SPOOF) {
+            if (event.getPacket() instanceof C09PacketHeldItemChange) {
+                var packet = (C09PacketHeldItemChange) event.getPacket();
+
+                int slotId = this.getBlockCount(false);
+
+                if (mc.thePlayer.inventory.currentItem == slotId || packet.getSlotId() != slotId) {
+                    event.cancel();
+                }
+            }
         }
     };
 
@@ -383,7 +398,7 @@ public class ScaffoldModule extends Module {
                                 break;
                         }
 
-                        float smoothness = 90f;
+                        float smoothness = 70f;
 
                         if (this.currentRotation == null) {
                             this.currentRotation = new Vec2f(
@@ -465,11 +480,12 @@ public class ScaffoldModule extends Module {
                                         * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.65 : 0.75));
                                 jumped = false;
                             }
-                            if (!Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()) && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
+                            if (!Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()) &&
+                                    !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                                 event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
                             }
                         } else {
-                            event.y = mc.thePlayer.motionY = Math.random();
+                            event.y = mc.thePlayer.motionY = Math.random() - (MovementUtils.getBaseMoveSpeed() / 6);
                         }
                         break;
                 }
@@ -620,7 +636,7 @@ public class ScaffoldModule extends Module {
         if (safeWalk.getValue() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) event.cancel();
     };
 
-    private void place(int slot, boolean spoofItem) {
+    private void place(int slot) {
         if (this.expand.getValue().doubleValue() > 0 && (this.tower.getValue()
                 && !mc.gameSettings.keyBindJump.isKeyDown() || !this.tower.getValue())) {
             for (double i = 0; i < this.expand.getValue().doubleValue(); i += 0.5) {
@@ -645,23 +661,18 @@ public class ScaffoldModule extends Module {
                 }
 
                 if (BlockUtils.getBlockAtPos(blockBelow1) == Blocks.air) {
-                    this.placeBlock(this.blockEntry, slot, spoofItem);
+                    this.placeBlock(this.blockEntry, slot);
                 }
             }
 
             return;
         }
 
-        this.placeBlock(this.blockEntry, slot, spoofItem);
+        this.placeBlock(this.blockEntry, slot);
     }
 
-    private void placeBlock(BlockEntry blockEntry, int slot, boolean spoofItem) {
+    private void placeBlock(BlockEntry blockEntry, int slot) {
         if (blockEntry == null || slot == -1) return;
-
-        if (spoofItem && this.spoofMode.getValue() == SpoofMode.SPOOF) {
-            this.lastSlot = mc.thePlayer.inventory.currentItem;
-            mc.thePlayer.inventory.currentItem = slot;
-        }
 
         if (ProtocolUtils.isOneDotEight()) {
             if (this.swing.getValue()) {
@@ -682,10 +693,6 @@ public class ScaffoldModule extends Module {
             } else {
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C0APacketAnimation());
             }
-        }
-
-        if (spoofItem && this.spoofMode.getValue() == SpoofMode.SPOOF) {
-            mc.thePlayer.inventory.currentItem = this.lastSlot;
         }
     }
 

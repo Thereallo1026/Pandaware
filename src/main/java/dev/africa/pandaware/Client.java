@@ -20,6 +20,7 @@ import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.manager.script.ScriptManager;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.impl.socket.util.HWIDUtil;
+import dev.africa.pandaware.utils.OsUtils;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.java.FileUtils;
 import dev.africa.pandaware.utils.network.GameListener;
@@ -30,13 +31,14 @@ import joptsimple.OptionSpec;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.main.Main;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -72,6 +74,8 @@ public class Client implements Initializable {
     private final GameListener gameListener = new GameListener();
     private final ScriptManager scriptManager = new ScriptManager();
 
+    private final List<String> files = new ArrayList<>();
+
     @Setter
     private boolean isKillSwitch;
 
@@ -81,11 +85,8 @@ public class Client implements Initializable {
     @Setter
     private float renderDeltaTime;
 
-    @Setter
-    private String discordUsername;
-
-    @Setter
-    private String discordID;
+    @Getter
+    private boolean fdpClient;
 
     @Override
     public void init() {
@@ -101,6 +102,8 @@ public class Client implements Initializable {
             }
         }).start();
 
+        this.checkFDPClient();
+
         this.initTitle();
         this.initMisc();
 
@@ -114,7 +117,7 @@ public class Client implements Initializable {
                 isKillSwitch = true;
             }
 
-            if (result == null || result.length() < 2 || Boolean.parseBoolean(result)) {
+            if (result == null || result.length() != 5 || Boolean.parseBoolean(result)) {
                 isKillSwitch = true;
             }
         }).start();
@@ -147,7 +150,6 @@ public class Client implements Initializable {
     }
 
     void initMisc() {
-
         OptionParser optionParser = new OptionParser();
         optionParser.allowsUnrecognizedOptions();
         OptionSpec<Boolean> devMode = optionParser.accepts("pandawareDevMode").withRequiredArg()
@@ -163,6 +165,13 @@ public class Client implements Initializable {
             this.manifest.setUsername(optionSet.valueOf(user));
             this.manifest.setUserId(optionSet.valueOf(uid));
             this.manifest.setDevMode(true);
+        }
+
+        for (String file : files) {
+            if (file.toLowerCase().contains("fdpclient")) {
+                fdpClient = true;
+                break;
+            }
         }
 
         try {
@@ -194,6 +203,40 @@ public class Client implements Initializable {
         }else {
             Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion());
             System.out.println("Failed to set title, set default title.");
+        }
+    }
+
+    void listFilesForFolder(final File folder) {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                files.add(fileEntry.getName());
+            }
+        }
+    }
+
+    void checkFDPClient() {
+        String userHome = System.getProperty("user.home", ".");
+        File fdp;
+        switch (OsUtils.getOsType()) {
+            case LINUX:
+                fdp = new File(userHome, ".minecraft/mods");
+                break;
+            case WINDOWS:
+                String applicationData = System.getenv("APPDATA");
+                String folder = applicationData != null ? applicationData : userHome;
+                fdp = new File(folder, ".minecraft/mods");
+                break;
+            case MAC:
+                fdp = new File(userHome, "Library/Application Support/minecraft/mods");
+                break;
+            default:
+                fdp = new File(userHome, "minecraft/mods");
+                break;
+        }
+        if (fdp.exists()) {
+            listFilesForFolder(fdp);
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.module.player;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.Module;
@@ -7,6 +8,7 @@ import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
+import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.client.Timer;
 import net.minecraft.network.play.client.C14PacketTabComplete;
@@ -18,6 +20,10 @@ public class PluginFinderModule extends Module {
     private final Timer timer = new Timer();
 
     public void onEnable() {
+        if (mc.isSingleplayer()) {
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "YOU'RE IN SINGLEPLAYER FUCKTARD", 5);
+            this.toggle(false);
+        }
         if (this.mc.thePlayer != null && this.mc.theWorld != null) {
             this.timer.reset();
             try {

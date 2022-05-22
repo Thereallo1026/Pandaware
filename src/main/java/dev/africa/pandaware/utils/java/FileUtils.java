@@ -159,6 +159,4 @@ public class FileUtils implements MinecraftInstance {
                 "RIP your chances at losing your virginity"};
         return lines[RandomUtils.nextInt(0, lines.length)];
     }
-
-
 }

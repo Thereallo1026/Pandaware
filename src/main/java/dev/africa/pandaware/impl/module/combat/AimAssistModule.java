@@ -10,6 +10,7 @@ import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.player.RotationUtils;
@@ -96,7 +97,7 @@ public class AimAssistModule extends Module {
         float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
         float f1 = f * f * f * 8.0F;
 
-        mouseX = Math.round(smoothX / f1);
-        mouseY = Math.round(smoothY / f1);
+        mouseX = ApacheMath.round(smoothX / f1);
+        mouseY = ApacheMath.round(smoothY / f1);
     };
 }

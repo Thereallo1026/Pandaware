@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class AuthManagerWebServer {
     public static ConcurrentHashMap<UUID, AuthInfo> authCache = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<String, Long> lastRequestTime = new ConcurrentHashMap<>();
 
     public static final int THREADS = 50;
 
@@ -22,7 +21,6 @@ public class AuthManagerWebServer {
     public static String REDIRECT_URI = "";
 
     public static final int TOKEN_STORE_TIME_MS = 30 * 1000;
-    public static final int TIME_BETWEEN_REQS = 4000;
     public static final int WEB_PORT = RandomUtils.nextInt(3333, 8888);
 
     public boolean serverRunning;
@@ -55,21 +53,6 @@ public class AuthManagerWebServer {
         this.server.stop(1);
         this.threadPoolExecutor.shutdownNow();
         this.executorService.shutdownNow();
-    }
-
-    public static boolean handleRatelimit(String client) {
-        lastRequestTime.putIfAbsent(client, 0L);
-        if (System.currentTimeMillis() - lastRequestTime.get(client) <= TIME_BETWEEN_REQS) {
-            return true;
-        }
-        lastRequestTime.put(client, System.currentTimeMillis());
-        return false;
-    }
-
-    public static long timeToNoRateLimit(String client) {
-        if (!lastRequestTime.containsKey(client))
-            return 0;
-        return 4000L - (System.currentTimeMillis() - lastRequestTime.get(client));
     }
 
     static class AuthInfo {

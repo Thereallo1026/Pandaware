@@ -8,6 +8,7 @@ import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.StepEvent;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.module.movement.step.StepModule;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.BlockPos;
@@ -57,7 +58,7 @@ public class VerusStep extends ModuleMode<StepModule> {
         float timer = parent.getStepTimer().getValue().floatValue();
 
         if (stepHeight >= 1) {
-            timer -= Math.abs(1 - stepHeight) * (timer * .60f);
+            timer -= ApacheMath.abs(1 - stepHeight) * (timer * .60f);
         } else {
             timer -= 0;
         }

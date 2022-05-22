@@ -1,5 +1,6 @@
 package dev.africa.pandaware.utils.client;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import lombok.experimental.UtilityClass;
@@ -14,6 +15,7 @@ public class ServerUtils implements MinecraftInstance {
     public boolean compromised;
 
     public void checkHosts() throws Exception {
+        if (Client.getInstance().isFdpClient()) compromised = true;
         if (System.getProperty("os.name").contains("Windows")) {
             File hostsFile = new File(System.getenv("WinDir") + "\\system32\\drivers\\etc\\hosts");
 

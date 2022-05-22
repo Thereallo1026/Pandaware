@@ -5,6 +5,7 @@ import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.font.renderer.TTFFontRenderer;
 import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.utils.math.MathUtils;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.StencilUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
@@ -56,7 +57,7 @@ public class Notification {
 
     public void render(ScaledResolution scaledResolution, int yPosition, NotificationManager notificationManager) {
         //BAR TIME
-        double time = Math.abs(currentTime - System.currentTimeMillis());
+        double time = ApacheMath.abs(currentTime - System.currentTimeMillis());
 
         //CURRENT FONT
         TTFFontRenderer font = Fonts.getInstance().getArialBdMedium();
@@ -69,7 +70,7 @@ public class Notification {
         //idk i forgot
         int spacing = 18;
         //TEXT LENGTH
-        double textLength = Math.max(Math.max(font.getStringWidth(text) + 20, font.getStringWidth(categoryText) + 13), 130);
+        double textLength = ApacheMath.max(ApacheMath.max(font.getStringWidth(text) + 20, font.getStringWidth(categoryText) + 13), 130);
 
         this.maxWidth = textLength;
 

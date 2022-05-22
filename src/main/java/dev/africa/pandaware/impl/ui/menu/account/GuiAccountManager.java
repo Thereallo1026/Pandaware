@@ -18,10 +18,7 @@ import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.network.NetworkUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
-import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
-import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
 import io.netty.util.internal.ThreadLocalRandom;
-import lombok.val;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.MathHelper;
@@ -50,8 +47,6 @@ public class GuiAccountManager extends GuiScreen {
     private Account loggedInAccount;
     private Account selectedAccount;
     private double accountsY, scrolling;
-
-    private final MicrosoftAuthenticator auth = new MicrosoftAuthenticator();
 
     @Override
     public void initGui() {
@@ -298,7 +293,9 @@ public class GuiAccountManager extends GuiScreen {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Cannot add a blank username", 5);
                 }
                 break;
-            case 5: //TODO: fix not working when building with intelligay
+            case 5:
+                Client.getInstance().getMicrosoftProvider().openUrl();
+                break;
                 /*if (usernameBox.getText().length() > 0 && passwordBox.getText().length() > 0) {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Logging in...", 3);
                     new Thread(() -> {
@@ -317,9 +314,9 @@ public class GuiAccountManager extends GuiScreen {
                     }).start();
                 } else {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Input login credentials retard", 3);
-                }*/
+                }
                 Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Unfinished", 3);
-                break;
+                break;*/
         }
 
         super.actionPerformed(button);

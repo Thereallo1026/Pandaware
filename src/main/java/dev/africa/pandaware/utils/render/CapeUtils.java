@@ -2,7 +2,6 @@ package dev.africa.pandaware.utils.render;
 
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.module.render.HUDModule;
-import dev.africa.pandaware.impl.ui.UISettings;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;

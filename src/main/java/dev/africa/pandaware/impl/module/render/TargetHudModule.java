@@ -17,6 +17,7 @@ import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.math.MathUtils;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
@@ -199,7 +200,7 @@ public class TargetHudModule extends Module {
 
                     double nameLength = Fonts.getInstance().getProductSansMedium()
                             .getStringWidth(this.cachedEntity.getName());
-                    this.width = Math.max((int) (65 + nameLength), 140);
+                    this.width = ApacheMath.max((int) (65 + nameLength), 140);
 
                     RenderUtils.drawRect(0, 0, this.width, this.height, new Color(0, 0, 0, 100).getRGB());
 
@@ -247,7 +248,7 @@ public class TargetHudModule extends Module {
 
                     double nameLength = Fonts.getInstance().getArialBdBig()
                             .getStringWidth(this.cachedEntity.getName());
-                    this.width = Math.max((int) (35 + nameLength), 150);
+                    this.width = ApacheMath.max((int) (35 + nameLength), 150);
 
                     RenderUtils.drawRect(0, 0, this.width, this.height, new Color(0, 0, 0, 100).getRGB());
 

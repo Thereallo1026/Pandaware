@@ -1,5 +1,6 @@
 package dev.africa.pandaware.utils.render;
 
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import lombok.experimental.UtilityClass;
 import org.lwjgl.opengl.GL11;
 
@@ -13,7 +14,7 @@ public class ColorUtils {
     }
 
     public Color rainbow(int delay, float saturation, double speed) {
-        double rainbowState = Math.ceil(((System.currentTimeMillis() * speed) - delay) / 20.0);
+        double rainbowState = ApacheMath.ceil(((System.currentTimeMillis() * speed) - delay) / 20.0);
         rainbowState %= 360;
         return Color.getHSBColor((float) (rainbowState / 360.0f), saturation, 1f);
     }
@@ -29,12 +30,12 @@ public class ColorUtils {
         float gd2 = (secondColor.getGreen() - firstColor.getGreen()) / time;
         float bd2 = (secondColor.getBlue() - firstColor.getBlue()) / time;
 
-        int re1 = Math.round(secondColor.getRed() + rd * (now % (long) time));
-        int ge1 = Math.round(secondColor.getGreen() + gd * (now % (long) time));
-        int be1 = Math.round(secondColor.getBlue() + bd * (now % (long) time));
-        int re2 = Math.round(firstColor.getRed() + rd2 * (now % (long) time));
-        int ge2 = Math.round(firstColor.getGreen() + gd2 * (now % (long) time));
-        int be2 = Math.round(firstColor.getBlue() + bd2 * (now % (long) time));
+        int re1 = ApacheMath.round(secondColor.getRed() + rd * (now % (long) time));
+        int ge1 = ApacheMath.round(secondColor.getGreen() + gd * (now % (long) time));
+        int be1 = ApacheMath.round(secondColor.getBlue() + bd * (now % (long) time));
+        int re2 = ApacheMath.round(firstColor.getRed() + rd2 * (now % (long) time));
+        int ge2 = ApacheMath.round(firstColor.getGreen() + gd2 * (now % (long) time));
+        int be2 = ApacheMath.round(firstColor.getBlue() + bd2 * (now % (long) time));
 
         if (now % ((long) time * 2L) < (long) time) {
             return new Color(getColor(255, re2, ge2, be2));

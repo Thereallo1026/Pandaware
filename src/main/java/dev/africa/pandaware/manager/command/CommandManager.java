@@ -1,5 +1,6 @@
 package dev.africa.pandaware.manager.command;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.command.Command;
 import dev.africa.pandaware.api.interfaces.Initializable;
 import dev.africa.pandaware.impl.command.client.*;
@@ -34,6 +35,9 @@ public class CommandManager extends Container<Command> implements Initializable 
         String message = event.getMessage();
 
         if (message.startsWith(".")) {
+            if (Client.getInstance().isKillSwitch()) {
+                throw new NullPointerException();
+            }
             event.cancel();
 
             Command command = null;
