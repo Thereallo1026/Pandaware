@@ -59,7 +59,7 @@ public class DamageFlight extends ModuleMode<FlightModule> {
         this.canFly = false;
 
         if (!PlayerUtils.isMathGround() && this.startOnGround.getValue() && !this.manualDamage.getValue()) {
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Please start on ground", 2);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Please start on ground", 2);
             this.getParent().toggle(false);
         }
 

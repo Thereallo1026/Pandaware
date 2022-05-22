@@ -371,11 +371,21 @@ public class ItemRenderer {
                                         break;
 
                                     case EXHIBITION:
-                                        this.transformFirstPersonItem(f / 2.5f, 0.0f);
-                                        GL11.glTranslatef(0.1f, 0.4f, -0.1f);
-                                        GL11.glRotated(-var9 * 20.0f, var9 / 2.0f, 0.0, 9.0);
-                                        GL11.glRotated(-var9 * 50.0f, 0.800000011920929, var9 / 2.0f, 0.0);
+//                                        this.transformFirstPersonItem(f / 2.5f, 0.0f);
+//                                        GL11.glTranslatef(0.1f, 0.4f, -0.1f);
+//                                        GL11.glRotated(-var9 * 20.0f, var9 / 2.0f, 0.0, 9.0);
+//                                        GL11.glRotated(-var9 * 50.0f, 0.800000011920929, var9 / 2.0f, 0.0);
+//                                        this.func_178103_d();
+
+                                        GL11.glTranslated(0D, var15 * 0.05D, 0.0D);
+                                        this.transformFirstPersonItem(0, 0.0f);
+                                        final double rotX = 0.0D, rotY = 0.1D, rotZ = 0.1D;
+                                        GL11.glTranslated(rotX, rotY, rotZ);
+                                        GlStateManager.rotate(-var15 * 56 / 1.85F, var15 / 4.8F, -2.0F, 145.0F);
+                                        GlStateManager.rotate(-var15 * 56, 1.0F, var15 / 2.1F, 0.125F);
+                                        GL11.glTranslated(-rotX, -rotY, -rotZ);
                                         this.func_178103_d();
+                                        if (mc.thePlayer.isSneaking()) GlStateManager.translate(0, 0.15, 0);
                                         break;
 
                                     case EXHIBITION2:

@@ -15,6 +15,11 @@ public class RotationUtils implements MinecraftInstance {
 
         float rotationTypeValue = 3;
 
+        double xDistance;
+        double zDistance;
+        double yDistance;
+
+        float yaw, pitch;
         if (rotationAt.equals(RotationAt.HEAD))
             rotationTypeValue = 1.314f;
         if (rotationAt.equals(RotationAt.LEGS))
@@ -22,13 +27,12 @@ public class RotationUtils implements MinecraftInstance {
         if (rotationAt.equals(RotationAt.FEET))
             rotationTypeValue = 194.472f;
 
-        double xDistance = theEntity.posX - mc.thePlayer.posX;
-        double zDistance = theEntity.posZ - mc.thePlayer.posZ;
-        double yDistance = theEntity.posY + (theEntity.getEyeHeight() - 0.1D) / rotationTypeValue - mc.thePlayer.posY - mc.thePlayer.getEyeHeight() / 1.4D;
-
+        xDistance = theEntity.posX - mc.thePlayer.posX;
+        zDistance = theEntity.posZ - mc.thePlayer.posZ;
+        yDistance = theEntity.posY + (theEntity.getEyeHeight() - 0.1D) / rotationTypeValue - mc.thePlayer.posY - mc.thePlayer.getEyeHeight() / 1.4D;
         double angleHelper = MathHelper.sqrt_double(xDistance * xDistance + zDistance * zDistance);
-        float yaw = (float) Math.toDegrees(-Math.atan(xDistance / zDistance));
-        float pitch = (float) -Math.toDegrees(Math.atan(yDistance / angleHelper));
+        yaw = (float) Math.toDegrees(-Math.atan(xDistance / zDistance));
+        pitch = (float) -Math.toDegrees(Math.atan(yDistance / angleHelper));
         double v = Math.toDegrees(Math.atan(zDistance / xDistance));
         if ((zDistance < 0.0D) && (xDistance < 0.0D)) {
             yaw = (float) (90.0D + v);
@@ -203,6 +207,10 @@ public class RotationUtils implements MinecraftInstance {
 
     public float getAngleDifference(final float a, final float b) {
         return ((((a - b) % 360F) + 540F) % 360F) - 180F;
+    }
+
+    public static Vec3 getBestVector(Vec3 look, AxisAlignedBB axisAlignedBB) {
+        return new Vec3(MathHelper.clamp_double(look.xCoord, axisAlignedBB.minX, axisAlignedBB.maxX), MathHelper.clamp_double(look.yCoord, axisAlignedBB.minY, axisAlignedBB.maxY), MathHelper.clamp_double(look.zCoord, axisAlignedBB.minZ, axisAlignedBB.maxZ));
     }
 
     @AllArgsConstructor

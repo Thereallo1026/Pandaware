@@ -67,7 +67,7 @@ public class VerusHighjump extends ModuleMode<HighJumpModule> {
         this.damage = true;
         if (mc.thePlayer.posY % 0.015625 != 0) {
             parent.toggle(false);
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "You must be on ground", 3);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "You must be on ground", 3);
         }
     }
 }

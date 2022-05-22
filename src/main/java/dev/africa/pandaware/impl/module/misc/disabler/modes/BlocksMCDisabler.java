@@ -43,7 +43,7 @@ public class BlocksMCDisabler extends ModuleMode<DisablerModule> {
         this.hasDisabled = false;
         if (ViaMCP.getInstance().getVersion() != ProtocolCollection.R1_9.getVersion().getVersion()) {
             this.getParent().toggle(false);
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Please switch to 1.9", 2);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Please switch to 1.9", 2);
         }
     }
 

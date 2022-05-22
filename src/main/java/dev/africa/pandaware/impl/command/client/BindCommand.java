@@ -7,7 +7,7 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.utils.client.Printer;
 import org.lwjgl.input.Keyboard;
 
-@CommandInformation(name = "Bind", description = "Binds a module to a specified key")
+@CommandInformation(name = "Bind", description = "Binds a module to a specified key", aliases = {"b"})
 public class BindCommand extends Command {
 
     @Override

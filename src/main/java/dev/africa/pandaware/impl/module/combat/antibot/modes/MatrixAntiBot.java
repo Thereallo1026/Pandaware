@@ -36,7 +36,7 @@ public class MatrixAntiBot extends ModuleMode<AntiBotModule> {
             if (entityPlayer != mc.thePlayer
                     && botIDs.contains(entityPlayer.getEntityId())) {
                 if (!Client.getInstance().getIgnoreManager().isIgnore(entityPlayer, false)) {
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Detected bot: §l" + entityPlayer.getName(), 3);
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Detected bot: §l" + entityPlayer.getName(), 3);
                     Client.getInstance().getIgnoreManager().add(entityPlayer, false);
                 }
             }

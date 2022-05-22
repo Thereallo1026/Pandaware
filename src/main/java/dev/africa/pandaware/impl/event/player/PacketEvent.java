@@ -13,6 +13,10 @@ public class PacketEvent extends Event {
     private Packet packet;
     private final State state;
 
+    public <T extends Packet> T getPacket() {
+        return (T) packet;
+    }
+
     public enum State {
         SEND, RECEIVE
     }

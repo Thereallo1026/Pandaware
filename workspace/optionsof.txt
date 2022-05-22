@@ -32,7 +32,7 @@ ofShowFps:false
 ofAutoSaveTicks:4000
 ofBetterGrass:3
 ofConnectedTextures:3
-ofWeather:true
+ofWeather:false
 ofSky:true
 ofStars:true
 ofSunMoon:true

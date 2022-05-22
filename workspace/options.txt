@@ -1,5 +1,5 @@
 invertYMouse:false
-mouseSensitivity:0.3309859
+mouseSensitivity:0.5
 fov:0.5
 gamma:1.0
 saturation:0.0
@@ -10,11 +10,11 @@ bobView:false
 anaglyph3d:false
 maxFps:260
 fboEnable:true
-difficulty:3
+difficulty:1
 fancyGraphics:false
 ao:2
 renderClouds:false
-resourcePacks:["!       §dberyL §8[§532§fx§8].zip"]
+resourcePacks:["§eRach200.zip"]
 incompatibleResourcePacks:[]
 lastServer:mc.minebox.es
 lang:en_US
@@ -29,7 +29,7 @@ enableVsync:false
 useVbo:false
 hideServerAddress:false
 advancedItemTooltips:true
-pauseOnLostFocus:true
+pauseOnLostFocus:false
 touchscreen:false
 overrideWidth:0
 overrideHeight:0
@@ -94,7 +94,7 @@ key_of.key.zoom:46
 soundCategory_master:0.102649
 soundCategory_music:0.0
 soundCategory_record:1.0
-soundCategory_weather:1.0
+soundCategory_weather:0.0
 soundCategory_block:1.0
 soundCategory_hostile:0.471831
 soundCategory_neutral:1.0

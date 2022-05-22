@@ -18,16 +18,17 @@ public class NotificationManager extends Container<Notification> {
 
             for (Notification notification : this.getItems()) {
                 notification.getYAnimator()
-                        .setEase(Easing.CIRC_IN)
+                        .setEase(Easing.LINEAR)
+//                        .setEase(Easing.CIRC_IN)
                         .setMin(0).setMax(1)
-                        .setReversed(
-                                notification.isShouldAnimateBack() && notification.getRectPosition()
-                                        <= scaledResolution.getScaledWidth() - 3)
+                        .setReversed(notification.isShouldAnimateBack())
+//                                notification.isShouldAnimateBack() && notification.getRectPosition()
+//                                        <= scaledResolution.getScaledWidth() - 3)
                         .setSpeed(3f).update();
 
                 notification.render(scaledResolution, yPosition, this);
 
-                yPosition += 45 * notification.getYAnimator().getValue();
+                yPosition -= 25 * notification.getYAnimator().getValue();
             }
         }
     }

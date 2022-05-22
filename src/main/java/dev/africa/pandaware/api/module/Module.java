@@ -108,7 +108,7 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
                 }
 
                 if (!(this instanceof ClickGUIModule) && hudModule != null && hudModule.getToggleNotifications().getValue()) {
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION,
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO,
                             "§aEnabled §7" + this.getData().getName(), 2);
                 }
 
@@ -148,7 +148,7 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
                 }
 
                 if (!(this instanceof ClickGUIModule) && hudModule != null && hudModule.getToggleNotifications().getValue()) {
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION,
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO,
                             "§4Disabled §7" + this.getData().getName(), 2);
                 }
 

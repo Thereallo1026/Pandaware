@@ -34,7 +34,7 @@ public class SpeedModule extends Module {
     @Override
     public void onDisable() {
         if (PlayerUtils.inLiquid() && this.getCurrentMode() instanceof HypixelSpeed) {
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Disabled speed to prevent flags", 1);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Disabled speed to prevent flags", 1);
         }
         MovementUtils.slowdown();
         mc.timer.timerSpeed = 1f;

@@ -84,7 +84,6 @@ public class ClickGUI extends ScreenGUI implements Initializable {
             this.femboyPosition.setY(mousePosition.getY() + this.femboyDraggingPosition.getY());
         }
 
-
         this.animator.setEase(this.shouldClose ? Easing.QUINTIC_OUT : Easing.QUINTIC_IN).setSpeed(3).setMin(0)
                 .setReversed(!this.shouldClose).setMax(1).update();
 
@@ -394,5 +393,10 @@ public class ClickGUI extends ScreenGUI implements Initializable {
         }
 
         super.handleGuiInit();
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
     }
 }

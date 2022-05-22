@@ -157,12 +157,12 @@ public class ESPModule extends Module {
 
                                 if (this.nametags.getValue()) {
                                     double xPos = (position.x - 1) + ((position.z - position.x + 3.0) / 2f);
-                                    double yPos = position.y - 5;
+                                    double yPos = position.y - 8;
 
                                     GlStateManager.pushMatrix();
-                                    GlStateManager.scale(0.5, 0.5, 0.5);
+//                                    GlStateManager.scale(0.5, 0.5, 0.5);
                                     Fonts.getInstance().getProductSansSmall().drawCenteredString(entity.getName(),
-                                            (int) xPos * 2, (int) yPos * 2, Color.RED.getRGB());
+                                            (int) xPos, (int) yPos, Color.RED.getRGB());
                                     GlStateManager.popMatrix();
                                 }
 

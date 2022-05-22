@@ -75,7 +75,7 @@ public class BowLongJump extends ModuleMode<LongJumpModule> { //ty sage for hot 
         if (this.getBowSlot() == -1) {
             this.toggle(false);
 
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION,
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY,
                     "You do not have a bow in your hotbar", 5);
         } else {
             this.stage = 1;

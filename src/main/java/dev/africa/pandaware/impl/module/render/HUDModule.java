@@ -55,6 +55,7 @@ public class HUDModule extends Module {
     private final BooleanSetting showCape = new BooleanSetting("Show Cape", true);
     private final BooleanSetting toggleSound = new BooleanSetting("Toggle sound", false);
     private final BooleanSetting toggleNotifications = new BooleanSetting("Toggle notifications", false);
+    private final BooleanSetting notificationsCenter = new BooleanSetting("Notifications in Center", false);
     private final NumberSetting soundVolume = new NumberSetting("Toggle Sound volume", 100, 1, 20, 1,
             this.toggleSound::getValue);
     private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.CAR, this.showCape::getValue);
@@ -108,6 +109,7 @@ public class HUDModule extends Module {
                 this.customFont,
                 this.toggleSound,
                 this.toggleNotifications,
+                this.notificationsCenter,
                 this.borderlessFullscreen,
                 this.arraylistLine,
                 this.colorTime,

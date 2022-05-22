@@ -42,7 +42,7 @@ public class AutoJoinModule extends Module {
         if (startTimer) {
             if (System.currentTimeMillis() - startDelay >= delay.getValue().longValue()) {
                 String text = "/play " + mode.getValue().label.replace(" ", "_").toLowerCase();
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Playing a new game!", 1);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Playing a new game!", 1);
                 mc.thePlayer.sendChatMessage(text);
                 startTimer = false;
             }

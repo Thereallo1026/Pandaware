@@ -83,7 +83,7 @@ public class ChestStealerModule extends Module {
                     mc.thePlayer.closeScreen();
 
                     if (silent.getValue()) {
-                        Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Finished stealing chest.", 1);
+                        Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY, "Finished stealing chest.", 1);
                     }
                 }
             }

@@ -3,6 +3,7 @@ package dev.africa.pandaware.impl.ui.notification;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.font.renderer.TTFFontRenderer;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
@@ -48,7 +49,7 @@ public class Notification {
         this.currentTime = System.currentTimeMillis();
         this.duration = (duration * 1000);
         this.xAnimation = 0;
-        this.typeColor = null;
+        this.typeColor = type.getColor();
         this.animated = false;
         this.shouldAnimateBack = false;
         this.xAnimator = new Animator();
@@ -60,7 +61,7 @@ public class Notification {
         double time = ApacheMath.abs(currentTime - System.currentTimeMillis());
 
         //CURRENT FONT
-        TTFFontRenderer font = Fonts.getInstance().getArialBdMedium();
+        TTFFontRenderer font = Fonts.getInstance().getTahomaNormal();
 
         //CATEGORY NAME
         String categoryName = StringUtils.capitalize(type.toString().toLowerCase());
@@ -68,18 +69,24 @@ public class Notification {
         String categoryText = categoryName + " (" + (MathUtils.roundToDecimal(MathHelper.clamp_double((duration - time) / 1000.0, 0, duration / 1000.0), 1)) + "s)";
 
         //idk i forgot
-        int spacing = 18;
+        int spacing = 1;
         //TEXT LENGTH
-        double textLength = ApacheMath.max(ApacheMath.max(font.getStringWidth(text) + 20, font.getStringWidth(categoryText) + 13), 130);
+        double textLength = ApacheMath.max(ApacheMath.max(font.getStringWidth(text) + 25, font.getStringWidth(categoryText) + 18), 0);
 
         this.maxWidth = textLength;
+
+        double width = textLength + spacing;
 
         //ANIMATION SPEED
         animationValue = animationStart * RenderUtils.fpsMultiplier();
 
+        HUDModule hudModule = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+
+        boolean shouldCenter = hudModule.getNotificationsCenter().getValue() && mc.currentScreen == null;
+
         //RENDERING POSITION
-        double rectX = scaledResolution.getScaledWidth() - (8 * xAnimation) - (spacing * xAnimation) - (textLength * xAnimation),
-                rectY = scaledResolution.getScaledHeight() - 70 - 20,
+        double rectX = shouldCenter ? ((1 / xAnimation) * (scaledResolution.getScaledWidth() / 2D - width / 2D)) : scaledResolution.getScaledWidth() - (width) * xAnimation,
+                rectY = shouldCenter ? scaledResolution.getScaledHeight() / 2D + 20 - yPosition : scaledResolution.getScaledHeight() + yPosition - 25,
                 reduction = MathHelper.clamp_double(1 - (time / duration), 0, 1);
 
         Easing easingMode = Easing.Elastic.QUINTIC_OUT;
@@ -129,55 +136,51 @@ public class Notification {
         //RENDERS BACKGROUND
 
         int rounding = mc.theWorld == null ? 0 : 3;
-        int alpha = 120 / 2;
+        int alpha = 200;
 
-        StencilUtils.stencilStage(StencilUtils.StencilStage.ENABLE_MASK);
-        RenderUtils.drawRoundedRect(this.rectPosition, rectY - yPosition, textLength + spacing,
-                32, rounding, (new Color(0, 0, 0, alpha)));
-        StencilUtils.stencilStage(StencilUtils.StencilStage.ENABLE_DRAW);
+        int height = 25;
 
-        RenderUtils.drawRoundedRect(this.rectPosition, rectY - yPosition, textLength + spacing,
-                32, rounding, new Color(10, 10, 10, alpha));
+//        StencilUtils.stencilStage(StencilUtils.StencilStage.ENABLE_MASK);
+//        RenderUtils.drawRoundedRect(this.rectPosition, rectY - yPosition, textLength + spacing,
+//                32, rounding, (new Color(0, 0, 0, alpha)));
+//        StencilUtils.stencilStage(StencilUtils.StencilStage.ENABLE_DRAW);
+//
+//        RenderUtils.drawRoundedRect(this.rectPosition, rectY - yPosition, textLength + spacing,
+//                32, rounding, new Color(10, 10, 10, alpha));
+//
+        double bar = ((width) * (1 - reduction));
+//        //RENDERS STAY TIME BAR
+//        StencilUtils.stencilStage(StencilUtils.StencilStage.DISABLE);
 
-        double bar = (rectX + (textLength + spacing) * (1 - reduction));
-        //RENDERS STAY TIME BAR
-        RenderUtils.drawRect(this.rectPosition, rectY + 30 - yPosition, bar, rectY + 32 - yPosition, typeColor.getRGB());
-        StencilUtils.stencilStage(StencilUtils.StencilStage.DISABLE);
+        RenderUtils.drawRect(this.rectPosition, rectY, this.rectPosition + width, rectY + height - 1, new Color(16, 14, 8, alpha).getRGB());
+        RenderUtils.drawRect(this.rectPosition + width, rectY + height - 1, rectPosition + bar, rectY + height, typeColor.getRGB());
 
         //RENDERS ICON
-        RenderUtils.drawImage(new ResourceLocation(icon), (float) this.rectPosition + 10 - 8, (float) (rectY - yPosition) + 2, 27, 27);
+        RenderUtils.drawImage(new ResourceLocation(icon), (int) this.rectPosition + 3, (int) (rectY) + 3, 18, 18);
 
-        font.drawStringWithShadow("§l" + StringUtils.capitalize(this.type.name().toLowerCase()),
-                (float) this.rectPosition + spacing + 3 + 10, (float) (rectY - yPosition) + 4, -1);
+        font.drawString(StringUtils.capitalize(this.type.name().toLowerCase()),
+                (float) this.rectPosition + spacing + 20, (float) (rectY) + 2, -1);
 
         //RENDER TEXTS
-        font.drawStringWithShadow(text, (float) this.rectPosition + spacing + 3 + 10, (float) (rectY - yPosition) + 17, -1);
+        font.drawString(text, (float) this.rectPosition + spacing + 20, (float) (rectY) + height - 4 - font.FONT_HEIGHT, -1);
     }
 
     //GETS ICON FROM PICKED CATEGORY
     private String getIcon() {
-        String path = Client.getInstance().getManifest().getClientName().toLowerCase() + "/icons/notification/", icon = "";
+        String path = Client.getInstance().getManifest().getClientName().toLowerCase() + "/icons/goodnotifs/", icon = "";
 
         switch (type) {
             case WARNING:
-                this.typeColor = new Color(166, 238, 252, 255);
                 icon = path + "warning.png";
                 break;
-            case INFORMATION:
-                this.typeColor = new Color(249, 107, 252, 255);
-                icon = path + "information.png";
+            case INFO:
+                icon = path + "info.png";
                 break;
-            case ERROR:
-                this.typeColor = new Color(255, 79, 79, 255);
-                icon = path + "error.png";
+            case NOTIFY:
+                icon = path + "notify.png";
                 break;
-            case SUCCESS:
-                this.typeColor = new Color(111, 255, 102, 255);
-                icon = path + "success.png";
-                break;
-            case SPOTIFY:
-                this.typeColor = new Color(30, 215, 96, 255);
-                icon = Client.getInstance().getManifest().getClientName() + "/icons/spotify.png";
+            case OKAY:
+                icon = path + "okay.png";
                 break;
         }
 
@@ -186,6 +189,19 @@ public class Notification {
 
     //CATEGORY ENUMS
     public enum Type {
-        WARNING, INFORMATION, ERROR, SUCCESS, SPOTIFY
+        OKAY(new Color(65, 252, 65)),
+        INFO(new Color(127, 174, 210)),
+        NOTIFY(new Color(255, 255, 94)),
+        WARNING(new Color(226, 87, 76));
+
+        private final Color color;
+
+        private Type(Color color) {
+            this.color = color;
+        }
+
+        public Color getColor() {
+            return this.color;
+        }
     }
 }

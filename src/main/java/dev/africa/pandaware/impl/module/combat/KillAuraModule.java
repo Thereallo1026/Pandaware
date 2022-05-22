@@ -16,6 +16,7 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberRangeSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
+import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
@@ -409,6 +410,16 @@ public class KillAuraModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+//
+//        Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY,
+//                "§4Disabled §7" + this.getData().getName(), 2);
+//
+//        Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING,
+//                "§4Disabled §7" + this.getData().getName(), 2);
+//
+//        Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY,
+//                "§4Disabled §7" + this.getData().getName(), 2);
+
         if (this.vulcant.getValue()) {
             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
                     mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ,

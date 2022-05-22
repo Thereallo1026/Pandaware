@@ -496,7 +496,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
         this.ingameGUI = new GuiIngame(this);
-
+        Client.getInstance().init();
         if (this.serverName != null) {
             this.displayGuiScreen(new GuiConnecting(new GuiNewMainMenu(), this, this.serverName, this.serverPort));
         } else {
@@ -519,7 +519,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         }
 
         System.setProperty("log4j2.formatMsgNoLookups", "true");
-        Client.getInstance().init();
+
 
         this.renderGlobal.makeEntityOutlineShader();
     }

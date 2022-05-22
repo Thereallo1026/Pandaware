@@ -21,7 +21,7 @@ public class PluginFinderModule extends Module {
 
     public void onEnable() {
         if (mc.isSingleplayer()) {
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "YOU'RE IN SINGLEPLAYER FUCKTARD", 5);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "YOU'RE IN SINGLEPLAYER FUCKTARD", 5);
             this.toggle(false);
         }
         if (this.mc.thePlayer != null && this.mc.theWorld != null) {

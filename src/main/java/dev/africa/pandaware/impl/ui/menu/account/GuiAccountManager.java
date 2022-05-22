@@ -201,7 +201,7 @@ public class GuiAccountManager extends GuiScreen {
                 if (usernameBox.getText().length() > 0) {
                     login(usernameBox.getText(), passwordBox.getText(), "", "", false);
                 } else {
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Cannot login to a blank username", 5);
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Cannot login to a blank username", 5);
                 }
                 break;
             case 1:
@@ -209,7 +209,7 @@ public class GuiAccountManager extends GuiScreen {
                     try {
                         String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
                         if (!data.contains(":")) {
-                            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Clipboard does not contain required text", 5);
+                            Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Clipboard does not contain required text", 5);
                             return;
                         }
 
@@ -290,7 +290,7 @@ public class GuiAccountManager extends GuiScreen {
                 if (usernameBox.getText().length() > 0) {
                     addToAccountList(usernameBox.getText(), passwordBox.getText(), "", "", false);
                 } else {
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Cannot add a blank username", 5);
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Cannot add a blank username", 5);
                 }
                 break;
             case 5:
@@ -357,7 +357,7 @@ public class GuiAccountManager extends GuiScreen {
                             login((selectedAccount.getEmail().length() > 0 ? selectedAccount.getEmail() : selectedAccount.getUsername()), selectedAccount.getPassword(), "", "", false);
                         }
                     } else {
-                        Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Cannot login to a blank username", 5);
+                        Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Cannot login to a blank username", 5);
                     }
                 }
 
@@ -376,16 +376,16 @@ public class GuiAccountManager extends GuiScreen {
                 this.mc.setSession(new Session(username, "", "", "mojang"));
 
                 this.loggedInAccount = new Account("", mc.getSession().getUsername(), "", "", "", true, true, false);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + mc.getSession().getUsername() + " - offline)", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY, "Logged in! (" + mc.getSession().getUsername() + " - offline)", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.orb"), 1.0F));
                 return;
             }
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Logging in...", 5);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Logging in...", 5);
 
             Session auth = microsoft ? createMicrosoftSession(username, uuid, getTokenMicrosoft(refreshToken)) : createSession(username, password);
 
             if (auth == null) {
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Login failed!", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Login failed!", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.pop"), 1.0F));
             } else {
                 if (Client.getInstance().isKillSwitch()) {
@@ -398,7 +398,7 @@ public class GuiAccountManager extends GuiScreen {
 
                 this.loggedInAccount = new Account(username, mc.getSession().getUsername(), password, refreshToken, uuid, false, true, microsoft);
                 StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY, "Logged in! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.orb"), 1.0F));
             }
         }).start();
@@ -408,20 +408,20 @@ public class GuiAccountManager extends GuiScreen {
         new Thread(() -> {
             if (passwordBox.getText().length() <= 0 && !microsoft) {
                 Client.getInstance().getAccountManager().getItems().add(new Account("", username, "", "", "", true, false, false));
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Account added! (" + username + " - offline)", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY, "Account added! (" + username + " - offline)", 5);
                 Client.getInstance().getFileManager().saveAll();
                 return;
             }
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION, "Logging in...", 5);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Logging in...", 5);
 
             Session auth = microsoft ? createMicrosoftSession(username, uuid, getTokenMicrosoft(refreshToken)) : createSession(username, password);
 
             if (auth == null) {
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "Login failed!", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Login failed!", 5);
             } else {
                 Client.getInstance().getAccountManager().getItems().add(new Account(username, auth.getUsername(), password, refreshToken, uuid, false, false, microsoft));
                 StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Account added! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Account added! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
                 Client.getInstance().getFileManager().saveAll();
             }
         }).start();

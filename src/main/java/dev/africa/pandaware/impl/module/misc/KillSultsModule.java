@@ -92,7 +92,7 @@ public class KillSultsModule extends Module {
         if (!this.insultsFile.exists()) {
             try {
                 this.insultsFile.createNewFile();
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFORMATION,
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO,
                         "Killsults file generated", 2);
             } catch (IOException e) {
                 e.printStackTrace();

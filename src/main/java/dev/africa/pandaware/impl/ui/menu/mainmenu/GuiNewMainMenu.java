@@ -41,7 +41,6 @@ public class GuiNewMainMenu extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        this.initGui();
         this.drawDefaultBackground(); // Incase of failiure to find wallpaper
 
         RenderUtils.drawImage(new ResourceLocation("/pandaware/icons/wallpaper.jpg"), 0, 0, width, height);

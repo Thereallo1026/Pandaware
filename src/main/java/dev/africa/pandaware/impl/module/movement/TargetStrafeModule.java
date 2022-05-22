@@ -59,7 +59,7 @@ public class TargetStrafeModule extends Module {
             this.entityLivingBase = killAuraModule.getTarget();
 
             this.canStrafe = GameSettings.isKeyDown(mc.gameSettings.keyBindJump) || !this.pressSpaceOnly.getValue();
-            this.shouldStrafe = this.entityLivingBase != null && killAuraModule.getData().isEnabled();
+            this.shouldStrafe = this.entityLivingBase != null && killAuraModule.getData().isEnabled() && mc.thePlayer.getDistanceToEntity(entityLivingBase) < radius.getValue().floatValue() + 1;
             if (this.shouldStrafe) {
                 this.drawCircle(
                         this.entityLivingBase,

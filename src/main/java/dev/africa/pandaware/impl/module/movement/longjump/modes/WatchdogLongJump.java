@@ -60,7 +60,7 @@ public class WatchdogLongJump extends ModuleMode<LongJumpModule> {
         this.wasOnGround = false;
         this.lastDistance = MovementUtils.getLastDistance();
         if (mc.getCurrentServerData() != null && !mc.getCurrentServerData().serverIP.endsWith("hypixel.net") && !(mc.currentScreen instanceof GuiMultiplayer)) {
-            Client.getInstance().getNotificationManager().addNotification(Notification.Type.ERROR, "FDPClient 'developer' detected", 2);
+            Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "FDPClient 'developer' detected", 2);
             this.parent.toggle(false);
         }
     }

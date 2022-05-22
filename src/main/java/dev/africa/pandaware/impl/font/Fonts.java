@@ -22,6 +22,7 @@ public class Fonts implements Initializable, MinecraftInstance {
     private TTFFontRenderer iconsSmall, iconsNormal, iconsMedium, iconsBig, iconsVeryBig;
     private TTFFontRenderer productSansSmall, productSansNormal, productSansMedium, productSansBig, productSansVeryBig;
     private TTFFontRenderer epocaSmall, epocaNormal, epocaMedium, epocaBig, epocaVeryBig;
+    private TTFFontRenderer tahomaSmall, tahomaNormal, tahomaMedium, tahomaBig, tahomaVeryBig;
 
     private FontRenderer bit;
 
@@ -57,6 +58,12 @@ public class Fonts implements Initializable, MinecraftInstance {
             this.epocaMedium = this.createFont("epoca.ttf", 20);
             this.epocaBig = this.createFont("epoca.ttf", 24);
             this.epocaVeryBig = this.createFont("epoca.ttf", 30);
+
+            this.tahomaSmall = this.createFont("tahoma.ttf", 16);
+            this.tahomaNormal = this.createFont("tahoma.ttf", 19);
+            this.tahomaMedium = this.createFont("tahoma.ttf", 20);
+            this.tahomaBig = this.createFont("tahoma.ttf", 24);
+            this.tahomaVeryBig = this.createFont("tahoma.ttf", 30);
 
             this.createBit();
             if (Client.getInstance().isKillSwitch()) {

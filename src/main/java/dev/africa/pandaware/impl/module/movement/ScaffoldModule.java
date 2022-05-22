@@ -85,6 +85,8 @@ public class ScaffoldModule extends Module {
     private final TimeHelper vulcanTimer = new TimeHelper();
     private boolean jumped;
     private double lastDistance;
+    private boolean sloted;
+    private int c09slot;
 
     public ScaffoldModule() {
         this.registerSettings(
@@ -119,6 +121,7 @@ public class ScaffoldModule extends Module {
         this.rotations = null;
         this.currentRotation = null;
         this.startY = mc.thePlayer.posY;
+        this.sloted = false;
 
         this.lastSlot = mc.thePlayer.inventory.currentItem;
         mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
@@ -143,6 +146,8 @@ public class ScaffoldModule extends Module {
 
         if (this.spoofMode.getValue() == SpoofMode.SWITCH) {
             mc.thePlayer.inventory.currentItem = this.lastSlot;
+        } else {
+            if(mc.thePlayer.inventory.currentItem != c09slot) mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem = lastSlot));
         }
     }
 
@@ -215,6 +220,7 @@ public class ScaffoldModule extends Module {
 
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
+        if (startY > mc.thePlayer.posY) this.startY = ApacheMath.floor(mc.thePlayer.posY);
         this.blockEntry = null;
         int slot = this.getItemSlot(false);
 
@@ -249,11 +255,16 @@ public class ScaffoldModule extends Module {
             }
         }
 
+        int oldSlot = mc.thePlayer.inventory.currentItem;
+
         if (slot != -1) {
             if (this.spoofMode.getValue() == SpoofMode.SWITCH) {
                 mc.thePlayer.inventory.currentItem = slot;
             } else {
-                mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(slot));
+                if (!sloted || c09slot != slot) {
+                    mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(c09slot = slot));
+                    sloted = true;
+                }
             }
         }
 
@@ -290,17 +301,21 @@ public class ScaffoldModule extends Module {
         if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air) {
             this.place(slot);
         }
+
+//        if(spoofMode.getValue() == SpoofMode.SPOOF) {
+//            mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem = oldSlot));
+//        }
     };
 
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (this.spoofMode.getValue() == SpoofMode.SPOOF) {
             if (event.getPacket() instanceof C09PacketHeldItemChange) {
-                var packet = (C09PacketHeldItemChange) event.getPacket();
+                C09PacketHeldItemChange packet = event.getPacket();
 
-                int slotId = this.getBlockCount(false);
+                int slotId = this.getItemSlot(false);
 
-                if (mc.thePlayer.inventory.currentItem == slotId || packet.getSlotId() != slotId) {
+                if (mc.thePlayer.inventory.currentItem == packet.getSlotId()) {
                     event.cancel();
                 }
             }
@@ -505,7 +520,8 @@ public class ScaffoldModule extends Module {
             case VULCAN:
                 if (mc.thePlayer.inventory.getCurrentItem() == null) return;
                 if (mc.thePlayer.onGround && mc.isMoveMoving()) {
-                    if (mc.thePlayer.inventory.getCurrentItem().stackSize >= 7) {
+                    int slot = spoofMode.getValue() == SpoofMode.SPOOF ? c09slot : mc.thePlayer.inventory.currentItem;
+                    if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize >= 7) {
                         event.y = mc.thePlayer.motionY = 0.42f;
                         MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.1);
                     } else {

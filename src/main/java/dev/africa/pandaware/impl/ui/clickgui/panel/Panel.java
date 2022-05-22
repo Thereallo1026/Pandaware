@@ -9,6 +9,7 @@ import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.impl.ui.clickgui.ClickGUI;
 import dev.africa.pandaware.impl.ui.clickgui.module.ModuleElement;
 import dev.africa.pandaware.utils.client.MouseUtils;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.Getter;
@@ -39,7 +40,7 @@ public class Panel implements GUIRenderer, MinecraftInstance {
         this.parent = parent;
         this.category = category;
         this.position = position;
-        this.size = size;
+//        this.size = size;
 
         this.moduleElements = new LinkedList<>();
 
@@ -48,6 +49,7 @@ public class Panel implements GUIRenderer, MinecraftInstance {
                 this.moduleElements.add(new ModuleElement(this, module,
                         new Vec2i(position.getX() + 4, atomicInteger.getAndAdd(20)),
                         new Vec2i(size.getX() - 8, 18))));
+        this.size = new Vec2i(size.getX(), ApacheMath.min(atomicInteger.get() - position.getY(), size.getY()));
     }
 
     @Override
@@ -81,7 +83,7 @@ public class Panel implements GUIRenderer, MinecraftInstance {
 
             RenderUtils.startScissorBox();
             RenderUtils.drawScissorBox(this.position.getX() + 2, this.position.getY() + 25 + animate,
-                    this.getSize().getX() - 4, this.getSize().getY() - 34);
+                    this.getSize().getX() - 4, this.getSize().getY() - 30);
 
             if (MouseUtils.isMouseInBounds(mousePosition, this.position, this.size)) {
                 AtomicInteger maxScroll = new AtomicInteger(0);
