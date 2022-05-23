@@ -376,7 +376,7 @@ public class GuiAccountManager extends GuiScreen {
                 this.mc.setSession(new Session(username, "", "", "mojang"));
 
                 this.loggedInAccount = new Account("", mc.getSession().getUsername(), "", "", "", true, true, false);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY, "Logged in! (" + mc.getSession().getUsername() + " - offline)", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + mc.getSession().getUsername() + " - offline)", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.orb"), 1.0F));
                 return;
             }
@@ -398,7 +398,7 @@ public class GuiAccountManager extends GuiScreen {
 
                 this.loggedInAccount = new Account(username, mc.getSession().getUsername(), password, refreshToken, uuid, false, true, microsoft);
                 StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY, "Logged in! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.orb"), 1.0F));
             }
         }).start();
@@ -408,7 +408,7 @@ public class GuiAccountManager extends GuiScreen {
         new Thread(() -> {
             if (passwordBox.getText().length() <= 0 && !microsoft) {
                 Client.getInstance().getAccountManager().getItems().add(new Account("", username, "", "", "", true, false, false));
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY, "Account added! (" + username + " - offline)", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Account added! (" + username + " - offline)", 5);
                 Client.getInstance().getFileManager().saveAll();
                 return;
             }

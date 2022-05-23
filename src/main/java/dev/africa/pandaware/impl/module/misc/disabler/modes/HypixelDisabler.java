@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.module.misc.disabler.modes;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
@@ -27,6 +28,7 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
     @Override
     public void onEnable() {
         this.packets = 0;
+        if (Client.getInstance().isKillSwitch()) mc.timer.timerSpeed = 0;
     }
 
     @EventHandler

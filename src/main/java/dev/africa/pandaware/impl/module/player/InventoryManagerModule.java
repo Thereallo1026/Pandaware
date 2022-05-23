@@ -34,6 +34,7 @@ public class InventoryManagerModule extends Module {
     private final NumberSetting randomMax = new NumberSetting("Random Max", 1000, 0, 50);
     private final NumberSetting randomMin = new NumberSetting("Random Min", 1000, 0, 0);
     private final NumberSetting blockCap = new NumberSetting("Block Cap", 1024, 64, 512);
+    private final BooleanSetting stopWhenCleaning = new BooleanSetting("Stop when cleaning", false);
     private final BooleanSetting random = new BooleanSetting("Randomization", false);
     private final BooleanSetting archery = new BooleanSetting("Clean Bows-Arrows", true);
     private final BooleanSetting food = new BooleanSetting("Clean food", true);
@@ -47,7 +48,10 @@ public class InventoryManagerModule extends Module {
         if (autoArmor.getData().isEnabled() && (System.currentTimeMillis() - autoArmor.lastCycle) < 150) return;
         final long time = delay.getValue().intValue() + (random.getValue() ? RandomUtils.nextInt(randomMin.getValue().intValue(), randomMax.getValue().intValue()) : 0);
 
-        if (this.cleanMode.getValue() == CleanMode.OPEN && !(mc.currentScreen instanceof GuiInventory))
+        if ((this.cleanMode.getValue() == CleanMode.OPEN && !(mc.currentScreen instanceof GuiInventory) &&
+                !this.stopWhenCleaning.getValue()) || this.stopWhenCleaning.getValue() &&
+                (mc.isMoveMoving() || mc.thePlayer.moveForward > 0 || mc.thePlayer.moveStrafing > 0 ||
+                        mc.gameSettings.keyBindJump.pressed))
             return;
 
         if (this.cleanMode.getValue() == CleanMode.FAKE && (mc.isMoveMoving() || mc.gameSettings.keyBindJump.pressed))

@@ -36,7 +36,6 @@ import java.util.List;
 @Getter
 public class ClickGUI extends ScreenGUI implements Initializable {
 
-
     private final List<Panel> panelList = new LinkedList<>();
     private final ClickCircle clickCircle = new ClickCircle();
 
@@ -264,47 +263,8 @@ public class ClickGUI extends ScreenGUI implements Initializable {
         ClickGUIModule clickGUI = Client.getInstance().getModuleManager().getByClass(ClickGUIModule.class);
 
         if (button == 0 || button == 1) {
-            switch(clickGUI.getClickColor().getValue()) {
-                case WHITE:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, Color.WHITE);
-                    break;
-                case RAINBOW:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, ColorUtils.rainbow(20, 0.7f, 3.5));
-                    break;
-                case ASTOLFO:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, ColorUtils.rainbow(20, 0.4f, 3.5));
-                    break;
-                case RED:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, Color.RED);
-                    break;
-                case GREEN:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, Color.GREEN);
-                    break;
-                case BLUE:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, Color.BLUE);
-                    break;
-                case YELLOW:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, Color.YELLOW);
-                    break;
-                case PINK:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, Color.PINK);
-                    break;
-                case ORANGE:
-                    this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                            0, 20, 1.6, Color.ORANGE);
-                    break;
-
-            }
             this.clickCircle.addCircle(mousePosition.getX(), mousePosition.getY(),
-                    0, 20, 1.6, Color.WHITE);
+                    0, 20, 1.6, clickGUI.getClickColor().getValue());
         }
 
         if (MouseUtils.isMouseInBounds(mousePosition, this.femboyPosition, new Vec2i(222, 283))) {

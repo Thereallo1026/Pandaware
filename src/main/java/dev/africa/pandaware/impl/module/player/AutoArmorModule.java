@@ -34,6 +34,7 @@ public class AutoArmorModule extends Module {
     private final NumberSetting randomMax = new NumberSetting("Random Max", 1000, 0, 50);
     private final NumberSetting randomMin = new NumberSetting("Random Min", 1000, 0, 0);
     private final BooleanSetting random = new BooleanSetting("Randomization", false);
+    private final BooleanSetting stopWhenCleaning = new BooleanSetting("Stop when cleaning", false);
     private double maxValue = -1.0D;
     protected long delayVal;
     private int item = -1;
@@ -42,12 +43,14 @@ public class AutoArmorModule extends Module {
     public long lastCycle;
 
     public AutoArmorModule() {
-        registerSettings(equipMode, delay, randomMax, randomMin, random);
+        registerSettings(this.equipMode, this.delay, this.randomMax, this.randomMin, this.random, this.stopWhenCleaning);
     }
 
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
-        if (equipMode.getValue() == EquipMode.OPEN && !(mc.currentScreen instanceof GuiInventory))
+        if ((equipMode.getValue() == EquipMode.OPEN && !(mc.currentScreen instanceof GuiInventory) ||
+                this.stopWhenCleaning.getValue() && (mc.isMoveMoving() || mc.thePlayer.moveForward > 0 ||
+                        mc.thePlayer.moveStrafing > 0 || mc.gameSettings.keyBindJump.pressed)))
             return;
 
         if (equipMode.getValue() == EquipMode.FAKE && (mc.isMoveMoving() || mc.gameSettings.keyBindJump.pressed || !mc.thePlayer.isUsingItem()))

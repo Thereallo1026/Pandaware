@@ -19,19 +19,6 @@ public class NotificationWriter implements Writer {
 
     @Override
     public void write(LogEntry logEntry) {
-//        Notification.Type notificationType;
-//        switch (logEntry.getLevel()) {
-//            case WARN:
-//                notificationType = Notification.Type.WARNING;
-//                break;
-//            case ERROR:
-//                notificationType = Notification.Type.ERROR;
-//                break;
-//            default:
-//                notificationType = Notification.Type.SUCCESS;
-//        }
-//
-//        Stitch.NOTIFICATION_MANAGER.addNotification(notificationType, logEntry.getMessage(), 3000);
     }
 
     @Override

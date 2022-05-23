@@ -8,6 +8,7 @@ import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.module.combat.AimAssistModule;
 import dev.africa.pandaware.impl.module.combat.ReachModule;
 import dev.africa.pandaware.impl.module.player.ChestStealerModule;
+import dev.africa.pandaware.impl.module.render.CameraNoClipModule;
 import dev.africa.pandaware.impl.module.render.TracersModule;
 import dev.africa.pandaware.impl.ui.menu.mainmenu.GuiNewMainMenu;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
@@ -706,24 +707,26 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     f2 += 180.0F;
                 }
 
-                double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-                double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-                double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
+                if (!Client.getInstance().getModuleManager().getByClass(CameraNoClipModule.class).getData().isEnabled()) {
+                    double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+                    double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+                    double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
 
-                for (int i = 0; i < 8; ++i) {
-                    float f3 = (float) ((i & 1) * 2 - 1);
-                    float f4 = (float) ((i >> 1 & 1) * 2 - 1);
-                    float f5 = (float) ((i >> 2 & 1) * 2 - 1);
-                    f3 = f3 * 0.1F;
-                    f4 = f4 * 0.1F;
-                    f5 = f5 * 0.1F;
-                    MovingObjectPosition movingobjectposition = this.mc.theWorld.rayTraceBlocks(new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5), new Vec3(d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4, d2 - d5 + (double) f5));
+                    for (int i = 0; i < 8; ++i) {
+                        float f3 = (float) ((i & 1) * 2 - 1);
+                        float f4 = (float) ((i >> 1 & 1) * 2 - 1);
+                        float f5 = (float) ((i >> 2 & 1) * 2 - 1);
+                        f3 = f3 * 0.1F;
+                        f4 = f4 * 0.1F;
+                        f5 = f5 * 0.1F;
+                        MovingObjectPosition movingobjectposition = this.mc.theWorld.rayTraceBlocks(new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5), new Vec3(d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4, d2 - d5 + (double) f5));
 
-                    if (movingobjectposition != null) {
-                        double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
+                          if (movingobjectposition != null) {
+                            double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
 
-                        if (d7 < d3) {
-                            d3 = d7;
+                            if (d7 < d3) {
+                                d3 = d7;
+                            }
                         }
                     }
                 }

@@ -83,6 +83,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new StreamerModule(),
                     new TracersModule(),
                     new WaveyCapesModule(),
+                    new CameraNoClipModule(),
 
                     // Player
                     new NoFallModule(),

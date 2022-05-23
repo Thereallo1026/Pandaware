@@ -3,6 +3,7 @@ package dev.africa.pandaware.impl.ui.circle;
 import dev.africa.pandaware.impl.container.Container;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.util.MathHelper;
 
 import java.awt.*;
@@ -20,6 +21,7 @@ public class ClickCircle extends Container<ClickCircle.Circle> {
         this.getItems().add(new Circle(x, y, startRadius, maxRadius, speed, color));
     }
 
+    @RequiredArgsConstructor
     @Getter
     protected static class Circle {
         private final double x;
@@ -27,22 +29,10 @@ public class ClickCircle extends Container<ClickCircle.Circle> {
         private final double startRadius;
         private final double maxRadius;
         private final double speed;
-        private Color color;
+        private final Color color;
 
         private double radius;
-        private int alpha;
-
-        public Circle(double x, double y, double startRadius, double maxRadius, double speed, Color color) {
-            this.x = x;
-            this.y = y;
-            this.startRadius = startRadius;
-            this.maxRadius = maxRadius;
-            this.speed = speed;
-            this.color = color;
-
-            this.radius = startRadius;
-            this.alpha = color.getAlpha();
-        }
+        private int alpha = 255;
 
         public void render() {
             this.radius += this.speed * RenderUtils.fpsMultiplier();

@@ -15,6 +15,7 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 
 public class VulcanNoFall extends ModuleMode<NoFallModule> {
     private boolean fixed;
+
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         FlightModule fly = Client.getInstance().getModuleManager().getByClass(FlightModule.class);
@@ -27,7 +28,7 @@ public class VulcanNoFall extends ModuleMode<NoFallModule> {
             if (mc.thePlayer.fallDistance > 3.5f) {
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(null));
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));
-                mc.thePlayer.motionY = -0.1;
+                mc.thePlayer.motionY = -0.1f;
                 mc.thePlayer.fallDistance = 0;
             }
             if (mc.thePlayer.onGround && !fixed) {

@@ -14,7 +14,7 @@ public class NotificationManager extends Container<Notification> {
 
     public void renderNotifications(ScaledResolution scaledResolution) {
         if (!this.getItems().isEmpty()) {
-            int yPosition = 0;
+            int yPosition = -30;
 
             for (Notification notification : this.getItems()) {
                 notification.getYAnimator()

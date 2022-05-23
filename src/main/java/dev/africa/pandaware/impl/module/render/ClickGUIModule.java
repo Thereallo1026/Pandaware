@@ -5,11 +5,13 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
+import dev.africa.pandaware.impl.setting.ColorSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
-import dev.africa.pandaware.impl.ui.clickgui.GUIClickColor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.lwjgl.input.Keyboard;
+
+import java.awt.*;
 
 @Getter
 @ModuleInfo(name = "Click GUI", description = "STOP LOOKING AT FEMBOYS FAGGOT", category = Category.VISUAL, key = Keyboard.KEY_RSHIFT)
@@ -17,14 +19,13 @@ public class ClickGUIModule extends Module {
     private final BooleanSetting showCummyMen = new BooleanSetting("Show Femboys", true);
     private final EnumSetting<FemboyMode> cummyMode = new EnumSetting<>("Femboy Mode", FemboyMode.GREEK,
             this.showCummyMen::getValue);
-    private final EnumSetting<GUIClickColor> clickColor = new EnumSetting<>("Click Color", GUIClickColor.WHITE);
+    private final ColorSetting clickColor = new ColorSetting("Click Color", Color.WHITE);
 
     public ClickGUIModule() {
         this.registerSettings(
                 this.showCummyMen,
                 this.cummyMode,
                 this.clickColor
-
         );
     }
 

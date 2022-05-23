@@ -18,6 +18,7 @@ import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.TimeHelper;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2f;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
@@ -31,7 +32,6 @@ import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
@@ -122,9 +122,10 @@ public class ScaffoldModule extends Module {
         this.currentRotation = null;
         this.startY = mc.thePlayer.posY;
         this.sloted = false;
-
+        this.c09slot = mc.thePlayer.inventory.currentItem;
         this.lastSlot = mc.thePlayer.inventory.currentItem;
         mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
+
         if (this.scaffoldMode.getValue() == ScaffoldMode.VULCAN) {
             if (!mc.thePlayer.onGround) {
                 mc.thePlayer.motionX *= 0.7;
@@ -147,7 +148,8 @@ public class ScaffoldModule extends Module {
         if (this.spoofMode.getValue() == SpoofMode.SWITCH) {
             mc.thePlayer.inventory.currentItem = this.lastSlot;
         } else {
-            if(mc.thePlayer.inventory.currentItem != c09slot) mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem = lastSlot));
+            if (mc.thePlayer.inventory.currentItem != c09slot) mc.thePlayer.sendQueue.getNetworkManager().sendPacket(
+                    new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem));
         }
     }
 
@@ -262,7 +264,8 @@ public class ScaffoldModule extends Module {
                 mc.thePlayer.inventory.currentItem = slot;
             } else {
                 if (!sloted || c09slot != slot) {
-                    mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(c09slot = slot));
+                    mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(slot));
+                    c09slot = slot;
                     sloted = true;
                 }
             }
@@ -301,10 +304,6 @@ public class ScaffoldModule extends Module {
         if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air) {
             this.place(slot);
         }
-
-//        if(spoofMode.getValue() == SpoofMode.SPOOF) {
-//            mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem = oldSlot));
-//        }
     };
 
     @EventHandler
@@ -518,7 +517,6 @@ public class ScaffoldModule extends Module {
                 mc.thePlayer.motionZ *= (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1);
                 break;
             case VULCAN:
-                if (mc.thePlayer.inventory.getCurrentItem() == null) return;
                 if (mc.thePlayer.onGround && mc.isMoveMoving()) {
                     int slot = spoofMode.getValue() == SpoofMode.SPOOF ? c09slot : mc.thePlayer.inventory.currentItem;
                     if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize >= 7) {
@@ -527,7 +525,6 @@ public class ScaffoldModule extends Module {
                     } else {
                         MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.7);
                     }
-                } else if (mc.isMoveMoving()) {
                     if (this.vulcanTimer.reach(500)) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SNEAKING));
                         vulcanTimer.reset();

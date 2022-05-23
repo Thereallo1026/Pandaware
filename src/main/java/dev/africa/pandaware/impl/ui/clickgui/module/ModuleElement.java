@@ -69,7 +69,6 @@ public class ModuleElement implements GUIRenderer, MinecraftInstance {
 
     @Override
     public void handleKeyboard(char typedChar, int keyCode) {
-
     }
 
     @Override

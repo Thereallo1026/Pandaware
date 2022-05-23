@@ -2,14 +2,13 @@ package dev.africa.pandaware.api.config;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.api.setting.Setting;
 import dev.africa.pandaware.impl.setting.*;
 import dev.africa.pandaware.utils.client.Printer;
-import dev.africa.pandaware.utils.java.FileUtils;
+import dev.africa.pandaware.utils.java.DataUtils;
 import dev.africa.pandaware.utils.math.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,104 +25,132 @@ public class Config {
 
     public void save(boolean clientConfig) {
         try {
-            if (!this.file.exists()) {
-                file.createNewFile();
+            if (!this.getFile().exists()) {
+                this.getFile().createNewFile();
             }
 
             JsonObject configObject = new JsonObject();
 
-            Client.getInstance().getModuleManager().getMap().values().stream().filter(module ->
-                    module.getData().getCategory() != Category.VISUAL || clientConfig).forEach(module -> {
-                JsonObject moduleObject = new JsonObject();
+            Client.getInstance().getModuleManager()
+                    .getMap()
+                    .values()
+                    .stream()
+                    .filter(module -> module.getData().getCategory() != Category.VISUAL || clientConfig).forEach(module -> {
+                        JsonObject moduleObject = new JsonObject();
 
-                moduleObject.addProperty("enabled", module.getData().isEnabled());
-                if (clientConfig) {
-                    moduleObject.addProperty("hidden", module.getData().isHidden());
-                    moduleObject.addProperty("key", module.getData().getKey());
-                }
+                        moduleObject.addProperty("enabled", module.getData().isEnabled());
 
-                JsonObject settingsObject = new JsonObject();
-                if (!module.getSettings().isEmpty()) {
-                    module.getSettings().keySet().forEach(setting ->
-                            this.addSettings(settingsObject, setting, null));
-
-                    if (module.getModeSetting() != null && !module.getModeSetting().getValues().isEmpty()) {
-                        if (!module.getModeSetting().getValues().isEmpty()) {
-                            module.getModeSetting().getValues().forEach(moduleMode ->
-                                    moduleMode.getSettings().keySet().forEach(setting -> {
-                                        if (setting.isSaveConfig() || clientConfig) {
-                                            this.addSettings(settingsObject, setting, moduleMode);
-                                        }
-                                    }));
+                        if (clientConfig) {
+                            moduleObject.addProperty("hidden", module.getData().isHidden());
+                            moduleObject.addProperty("key", module.getData().getKey());
                         }
-                    }
 
-                    moduleObject.add("settings", settingsObject);
-                }
+                        JsonObject settingsObject = new JsonObject();
+                        if (!module.getSettings().isEmpty()) {
+                            module.getSettings()
+                                    .keySet()
+                                    .forEach(setting -> {
+                                        if (setting.isSaveConfig() || clientConfig) {
+                                            this.addSettings(settingsObject, setting, null);
+                                        }
+                                    });
 
-                configObject.add(module.getData().getName(), moduleObject);
-            });
+                            if (module.getModeSetting() != null && !module.getModeSetting().getValues().isEmpty()) {
+                                if (!module.getModeSetting().getValues().isEmpty()) {
+                                    module.getModeSetting().getValues().forEach(moduleMode ->
+                                            moduleMode.getSettings()
+                                                    .keySet()
+                                                    .forEach(setting -> {
+                                                        if (setting.isSaveConfig() || clientConfig) {
+                                                            this.addSettings(settingsObject, setting, moduleMode);
+                                                        }
+                                                    }));
+                                }
+                            }
 
-            FileUtils.writeToFile(Client.getInstance().getFileManager().getGson().toJson(configObject), this.file);
+                            moduleObject.add("settings", settingsObject);
+                        }
+
+                        configObject.add(module.getData().getName(), moduleObject);
+                    });
+
+            DataUtils.writeJson(configObject, this.getFile());
         } catch (Exception e) {
-            Printer.consoleError("There was an error while saving the config: " + this.name);
+            e.printStackTrace();
+
+            Printer.consoleError("There was an error while saving the config: " + this.getName());
         }
     }
 
     public void load(boolean clientConfig) {
         try {
-            if (!this.file.exists()) {
+            if (!this.getFile().exists()) {
                 return;
             }
 
-            String json = FileUtils.readFromFile(this.file);
-            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+            JsonObject jsonObject = DataUtils.parseJson(this.getFile()).getAsJsonObject();
 
-            Client.getInstance().getModuleManager().getMap().values().stream().filter(module ->
-                    module.getData().getCategory() != Category.VISUAL || clientConfig).forEach(module -> {
-                JsonObject moduleObject = jsonObject.getAsJsonObject(module.getData().getName());
+            Client.getInstance().getModuleManager()
+                    .getMap()
+                    .values()
+                    .stream()
+                    .filter(module -> module.getData().getCategory() != Category.VISUAL || clientConfig).forEach(module -> {
+                        JsonObject moduleObject = jsonObject.getAsJsonObject(module.getData().getName());
 
-                if (moduleObject != null) {
-                    boolean toggled = moduleObject.get("enabled").getAsBoolean();
-                    if (toggled && !module.getData().isEnabled() || !toggled && module.getData().isEnabled()) {
-                        module.toggle();
-                    }
-
-                    if (clientConfig) {
-                        module.getData().setHidden(moduleObject.get("hidden").getAsBoolean());
-                        module.getData().setKey(moduleObject.get("key").getAsInt());
-                    }
-
-                    JsonObject settingsObject = moduleObject.getAsJsonObject("settings");
-
-                    if (settingsObject != null) {
-                        module.getSettings().keySet().forEach(setting -> {
-                            JsonElement value = settingsObject.get(setting.getName());
-
-                            if (value != null) {
-                                this.fetchSettings(setting, value);
+                        if (moduleObject != null) {
+                            boolean toggled = moduleObject.get("enabled").getAsBoolean();
+                            if (toggled && !module.getData().isEnabled() || !toggled && module.getData().isEnabled()) {
+                                module.toggle();
                             }
-                        });
 
-                        if (module.getModeSetting() != null && !module.getModeSetting().getValues().isEmpty()) {
-                            module.getModeSetting().getValues().forEach(moduleMode -> {
-                                if (!moduleMode.getSettings().isEmpty()) {
-                                    moduleMode.getSettings().keySet().forEach(setting -> {
-                                        JsonElement value = settingsObject.get(moduleMode.getName() + "_" + setting.getName());
+                            if (clientConfig) {
+                                module.getData().setHidden(moduleObject.get("hidden").getAsBoolean());
+                                module.getData().setKey(moduleObject.get("key").getAsInt());
+                            }
+
+                            JsonObject settingsObject = moduleObject.getAsJsonObject("settings");
+
+                            if (settingsObject != null) {
+                                module.getSettings().keySet().forEach(setting -> {
+                                    if (setting.isSaveConfig() || clientConfig) {
+                                        JsonElement value = settingsObject.get(setting.getName());
 
                                         if (value != null) {
                                             this.fetchSettings(setting, value);
                                         }
+                                    }
+                                });
+
+                                if (module.getModeSetting() != null && !module.getModeSetting().getValues().isEmpty()) {
+                                    module.getModeSetting().getValues().forEach(moduleMode -> {
+                                        if (!moduleMode.getSettings().isEmpty()) {
+                                            moduleMode.getSettings().keySet().forEach(setting -> {
+                                                if (setting.isSaveConfig() || clientConfig) {
+                                                    JsonElement value = settingsObject
+                                                            .get(moduleMode.getName() + "_" + setting.getName());
+
+                                                    if (value != null) {
+                                                        this.fetchSettings(setting, value);
+                                                    }
+                                                }
+                                            });
+                                        }
                                     });
                                 }
-                            });
+                            }
                         }
-                    }
-                }
-            });
+                    });
         } catch (Exception e) {
-            Printer.consoleError("There was an error while loading the config: " + this.name);
+            e.printStackTrace();
+
+            Printer.consoleError("There was an error while loading the config: " + this.getName());
         }
+    }
+
+    public void delete() {
+        this.getFile().delete();
+
+        Client.getInstance().getConfigManager().getItems().remove(this);
     }
 
     void addSettings(JsonObject settingsObject, Setting<?> setting, ModuleMode<?> moduleMode) {
@@ -178,11 +205,8 @@ public class Config {
             double secondValue = Double.parseDouble(split[1]);
 
             if (rangeSetting.getIncrement() != null) {
-                firstValue = MathUtils.roundToDecimal(firstValue,
-                        rangeSetting.getIncrement().doubleValue());
-
-                secondValue = MathUtils.roundToDecimal(secondValue,
-                        rangeSetting.getIncrement().doubleValue());
+                firstValue = MathUtils.roundToIncrement(firstValue, rangeSetting.getIncrement().doubleValue());
+                secondValue = MathUtils.roundToIncrement(secondValue, rangeSetting.getIncrement().doubleValue());
             }
 
             rangeSetting.setValue(new Number[]{firstValue, secondValue});
@@ -202,11 +226,5 @@ public class Config {
         } else if (setting instanceof TextBoxSetting) {
             ((TextBoxSetting) setting).setValue(value.getAsString());
         }
-    }
-
-    public void delete() {
-        this.file.delete();
-
-        Client.getInstance().getConfigManager().getItems().remove(this);
     }
 }

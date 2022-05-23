@@ -631,6 +631,11 @@ public class KillAuraModule extends Module {
                 newRotation.setY((float) ((newRotation.getY() * ApacheMath.random()) + RandomUtils.nextFloat(-45f, 45f)));
                 break;
             }
+            case ATANH: {
+                newRotation.setX((float) ApacheMath.atanh(newRotation.getX()));
+                newRotation.setY((float) ApacheMath.atanh(newRotation.getY()));
+                break;
+            }
         }
 
         //Finally clamp the pitch to make sure we didn't mess up.
@@ -1190,7 +1195,8 @@ public class KillAuraModule extends Module {
         ROUND("Round"),
         LOCK("Lock"),
         RANDOMIZE("Randomize"),
-        MATH_RANDOM("Math.Random");
+        MATH_RANDOM("Math.Random"),
+        ATANH("Atanh");
 
         private final String label;
     }

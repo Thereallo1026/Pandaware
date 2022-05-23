@@ -9,7 +9,6 @@ import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.impl.ui.clickgui.ClickGUI;
 import dev.africa.pandaware.impl.ui.clickgui.module.ModuleElement;
 import dev.africa.pandaware.utils.client.MouseUtils;
-import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.Getter;
@@ -49,7 +48,7 @@ public class Panel implements GUIRenderer, MinecraftInstance {
                 this.moduleElements.add(new ModuleElement(this, module,
                         new Vec2i(position.getX() + 4, atomicInteger.getAndAdd(20)),
                         new Vec2i(size.getX() - 8, 18))));
-        this.size = new Vec2i(size.getX(), ApacheMath.min(atomicInteger.get() - position.getY(), size.getY()));
+        this.size = new Vec2i(size.getX(), Math.min(atomicInteger.get() - position.getY(), size.getY()));
     }
 
     @Override
@@ -90,7 +89,7 @@ public class Panel implements GUIRenderer, MinecraftInstance {
                 this.moduleElements.forEach(element -> maxScroll.addAndGet(element.getSize() != null
                         ? element.getSize().getY() : 0));
 
-                boolean shouldScroll = maxScroll.get() > (this.size.getY() - 34);
+                boolean shouldScroll = moduleElements.size() > 13;
 
                 if (shouldScroll) {
                     int wheel = Mouse.getDWheel();
@@ -101,7 +100,7 @@ public class Panel implements GUIRenderer, MinecraftInstance {
                         this.scrolling -= 20;
                     }
 
-                    this.scrolling = MathHelper.clamp_double(this.scrolling, 0, maxScroll.get() - 250);
+                    this.scrolling = MathHelper.clamp_double(this.scrolling, 0, maxScroll.get() - 240);
                 } else {
                     this.scrolling = 0;
                 }
@@ -140,7 +139,9 @@ public class Panel implements GUIRenderer, MinecraftInstance {
         }
 
         if (this.extended) {
-            this.moduleElements.forEach(moduleElement -> moduleElement.handleClick(mousePosition, button));
+            if (mousePosition.getY() <= this.position.getY() + this.size.getY()) {
+                this.moduleElements.forEach(moduleElement -> moduleElement.handleClick(mousePosition, button));
+            }
         }
     }
 

@@ -175,7 +175,11 @@ public class MineboxFlight extends ModuleMode<FlightModule> {
     @Override
     public void onDisable() {
         if (this.lastTick != null) {
-            mc.thePlayer.setPosition(this.lastTick.getX(), this.lastTick.getY() + .42f, this.lastTick.getZ());
+            mc.thePlayer.setPosition(this.lastTick.getX(), this.lastTick.getY() + 0.42f, this.lastTick.getZ());
+            /*mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
+                    lastTick.getX(), lastTick.getY() + 0.42f, lastTick.getZ(), mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch,
+                    false
+            ));*/
         }
 
         mc.timer.timerSpeed = 1f;

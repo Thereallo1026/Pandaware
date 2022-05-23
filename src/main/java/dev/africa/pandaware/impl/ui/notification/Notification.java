@@ -8,7 +8,6 @@ import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.render.RenderUtils;
-import dev.africa.pandaware.utils.render.StencilUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
 import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.Getter;
@@ -156,7 +155,7 @@ public class Notification {
         RenderUtils.drawRect(this.rectPosition + width, rectY + height - 1, rectPosition + bar, rectY + height, typeColor.getRGB());
 
         //RENDERS ICON
-        RenderUtils.drawImage(new ResourceLocation(icon), (int) this.rectPosition + 3, (int) (rectY) + 3, 18, 18);
+        RenderUtils.drawImage(new ResourceLocation(icon), (int) this.rectPosition + 2, (int) (rectY) + 3, 18, 18);
 
         font.drawString(StringUtils.capitalize(this.type.name().toLowerCase()),
                 (float) this.rectPosition + spacing + 20, (float) (rectY) + 2, -1);
@@ -179,7 +178,7 @@ public class Notification {
             case NOTIFY:
                 icon = path + "notify.png";
                 break;
-            case OKAY:
+            case SUCCESS:
                 icon = path + "okay.png";
                 break;
         }
@@ -189,14 +188,14 @@ public class Notification {
 
     //CATEGORY ENUMS
     public enum Type {
-        OKAY(new Color(65, 252, 65)),
+        SUCCESS(new Color(65, 252, 65)),
         INFO(new Color(127, 174, 210)),
         NOTIFY(new Color(255, 255, 94)),
         WARNING(new Color(226, 87, 76));
 
         private final Color color;
 
-        private Type(Color color) {
+        Type(Color color) {
             this.color = color;
         }
 
