@@ -10,11 +10,11 @@ bobView:false
 anaglyph3d:false
 maxFps:260
 fboEnable:true
-difficulty:1
+difficulty:2
 fancyGraphics:false
-ao:2
+ao:0
 renderClouds:false
-resourcePacks:["§eRach200.zip"]
+resourcePacks:["!       §dberyL §8[§532§fx§8].zip"]
 incompatibleResourcePacks:[]
 lastServer:mc.minebox.es
 lang:en_US
