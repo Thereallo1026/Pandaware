@@ -286,7 +286,7 @@ public class TargetHudModule extends Module {
                     break;
                 }
 
-                case BASIC_SMALL: {
+                case BASIC_BIG: {
                     this.height = 25;
                     RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3, new Color(0, 0, 0, 100));
                     double nameLength1 = Fonts.getInstance().getArialBdBig()
@@ -298,17 +298,14 @@ public class TargetHudModule extends Module {
                     } else {
                         Fonts.getInstance().getTahomaBig().drawString("§l" + this.cachedEntity.getName(), this.height, 1, -1);
                     }
-                    String playerHealth1 = String.valueOf(this.cachedEntity.getHealth());
-                    String maxPlayerHealth1 = " / " + this.cachedEntity.getMaxHealth();
+                    String playerHealth1 = String.valueOf(ApacheMath.round(this.cachedEntity.getHealth()) + " / " + this.cachedEntity.getMaxHealth());
                     String playerPing1 = PlayerUtils.getPing(this.cachedEntity) + "ms";
 
                     Color playerHealthColor;
 
-                    double legnth1 = Fonts.getInstance().getTahomaNormal().getStringWidth(maxPlayerHealth1);
                     this.width = ApacheMath.max((int) (35 + nameLength1), 150);
 
-                    Fonts.getInstance().getTahomaNormal().drawString(playerHealth1, this.height, 12, getPlayerColor().getRGB());
-                    Fonts.getInstance().getTahomaNormal().drawString(maxPlayerHealth1, this.height + 18, 12, -1);
+                    Fonts.getInstance().getTahomaNormal().drawString(playerHealth1, this.height, 14, getPlayerColor().getRGB());
                     Fonts.getInstance().getTahomaNormal().drawString(playerPing1, this.height + 100, 15, -1);
 
 
@@ -316,7 +313,7 @@ public class TargetHudModule extends Module {
                     break;
                 }
 
-                case BASIC_BIG: {
+                case BASIC_SMALL: {
                     this.height = 50;
                     RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3, new Color(0, 0, 0, 100));
                     double nameLength = Fonts.getInstance().getArialBdBig()
@@ -328,7 +325,7 @@ public class TargetHudModule extends Module {
                     } else {
                         Fonts.getInstance().getTahomaBig().drawString("§l" + this.cachedEntity.getName(), this.height, 1, -1);
                     }
-                    String playerHealth = String.valueOf(this.cachedEntity.getHealth());
+                    String playerHealth = String.valueOf(ApacheMath.round(this.cachedEntity.getHealth()));
                     String maxPlayerHealth = " / " + this.cachedEntity.getMaxHealth();
                     String playerPing = PlayerUtils.getPing(this.cachedEntity) + "ms";
 
