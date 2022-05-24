@@ -2,7 +2,9 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.module.misc.StreamerModule;
+import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.switcher.ViaMCP;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -13,6 +15,11 @@ import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import org.tinylog.Logger;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.io.IOException;
 import java.util.List;
 
@@ -161,6 +168,30 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
                 this.mc.displayGuiScreen(this.parentScreen);
             } else if (button.id == 8) {
                 this.refreshServerList();
+            } else if (button.id == 9) {
+
+                //TODO: FIX
+                String playerIGN = null;
+                try {
+
+                    playerIGN = mc.session.getUsername();
+
+                    Toolkit toolkit = Toolkit.getDefaultToolkit();
+                    Clipboard clipboard = toolkit.getSystemClipboard();
+                    StringSelection strSel = new StringSelection(playerIGN);
+                    clipboard.setContents(strSel, null);
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "Failed to copy your IGN to the clipboard.", 3);
+                }
+
+                if(Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Copied IGN to your clipboard. (You have streamer mode enabled).", 3);
+                }else if (!(playerIGN == null)){
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Copied IGN " + playerIGN + " to your clipboard.", 3);
+                }else if (playerIGN == null){
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "If you see this, report this to a developer.", 3);
+                }
             }
         }
     }
