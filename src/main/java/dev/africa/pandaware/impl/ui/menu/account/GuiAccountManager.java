@@ -421,7 +421,7 @@ public class GuiAccountManager extends GuiScreen {
             } else {
                 Client.getInstance().getAccountManager().getItems().add(new Account(username, auth.getUsername(), password, refreshToken, uuid, false, false, microsoft));
                 StreamerModule streamerModule = Client.getInstance().getModuleManager().getByClass(StreamerModule.class);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Account added! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Account added! (" + (streamerModule.getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + ")", 5);
                 Client.getInstance().getFileManager().saveAll();
             }
         }).start();

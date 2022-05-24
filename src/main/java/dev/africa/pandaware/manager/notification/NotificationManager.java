@@ -12,6 +12,10 @@ public class NotificationManager extends Container<Notification> {
         this.getItems().add(new Notification(type, text, duration));
     }
 
+    public void addNotification(Notification.Type type, String title, String text, double duration) {
+        this.getItems().add(new Notification(type, title, text, duration));
+    }
+
     public void renderNotifications(ScaledResolution scaledResolution) {
         if (!this.getItems().isEmpty()) {
             int yPosition = -30;
