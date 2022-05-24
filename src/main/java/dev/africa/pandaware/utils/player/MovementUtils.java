@@ -4,6 +4,7 @@ import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
+import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.potion.Potion;
@@ -139,6 +140,14 @@ public class MovementUtils implements MinecraftInstance {
         }
 
         return motion;
+    }
+
+    public double getHypixelFunny() {
+        double value = 1;
+        for(int i = 0; i < RandomUtils.nextInt(4, 7); i++) {
+            value *= ApacheMath.random();
+        }
+        return value;
     }
 
     public final double MODULO_GROUND = 1 / 64D;

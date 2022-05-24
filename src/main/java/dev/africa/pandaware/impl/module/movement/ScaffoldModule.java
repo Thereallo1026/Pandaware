@@ -74,6 +74,8 @@ public class ScaffoldModule extends Module {
     private final NumberSetting expand = new NumberSetting("Expand", 6, 0, 0, 0.1);
     private final NumberSetting timerSpeed = new NumberSetting("Timer", 5, 1, 1, 0.1);
 
+    final EnumFacing[] invert = {EnumFacing.UP, EnumFacing.DOWN, EnumFacing.SOUTH, EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.WEST};
+
     private BlockEntry blockEntry;
     private BlockEntry aimBlockEntry;
     private Vec2f rotations;
@@ -176,7 +178,7 @@ public class ScaffoldModule extends Module {
                 if (this.animator.getValue() > 0) {
                     float width = 30;
                     float x = event.getResolution().getScaledWidth() / 2f - (width / 2);
-                    float y = event.getResolution().getScaledHeight() / 2f + 35;
+                    float y = event.getResolution().getScaledHeight() / 2f + 10;
                     GlStateManager.translate(x, y, 0);
 
                     if (this.animator.getValue() < 1D) {
@@ -329,6 +331,10 @@ public class ScaffoldModule extends Module {
 
         if (this.rotate.getValue() && this.rotations != null) {
             switch (this.rotationMode.getValue()) {
+                case VULCAN:
+                    event.setPitch(-50);
+                    event.setYaw(mc.thePlayer.rotationYaw - 180);
+                    break;
                 case SNAP:
                 case NEW:
                 case OLD:
@@ -484,20 +490,21 @@ public class ScaffoldModule extends Module {
                                     && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
                                 event.y = mc.thePlayer.motionY = 0.4f;
 
-                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 0.75 *
-                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.65 : 1.05) *
-                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.45 : 0.75) *
-                                        (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
+                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 1.1);
+//                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 0.75 *
+//                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.65 : 1.05) *
+//                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.45 : 0.75) *
+//                                        (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                                 jumped = true;
-                            } else if (jumped) {
+                            }/* else if (jumped) {
                                 MovementUtils.strafe((lastDistance - 0.66F * (lastDistance - MovementUtils.getBaseMoveSpeed()))
                                         * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.65 : 0.75));
                                 jumped = false;
-                            }
-                            if (!Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()) &&
+                            }*/
+                            /*if (!Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()) &&
                                     !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                                 event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
-                            }
+                            }*/
                         } else {
                             event.y = mc.thePlayer.motionY = Math.random() - (MovementUtils.getBaseMoveSpeed() / 6);
                         }
@@ -533,7 +540,6 @@ public class ScaffoldModule extends Module {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
                     }
                 }
-                break;
         }
 
         if (mc.isMoveMoving()) {
@@ -563,8 +569,8 @@ public class ScaffoldModule extends Module {
                         if (this.blockEntry != null) {
                             if (mc.thePlayer.onGround) {
                                 event.y = mc.thePlayer.motionY = 0.42f;
-                            } else if (mc.thePlayer.getAirTicks() == 4 && !mc.isMoveMoving()) {
-                                event.y = mc.thePlayer.motionY = -0.2f;
+                            } else if (mc.thePlayer.getAirTicks() == 5 && !mc.isMoveMoving()) {
+                                event.y = mc.thePlayer.motionY = -0.4f;
                             }
                         }
                         break;
@@ -586,17 +592,23 @@ public class ScaffoldModule extends Module {
 
                             if (!mc.isMoveMoving()) {
                                 MovementUtils.strafe(event, 0);
+//                                if (mc.thePlayer.onGround) {
+//                                    mc.thePlayer.jump();
+//                                    event.y = mc.thePlayer.motionY = 0.419;
+//                                }
                             } else {
                                 MovementUtils.strafe(event, (mc.thePlayer.getDiagonalTicks() > 0 ? 0.158 : 0.205));
                             }
-
                             double offset = onHypixel ? 0.41 : 0.15;
 
                             boolean towerMove = PlayerUtils.isOnGround(offset) && mc.isMoveMoving();
                             boolean shouldRun = !mc.isMoveMoving() || towerMove;
 
                             if (this.blockEntry != null && shouldRun) {
-                                event.y = mc.thePlayer.motionY = onHypixel ? 0.419f : 0.38f;
+                                event.y = mc.thePlayer.motionY = onHypixel ? 0.418f + (0.01 * MovementUtils.getHypixelFunny()) : 0.38f;
+
+                                event.x -= MovementUtils.getHypixelFunny() * 1E-4;
+                                event.z -= MovementUtils.getHypixelFunny() * 1E-4;
 
                                 long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
 
@@ -608,6 +620,7 @@ public class ScaffoldModule extends Module {
                                     this.towerTimer.reset();
                                 }
                             }
+
                         }
                         break;
 
@@ -729,281 +742,23 @@ public class ScaffoldModule extends Module {
     }
 
     private BlockEntry getBlockEntry(BlockPos pos) {
-
-        if (isValid(mc.theWorld.getBlockState((pos.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-        BlockPos pos1 = pos.add(-1, 0, 0);
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos1.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos1.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-
-        BlockPos pos2 = pos.add(1, 0, 0);
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos2.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos2.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-
-        BlockPos pos3 = pos.add(0, 0, 1);
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos3.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos3.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        BlockPos pos4 = pos.add(0, 0, -1);
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos4.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos4.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos1.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos1.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos1.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos1.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos2.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos2.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos2.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos2.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos3.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos3.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos3.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos3.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos4.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos4.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos4.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos4.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        BlockPos pos5 = pos.add(0, -1, 0);
-        if (isValid(mc.theWorld.getBlockState((pos5.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos5.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos5.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos5.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos5.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos5.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos5.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos5.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos5.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos5.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos5.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos5.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        BlockPos pos6 = pos5.add(1, 0, 0);
-        if (isValid(mc.theWorld.getBlockState((pos6.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos6.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos6.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos6.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos6.add(-1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos6.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos6.add(1, 0, 0))).getBlock())) {
-            return new BlockEntry(pos6.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos6.add(0, 0, 1))).getBlock())) {
-            return new BlockEntry(pos6.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos6.add(0, 0, -1))).getBlock())) {
-            return new BlockEntry(pos6.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        BlockPos pos7 = pos5.add(-1, 0, 0);
-        if (isValid(mc.theWorld.getBlockState((pos7.add(0, -1, 0))).getBlock())) {
-            return new BlockEntry(pos7.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos7.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos7.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos7.add(-1, 0, 0)).getBlock())) {
-            return new BlockEntry(pos7.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos7.add(1, 0, 0)).getBlock())) {
-            return new BlockEntry(pos7.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos7.add(0, 0, 1)).getBlock())) {
-            return new BlockEntry(pos7.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos7.add(0, 0, -1)).getBlock())) {
-            return new BlockEntry(pos7.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        BlockPos pos8 = pos5.add(0, 0, 1);
-        if (isValid(mc.theWorld.getBlockState(pos8.add(0, -1, 0)).getBlock())) {
-            return new BlockEntry(pos8.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos8.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos8.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos8.add(-1, 0, 0)).getBlock())) {
-            return new BlockEntry(pos8.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos8.add(1, 0, 0)).getBlock())) {
-            return new BlockEntry(pos8.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos8.add(0, 0, 1)).getBlock())) {
-            return new BlockEntry(pos8.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos8.add(0, 0, -1)).getBlock())) {
-            return new BlockEntry(pos8.add(0, 0, -1), EnumFacing.SOUTH);
-        }
-
-        BlockPos pos9 = pos5.add(0, 0, -1);
-        if (isValid(mc.theWorld.getBlockState(pos9.add(0, -1, 0)).getBlock())) {
-            return new BlockEntry(pos9.add(0, -1, 0), EnumFacing.UP);
-        }
-        if (isValid(mc.theWorld.getBlockState((pos9.add(0, 1, 0))).getBlock())) {
-            return new BlockEntry(pos9.add(0, 1, 0), EnumFacing.DOWN);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos9.add(-1, 0, 0)).getBlock())) {
-            return new BlockEntry(pos9.add(-1, 0, 0), EnumFacing.EAST);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos9.add(1, 0, 0)).getBlock())) {
-            return new BlockEntry(pos9.add(1, 0, 0), EnumFacing.WEST);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos9.add(0, 0, 1)).getBlock())) {
-            return new BlockEntry(pos9.add(0, 0, 1), EnumFacing.NORTH);
-        }
-        if (isValid(mc.theWorld.getBlockState(pos9.add(0, 0, -1)).getBlock())) {
-            return new BlockEntry(pos9.add(0, 0, -1), EnumFacing.SOUTH);
+        for (EnumFacing facingVal : EnumFacing.values()) {
+            BlockPos offset = pos.offset(facingVal);
+            if (isValid(mc.theWorld.getBlockState(offset).getBlock())) {
+                return new BlockEntry(offset, invert[facingVal.ordinal()]);
+            }
+        }
+        for (EnumFacing face : EnumFacing.values()) {
+            BlockPos offsetPos = pos.offset(face, 1);
+            for (EnumFacing face2 : EnumFacing.values()) {
+                if (face2 == EnumFacing.DOWN || face2 == EnumFacing.UP) {
+                    continue;
+                }
+                BlockPos offset = offsetPos.offset(face2);
+                if (isValid(mc.theWorld.getBlockState(offset).getBlock())) {
+                    return new BlockEntry(offset, invert[face2.ordinal()]);
+                }
+            }
         }
         return null;
     }
@@ -1059,6 +814,7 @@ public class ScaffoldModule extends Module {
         FACING("Facing"),
         STATIC("Static"),
         MMC("MMC"),
+        VULCAN("Vulcan"),
         BACKWARDS("Backwards"),
         SMOOTHGCD("Smooth GCD");
 

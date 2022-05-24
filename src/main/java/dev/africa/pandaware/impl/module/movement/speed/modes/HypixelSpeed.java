@@ -55,10 +55,10 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
             if (PlayerUtils.inLiquid()) {
                 this.getParent().toggle(false);
             }
-            if (!mc.thePlayer.isCollidedHorizontally && !mc.thePlayer.isPotionActive(Potion.jump) &&
-                    mc.thePlayer.fallDistance < 0.7 && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
-                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
-            }
+//            if (!mc.thePlayer.isCollidedHorizontally && !mc.thePlayer.isPotionActive(Potion.jump) &&
+//                    mc.thePlayer.fallDistance < 0.7 && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
+//                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
+//            }
             if (mc.thePlayer.onGround && mc.isMoveMoving()) {
                 double motion = 0.4F;
                 motion += PlayerUtils.getJumpBoostMotion();
@@ -78,8 +78,8 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                     this.movespeed -= 0.01f;
                 }
             }
-            if (mc.thePlayer.getAirTicks() == 5 && !mc.thePlayer.isPotionActive(Potion.jump) &&
-                    Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
+            if (mc.thePlayer.getAirTicks() == 5 && !mc.thePlayer.isPotionActive(Potion.jump)/* &&
+                    Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())*/) {
                 event.y = mc.thePlayer.motionY = -0.02;
             }
 
