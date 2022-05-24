@@ -324,7 +324,7 @@ public class HUDModule extends Module {
                         UISettings.CURRENT_COLOR.getRGB());
             }
 
-            text = String.format("POS: §f%s §7- §f%s §7- §f%s",
+            text = String.format("XYZ: §f%s §7- §f%s §7- §f%s",
                     MathUtils.roundToDecimal(mc.thePlayer.posX, 1),
                     MathUtils.roundToDecimal(mc.thePlayer.posY, 1),
                     MathUtils.roundToDecimal(mc.thePlayer.posZ, 1));

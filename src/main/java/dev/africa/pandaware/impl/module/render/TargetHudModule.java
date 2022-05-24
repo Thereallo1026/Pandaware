@@ -149,8 +149,8 @@ public class TargetHudModule extends Module {
 
                     if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
                         if (this.cachedEntity.getName() == mc.thePlayer.getName())
-                        Fonts.getInstance().getArialBdNormal().drawString("Legit Player", this.height - 9,5, -1);
-                        else Fonts.getInstance().getArialBdNormal().drawString("Player", this.height - 9,5, -1);
+                            Fonts.getInstance().getArialBdNormal().drawString("Legit Player", this.height - 9, 5, -1);
+                        else Fonts.getInstance().getArialBdNormal().drawString("Player", this.height - 9, 5, -1);
                     } else {
                         Fonts.getInstance().getArialBdNormal().drawString(this.cachedEntity.getName(),
                                 this.height - 9, 5, -1);
@@ -285,9 +285,70 @@ public class TargetHudModule extends Module {
                     this.armorAnimation += ((armorPercentage - this.armorAnimation) / 5.5f) * RenderUtils.fpsMultiplier();
                     break;
                 }
+
+                case BASIC_SMALL: {
+                    this.height = 25;
+                    RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3, new Color(0, 0, 0, 100));
+                    double nameLength1 = Fonts.getInstance().getArialBdBig()
+                            .getStringWidth(this.cachedEntity.getName());
+                    this.width = ApacheMath.max((int) (35 + nameLength1), 150);
+
+                    if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
+                        Fonts.getInstance().getArialBdBig().drawString("********", this.height - 9, 1, -1);
+                    } else {
+                        Fonts.getInstance().getTahomaBig().drawString("§l" + this.cachedEntity.getName(), this.height, 1, -1);
+                    }
+                    String playerHealth1 = String.valueOf(this.cachedEntity.getHealth());
+                    String maxPlayerHealth1 = " / " + this.cachedEntity.getMaxHealth();
+                    String playerPing1 = PlayerUtils.getPing(this.cachedEntity) + "ms";
+
+                    Color playerHealthColor;
+
+                    double legnth1 = Fonts.getInstance().getTahomaNormal().getStringWidth(maxPlayerHealth1);
+                    this.width = ApacheMath.max((int) (35 + nameLength1), 150);
+
+                    Fonts.getInstance().getTahomaNormal().drawString(playerHealth1, this.height, 12, getPlayerColor().getRGB());
+                    Fonts.getInstance().getTahomaNormal().drawString(maxPlayerHealth1, this.height + 18, 12, -1);
+                    Fonts.getInstance().getTahomaNormal().drawString(playerPing1, this.height + 100, 15, -1);
+
+
+                    RenderUtils.renderSkinHead(this.cachedEntity, 2, 2, this.height - 4);
+                    break;
+                }
+
+                case BASIC_BIG: {
+                    this.height = 50;
+                    RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3, new Color(0, 0, 0, 100));
+                    double nameLength = Fonts.getInstance().getArialBdBig()
+                            .getStringWidth(this.cachedEntity.getName());
+                    this.width = ApacheMath.max((int) (35 + nameLength), 150);
+
+                    if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
+                        Fonts.getInstance().getArialBdBig().drawString("********", this.height - 9, 1, -1);
+                    } else {
+                        Fonts.getInstance().getTahomaBig().drawString("§l" + this.cachedEntity.getName(), this.height, 1, -1);
+                    }
+                    String playerHealth = String.valueOf(this.cachedEntity.getHealth());
+                    String maxPlayerHealth = " / " + this.cachedEntity.getMaxHealth();
+                    String playerPing = PlayerUtils.getPing(this.cachedEntity) + "ms";
+
+                    Color playerHealthColor;
+
+                    double legnth = Fonts.getInstance().getTahomaNormal().getStringWidth(maxPlayerHealth);
+                    this.width = ApacheMath.max((int) (35 + nameLength), 150);
+
+                    Fonts.getInstance().getTahomaNormal().drawString(playerHealth, this.height, 12, getPlayerColor().getRGB());
+                    Fonts.getInstance().getTahomaNormal().drawString(maxPlayerHealth, this.height + 18, 12, -1);
+                    Fonts.getInstance().getTahomaNormal().drawString(playerPing, this.height + 75, 38, -1);
+
+
+                    RenderUtils.renderSkinHead(this.cachedEntity, 2, 2, this.height - 4);
+                }
+
             }
 
             GlStateManager.popMatrix();
+
         }
     };
 
@@ -314,10 +375,24 @@ public class TargetHudModule extends Module {
         return this.mode.getValue().label;
     }
 
+    public Color getPlayerColor() {
+        Color playerHealthColor = null;
+        if (this.cachedEntity.getHealth() >= 16) {
+            playerHealthColor = new Color(55, 245, 55, 255);
+        } else if (this.cachedEntity.getHealth() >= 10 && this.cachedEntity.getHealth() <= 16) {
+            playerHealthColor = new Color(255, 162, 0, 255);
+        } else if (this.cachedEntity.getHealth() >= 0 && this.cachedEntity.getHealth() <= 10) {
+            playerHealthColor = new Color(255, 69, 69, 255);
+        }
+        return playerHealthColor;
+    }
+
     @AllArgsConstructor
     enum Mode {
         PANDAWARE("Pandaware"),
         FLUX("Flux"),
+        BASIC_BIG("Basic (Big)"),
+        BASIC_SMALL("Basic (Small)"),
         NOVOLINE("Novoline");
 
         private final String label;
