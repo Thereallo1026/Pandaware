@@ -68,7 +68,7 @@ public class CollideFlight extends ModuleMode<FlightModule> {
                 }
                 break;
             case YPORT:
-                if (mc.isMoveMoving()) {
+                if (MovementUtils.isMoving()) {
                     if (mc.thePlayer.isCollidedHorizontally) {
                         if (PlayerUtils.isMathGround()) {
                             this.stage = 0;

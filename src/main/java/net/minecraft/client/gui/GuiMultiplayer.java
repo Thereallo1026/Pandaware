@@ -186,11 +186,11 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
                 }
 
                 if(Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Copied IGN to your clipboard. (You have streamer mode enabled).", 3);
-                }else if (!(playerIGN == null)){
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Copied IGN " + playerIGN + " to your clipboard.", 3);
-                }else if (playerIGN == null){
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "If you see this, report this to a developer.", 3);
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Copied IGN to your clipboard. (You have streamer mode enabled).", 3);
+                }else if (playerIGN != null){
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Copied IGN " + playerIGN + " to your clipboard.", 3);
+                }else {
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "If you see this, report this to a developer.", 3);
                 }
             }
         }

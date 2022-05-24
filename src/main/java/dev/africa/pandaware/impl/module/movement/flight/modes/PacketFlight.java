@@ -98,7 +98,7 @@ public class PacketFlight extends ModuleMode<FlightModule> {
         mc.thePlayer.motionY = 0;
 
         if (mc.thePlayer.ticksExisted % this.teleportTicks.getValue().intValue() == 0) {
-            double speed = (mc.isMoveMoving() ? this.speed.getValue().doubleValue() : 0);
+            double speed = (MovementUtils.isMoving() ? this.speed.getValue().doubleValue() : 0);
 
             double radiansYaw = Math.toRadians(MovementUtils.getDirection());
             double xMove = -Math.sin(radiansYaw) * speed;

@@ -25,7 +25,7 @@ public class Notification {
     private final double animationStart;
     private final double currentTime;
     private final double duration;
-    private final String text;
+    private final String text, title;
     private final Type type;
     private final Animator xAnimator;
     private final Animator yAnimator;
@@ -34,14 +34,19 @@ public class Notification {
     private double animationValue;
     private double xAnimation;
     private boolean animated;
-    private Color typeColor;
+    private final Color typeColor;
 
     private double rectPosition;
     private double maxWidth;
 
     public Notification(Type type, String text, double duration) {
+        this(type, StringUtils.capitalize(type.name().toLowerCase()), text, duration);
+    }
+
+    public Notification(Type type, String title, String text, double duration) {
         this.type = type;
         this.text = text;
+        this.title = title;
 
         this.animationStart = 0.062f;
         this.animationValue = animationStart * RenderUtils.fpsMultiplier();
@@ -52,7 +57,7 @@ public class Notification {
         this.animated = false;
         this.shouldAnimateBack = false;
         this.xAnimator = new Animator();
-        this.yAnimator = new Animator().setValue(1);
+        this.yAnimator = new Animator().setValue(0);
     }
 
     public void render(ScaledResolution scaledResolution, int yPosition, NotificationManager notificationManager) {
@@ -61,16 +66,16 @@ public class Notification {
 
         //CURRENT FONT
         TTFFontRenderer font = Fonts.getInstance().getTahomaNormal();
+//        TTFFontRenderer font2 = Fonts.getInstance().getTahomaSmall();
 
         //CATEGORY NAME
-        String categoryName = StringUtils.capitalize(type.toString().toLowerCase());
 
-        String categoryText = categoryName + " (" + (MathUtils.roundToDecimal(MathHelper.clamp_double((duration - time) / 1000.0, 0, duration / 1000.0), 1)) + "s)";
+        String categoryText = title + " (" + (MathUtils.roundToDecimal(MathHelper.clamp_double((duration - time) / 1000.0, 0, duration / 1000.0), 1)) + "s)";
 
         //idk i forgot
         int spacing = 1;
         //TEXT LENGTH
-        double textLength = ApacheMath.max(ApacheMath.max(font.getStringWidth(text) + 25, font.getStringWidth(categoryText) + 18), 0);
+        double textLength = ApacheMath.max(ApacheMath.max(font.getStringWidth(text) + 25, font.getStringWidth(title) + 18), 0);
 
         this.maxWidth = textLength;
 
@@ -152,12 +157,14 @@ public class Notification {
 //        StencilUtils.stencilStage(StencilUtils.StencilStage.DISABLE);
 
         RenderUtils.drawRect(this.rectPosition, rectY, this.rectPosition + width, rectY + height - 1, new Color(16, 14, 8, alpha).getRGB());
+        RenderUtils.drawRect(this.rectPosition + width, rectY + height - 1, rectPosition, rectY + height, typeColor.darker().darker().getRGB());
+        RenderUtils.drawRect(this.rectPosition + width, rectY + height - 1, rectPosition + bar - 1, rectY + height, typeColor.darker().getRGB());
         RenderUtils.drawRect(this.rectPosition + width, rectY + height - 1, rectPosition + bar, rectY + height, typeColor.getRGB());
 
         //RENDERS ICON
         RenderUtils.drawImage(new ResourceLocation(icon), (int) this.rectPosition + 2, (int) (rectY) + 3, 18, 18);
 
-        font.drawString(StringUtils.capitalize(this.type.name().toLowerCase()),
+        font.drawString(title/*StringUtils.capitalize(this.type.name().toLowerCase())*/,
                 (float) this.rectPosition + spacing + 20, (float) (rectY) + 2, -1);
 
         //RENDER TEXTS

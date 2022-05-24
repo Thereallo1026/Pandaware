@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.module.movement.noslow.NoSlowModule;
 import dev.africa.pandaware.utils.client.Timer;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
@@ -21,7 +22,7 @@ public class NCPNoSlow extends ModuleMode<NoSlowModule> {
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
-        if (mc.isMoveMoving() && mc.thePlayer.isUsingItem()) {
+        if (MovementUtils.isMoving() && mc.thePlayer.isUsingItem()) {
             if (timer.hasReached(50)) {
                 timer.reset();
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C07PacketPlayerDigging(

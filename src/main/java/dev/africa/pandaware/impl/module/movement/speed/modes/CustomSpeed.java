@@ -55,13 +55,13 @@ public class CustomSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.isMoveMoving()) mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
+        if (MovementUtils.isMoving()) mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
         else mc.timer.timerSpeed = 1f;
-        if (PlayerUtils.isMathGround() && this.multiply.getValue() && mc.isMoveMoving()) {
+        if (PlayerUtils.isMathGround() && this.multiply.getValue() && MovementUtils.isMoving()) {
             mc.thePlayer.motionX = mc.thePlayer.motionX * this.groundSpeed.getValue().floatValue();
             mc.thePlayer.motionZ = mc.thePlayer.motionZ * this.groundSpeed.getValue().floatValue();
             event.y = mc.thePlayer.motionY = jumpMotion.getValue().floatValue();
-        } else if (PlayerUtils.isMathGround() && mc.isMoveMoving()) {
+        } else if (PlayerUtils.isMathGround() && MovementUtils.isMoving()) {
             moveSpeed = groundSpeed.getValue().floatValue();
             event.y = mc.thePlayer.motionY = jumpMotion.getValue().floatValue();
             jumped = true;

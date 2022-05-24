@@ -742,10 +742,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.displayHeight = displaymode.getHeight();
     }
 
-    public boolean isMoveMoving() {
-        return this.gameSettings.keyBindLeft.pressed || this.gameSettings.keyBindRight.pressed || this.gameSettings.keyBindForward.pressed || this.gameSettings.keyBindBack.pressed;
-    }
-
     private void drawSplashScreen(TextureManager textureManagerInstance) throws LWJGLException {
         ScaledResolution scaledresolution = new ScaledResolution(this);
         int i = scaledresolution.getScaleFactor();
@@ -971,6 +967,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.mcProfiler.profilingEnabled = false;
             this.prevFrameTime = System.nanoTime();
         }
+
+        this.mcProfiler.profilingEnabled = false;
+        this.mcProfiler.profilerGlobalEnabled = false;
+        this.mcProfiler.clearProfiling();
 
         this.guiAchievement.updateAchievementWindow();
         this.framebufferMc.unbindFramebuffer();

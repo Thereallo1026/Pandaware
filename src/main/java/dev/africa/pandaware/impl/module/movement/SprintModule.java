@@ -10,6 +10,7 @@ import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.Getter;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 
@@ -24,13 +25,13 @@ public class SprintModule extends Module {
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.PRE) {
             if (Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
-            if (omniSprint.getValue() && mc.isMoveMoving()) {
+            if (omniSprint.getValue() && MovementUtils.isMoving()) {
                 mc.thePlayer.setSprinting(true);
             } else if (mc.thePlayer.moveForward > 0) {
                 mc.thePlayer.setSprinting(true);
             }
             if (applySpeed.getValue() && !mc.thePlayer.isSneaking() && !mc.thePlayer.isCollidedHorizontally
-                && mc.isMoveMoving() && !(mc.thePlayer.getGroundTicks() < 2)) {
+                && MovementUtils.isMoving() && !(mc.thePlayer.getGroundTicks() < 2)) {
             }
         }
     };

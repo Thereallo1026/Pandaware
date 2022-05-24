@@ -31,7 +31,7 @@ public class WatchdogLongJump extends ModuleMode<LongJumpModule> {
     EventCallback<MoveEvent> onMove = event -> {
         boolean hasSpeed = (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed) != null);
 
-        if (mc.thePlayer.onGround && !wasOnGround && mc.isMoveMoving()) {
+        if (mc.thePlayer.onGround && !wasOnGround && MovementUtils.isMoving()) {
             if (hasSpeed) {
                 MovementUtils.strafe(1.0);
             } else {

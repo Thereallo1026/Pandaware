@@ -457,7 +457,7 @@ public class ScaffoldModule extends Module {
 
         if (this.scaffoldMode.getValue() == ScaffoldMode.HYPIXEL && this.hypixelMode.getValue() == HypixelMode.NORMAL) {
             if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
-                if (mc.isMoveMoving() &&
+                if (MovementUtils.isMoving() &&
                         !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()
                         && (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) &&
                         !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) && PlayerUtils.isMathGround() &&
@@ -486,7 +486,7 @@ public class ScaffoldModule extends Module {
                         break;
                     case KEEPY:
                         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
-                            if (mc.thePlayer.onGround && mc.isMoveMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
+                            if (mc.thePlayer.onGround && MovementUtils.isMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
                                     && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
                                 event.y = mc.thePlayer.motionY = 0.4f;
 
@@ -512,10 +512,10 @@ public class ScaffoldModule extends Module {
                 }
                 break;
             case BLOCKSMC:
-                if (mc.thePlayer.onGround && mc.isMoveMoving()) {
+                if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
                     event.y = mc.thePlayer.motionY = 0.42f;
                     MovementUtils.strafe(event, 0.49);
-                } else if (!mc.thePlayer.onGround && mc.isMoveMoving()) {
+                } else if (!mc.thePlayer.onGround && MovementUtils.isMoving()) {
                     MovementUtils.strafe(event);
                 }
                 break;
@@ -524,7 +524,7 @@ public class ScaffoldModule extends Module {
                 mc.thePlayer.motionZ *= (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1);
                 break;
             case VULCAN:
-                if (mc.thePlayer.onGround && mc.isMoveMoving()) {
+                if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
                     int slot = spoofMode.getValue() == SpoofMode.SPOOF ? c09slot : mc.thePlayer.inventory.currentItem;
                     if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize >= 7) {
                         event.y = mc.thePlayer.motionY = 0.42f;
@@ -542,18 +542,18 @@ public class ScaffoldModule extends Module {
                 }
         }
 
-        if (mc.isMoveMoving()) {
+        if (MovementUtils.isMoving()) {
             mc.thePlayer.setSprinting(this.sprint.getValue());
         }
 
         if (this.tower.getValue() && mc.gameSettings.keyBindJump.isKeyDown()
-                && (!mc.isMoveMoving() || this.towerMove.getValue())) {
+                && (!MovementUtils.isMoving() || this.towerMove.getValue())) {
             int count = this.getItemSlot(true);
 
             if (count > 0) {
                 switch (this.towerMode.getValue()) {
                     case NCP:
-                        if (!mc.isMoveMoving()) {
+                        if (!MovementUtils.isMoving()) {
                             MovementUtils.strafe(event, 0);
                         }
 
@@ -563,25 +563,25 @@ public class ScaffoldModule extends Module {
                         break;
 
                     case VULCAN:
-                        if (!mc.isMoveMoving()) {
+                        if (!MovementUtils.isMoving()) {
                             MovementUtils.strafe(event, 0);
                         }
                         if (this.blockEntry != null) {
                             if (mc.thePlayer.onGround) {
                                 event.y = mc.thePlayer.motionY = 0.42f;
-                            } else if (mc.thePlayer.getAirTicks() == 5 && !mc.isMoveMoving()) {
+                            } else if (mc.thePlayer.getAirTicks() == 5 && !MovementUtils.isMoving()) {
                                 event.y = mc.thePlayer.motionY = -0.4f;
                             }
                         }
                         break;
 
                     case FAST:
-                        if (!mc.isMoveMoving()) {
+                        if (!MovementUtils.isMoving()) {
                             MovementUtils.strafe(event, 0);
                         }
 
                         if (this.blockEntry != null) {
-                            event.y = mc.thePlayer.motionY = (mc.isMoveMoving() ? 0.42f : 0);
+                            event.y = mc.thePlayer.motionY = (MovementUtils.isMoving() ? 0.42f : 0);
                         }
                         break;
 
@@ -590,7 +590,7 @@ public class ScaffoldModule extends Module {
                             boolean onHypixel = (ServerUtils.isOnServer("mc.hypixel.net") ||
                                     ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised;
 
-                            if (!mc.isMoveMoving()) {
+                            if (!MovementUtils.isMoving()) {
                                 MovementUtils.strafe(event, 0);
 //                                if (mc.thePlayer.onGround) {
 //                                    mc.thePlayer.jump();
@@ -601,8 +601,8 @@ public class ScaffoldModule extends Module {
                             }
                             double offset = onHypixel ? 0.41 : 0.15;
 
-                            boolean towerMove = PlayerUtils.isOnGround(offset) && mc.isMoveMoving();
-                            boolean shouldRun = !mc.isMoveMoving() || towerMove;
+                            boolean towerMove = PlayerUtils.isOnGround(offset) && MovementUtils.isMoving();
+                            boolean shouldRun = !MovementUtils.isMoving() || towerMove;
 
                             if (this.blockEntry != null && shouldRun) {
                                 event.y = mc.thePlayer.motionY = onHypixel ? 0.418f + (0.01 * MovementUtils.getHypixelFunny()) : 0.38f;
@@ -625,7 +625,7 @@ public class ScaffoldModule extends Module {
                         break;
 
                     case TELEPORT:
-                        if (!mc.isMoveMoving()) {
+                        if (!MovementUtils.isMoving()) {
                             MovementUtils.strafe(event, 0);
                         }
 
@@ -639,12 +639,12 @@ public class ScaffoldModule extends Module {
                         break;
 
                     case VERUS:
-                        if (!mc.isMoveMoving()) {
+                        if (!MovementUtils.isMoving()) {
                             MovementUtils.strafe(event, 0);
                         }
 
                         if (this.blockEntry != null) {
-                            event.y = mc.thePlayer.motionY = (mc.isMoveMoving() ? 0.5f : 0f);
+                            event.y = mc.thePlayer.motionY = (MovementUtils.isMoving() ? 0.5f : 0f);
                         }
                         break;
 
@@ -673,7 +673,7 @@ public class ScaffoldModule extends Module {
                 boolean canGoDown = this.downwards.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
                         && mc.currentScreen == null;
 
-                double blockBelowY = !canGoDown && mc.isMoveMoving() ? startY : mc.thePlayer.posY;
+                double blockBelowY = !canGoDown && MovementUtils.isMoving() ? startY : mc.thePlayer.posY;
 
                 BlockPos blockBelow1 = canGoDown ? new BlockPos(mc.thePlayer.posX + dX, mc.thePlayer.posY - 0.5,
                         mc.thePlayer.posZ + dZ).down()

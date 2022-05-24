@@ -19,7 +19,7 @@ public class BhopSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.thePlayer.onGround && mc.isMoveMoving()) {
+        if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
             event.y = mc.thePlayer.motionY = 0.42F;
         }
 

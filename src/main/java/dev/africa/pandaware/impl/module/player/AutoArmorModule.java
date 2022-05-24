@@ -11,6 +11,7 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -49,11 +50,11 @@ public class AutoArmorModule extends Module {
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
         if ((equipMode.getValue() == EquipMode.OPEN && !(mc.currentScreen instanceof GuiInventory) ||
-                this.stopWhenCleaning.getValue() && (mc.isMoveMoving() || mc.thePlayer.moveForward > 0 ||
+                this.stopWhenCleaning.getValue() && (MovementUtils.isMoving() || mc.thePlayer.moveForward > 0 ||
                         mc.thePlayer.moveStrafing > 0 || mc.gameSettings.keyBindJump.pressed)))
             return;
 
-        if (equipMode.getValue() == EquipMode.FAKE && (mc.isMoveMoving() || mc.gameSettings.keyBindJump.pressed || !mc.thePlayer.isUsingItem()))
+        if (equipMode.getValue() == EquipMode.FAKE && (MovementUtils.isMoving() || mc.gameSettings.keyBindJump.pressed || !mc.thePlayer.isUsingItem()))
             return;
 
         delayVal = delay.getValue().intValue() +

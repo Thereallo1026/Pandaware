@@ -26,7 +26,7 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
     EventCallback<MoveEvent> onMove = event -> {
         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised) {
 
-            if (mc.thePlayer.onGround && mc.isMoveMoving()) {
+            if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 2 : 2.2));
                 mc.thePlayer.jump();
                 event.y = mc.thePlayer.motionY = 0.42f + (mc.thePlayer.isPotionActive(Potion.jump)

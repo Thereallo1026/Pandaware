@@ -79,7 +79,7 @@ public class VerusFlight extends ModuleMode<FlightModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (!mc.isMoveMoving()) {
+        if (!MovementUtils.isMoving()) {
             this.ticks = 0;
             mc.thePlayer.fallDistance = 0;
             this.shouldFly = true;
@@ -92,7 +92,7 @@ public class VerusFlight extends ModuleMode<FlightModule> {
                 this.shouldFly = false;
             }
 
-            if (stage >= 7 && mc.isMoveMoving() && !this.shouldFly) {
+            if (stage >= 7 && MovementUtils.isMoving() && !this.shouldFly) {
                 float add = mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.04f : -0.04f;
 
                 MovementUtils.strafe(event, MovementUtils.getSpeed(event) + ((this.ticks % 2 == 0 ? 0.12f : 0.11f) + add));

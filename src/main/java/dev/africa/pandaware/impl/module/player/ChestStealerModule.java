@@ -15,6 +15,7 @@ import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemGlassBottle;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
@@ -131,6 +132,6 @@ public class ChestStealerModule extends Module {
 
     public boolean isInvalidChest(GuiScreen screen) {
         GuiChest chest = (GuiChest) screen;
-        return Pattern.compile(Pattern.quote(chest.lowerChestInventory.getName()), Pattern.CASE_INSENSITIVE).matcher("chest").find();
+        return chest.lowerChestInventory.getName().contains(I18n.format("container.chest"))/*Pattern.compile(Pattern.quote(chest.lowerChestInventory.getName()), Pattern.CASE_INSENSITIVE).matcher("chest").find()*/;
     }
 }

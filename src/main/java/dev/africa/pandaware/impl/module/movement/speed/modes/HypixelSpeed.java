@@ -59,7 +59,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
 //                    mc.thePlayer.fallDistance < 0.7 && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
 //                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
 //            }
-            if (mc.thePlayer.onGround && mc.isMoveMoving()) {
+            if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
                 double motion = 0.4F;
                 motion += PlayerUtils.getJumpBoostMotion();
 

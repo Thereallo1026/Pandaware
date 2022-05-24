@@ -33,7 +33,7 @@ public class NCPSpeed extends ModuleMode<SpeedModule> {
     };
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.isMoveMoving() && !PlayerUtils.onLiquid() && !mc.thePlayer.isInLava() && !mc.thePlayer.isInWater()) {
+        if (MovementUtils.isMoving() && !PlayerUtils.onLiquid() && !mc.thePlayer.isInLava() && !mc.thePlayer.isInWater()) {
             if (mc.thePlayer.ticksExisted % 10 == 0 && timer.getValue()) {
                 if (isTimer) {
                     mc.timer.timerSpeed = 1f;

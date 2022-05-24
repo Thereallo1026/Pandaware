@@ -18,8 +18,8 @@ public class NotificationManager extends Container<Notification> {
 
             for (Notification notification : this.getItems()) {
                 notification.getYAnimator()
-                        .setEase(Easing.LINEAR)
-//                        .setEase(Easing.CIRC_IN)
+//                        .setEase(Easing.LINEAR)
+                        .setEase(Easing.CIRC_IN)
                         .setMin(0).setMax(1)
                         .setReversed(notification.isShouldAnimateBack())
 //                                notification.isShouldAnimateBack() && notification.getRectPosition()

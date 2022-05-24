@@ -14,6 +14,7 @@ import dev.africa.pandaware.impl.module.combat.criticals.modes.*;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.module.movement.longjump.LongJumpModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.Getter;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 
@@ -78,7 +79,7 @@ public class CriticalsModule extends Module {
 
         return !Client.getInstance().getModuleManager().getByClass(FlightModule.class).getData().isEnabled() &&
                 !Client.getInstance().getModuleManager().getByClass(LongJumpModule.class).getData().isEnabled() &&
-                (!speedToggled || !mc.isMoveMoving()) && !mc.thePlayer.isInWater() && !mc.thePlayer.isInLava()
+                (!speedToggled || !MovementUtils.isMoving()) && !mc.thePlayer.isInWater() && !mc.thePlayer.isInLava()
                 && !mc.thePlayer.isOnLadder() && (this.hasAttacked || killAuraNotNull) && isInGame;
     }
 

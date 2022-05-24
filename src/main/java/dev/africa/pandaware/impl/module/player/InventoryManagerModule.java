@@ -12,6 +12,7 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.gui.GuiChat;
@@ -50,11 +51,11 @@ public class InventoryManagerModule extends Module {
 
         if ((this.cleanMode.getValue() == CleanMode.OPEN && !(mc.currentScreen instanceof GuiInventory) &&
                 !this.stopWhenCleaning.getValue()) || this.stopWhenCleaning.getValue() &&
-                (mc.isMoveMoving() || mc.thePlayer.moveForward > 0 || mc.thePlayer.moveStrafing > 0 ||
+                (MovementUtils.isMoving() || mc.thePlayer.moveForward > 0 || mc.thePlayer.moveStrafing > 0 ||
                         mc.gameSettings.keyBindJump.pressed))
             return;
 
-        if (this.cleanMode.getValue() == CleanMode.FAKE && (mc.isMoveMoving() || mc.gameSettings.keyBindJump.pressed))
+        if (this.cleanMode.getValue() == CleanMode.FAKE && (MovementUtils.isMoving() || mc.gameSettings.keyBindJump.pressed))
             return;
 
         if (mc.currentScreen == null || mc.currentScreen instanceof GuiInventory || mc.currentScreen instanceof GuiChat) {

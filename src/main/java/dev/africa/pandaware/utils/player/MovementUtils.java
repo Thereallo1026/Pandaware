@@ -12,6 +12,11 @@ import net.minecraft.util.MathHelper;
 
 @UtilityClass
 public class MovementUtils implements MinecraftInstance {
+
+    public boolean isMoving() {
+        return mc.thePlayer.movementInput.moveForward != 0 || mc.thePlayer.movementInput.moveStrafe != 0;
+    }
+
     public double getBaseMoveSpeed() {
         double baseSpeed = 0.2873D;
         if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) {
@@ -144,7 +149,7 @@ public class MovementUtils implements MinecraftInstance {
 
     public double getHypixelFunny() {
         double value = 1;
-        for(int i = 0; i < RandomUtils.nextInt(4, 7); i++) {
+        for (int i = 0; i < RandomUtils.nextInt(4, 7); i++) {
             value *= ApacheMath.random();
         }
         return value;

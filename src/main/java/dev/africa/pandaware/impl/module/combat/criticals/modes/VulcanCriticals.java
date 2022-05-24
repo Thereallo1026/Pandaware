@@ -7,6 +7,7 @@ import dev.africa.pandaware.impl.module.combat.criticals.CriticalsModule;
 import dev.africa.pandaware.impl.module.combat.criticals.ICriticalsMode;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.setting.EnumSetting;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import lombok.AllArgsConstructor;
 
@@ -86,7 +87,7 @@ public class VulcanCriticals extends ModuleMode<CriticalsModule> implements ICri
                     }
             }
 
-            if (!mc.isMoveMoving() && mc.thePlayer.ticksExisted % 2 == 0) {
+            if (!MovementUtils.isMoving() && mc.thePlayer.ticksExisted % 2 == 0) {
                 double yaw = Math.toRadians(mc.thePlayer.rotationYaw);
                 double amount = .1;
                 double dX = -Math.sin(yaw) * amount;

@@ -35,7 +35,7 @@ public class FuncraftSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.isMoveMoving() && !PlayerUtils.onLiquid()) {
+        if (MovementUtils.isMoving() && !PlayerUtils.onLiquid()) {
             if (mc.thePlayer.onGround && this.stage > 1) {
                 this.stage = 0;
             }

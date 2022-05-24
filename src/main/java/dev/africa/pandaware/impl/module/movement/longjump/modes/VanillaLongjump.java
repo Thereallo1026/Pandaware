@@ -14,7 +14,7 @@ public class VanillaLongjump extends ModuleMode<LongJumpModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.isMoveMoving()) {
+        if (MovementUtils.isMoving()) {
             if (mc.thePlayer.onGround) {
                 event.y = mc.thePlayer.motionY = 0.42F;
             }

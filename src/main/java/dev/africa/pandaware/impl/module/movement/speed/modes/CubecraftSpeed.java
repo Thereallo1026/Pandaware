@@ -15,7 +15,7 @@ public class CubecraftSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.isMoveMoving()) {
+        if (MovementUtils.isMoving()) {
             double speedAmplifier = (mc.thePlayer.isPotionActive(Potion.moveSpeed)
                     ? ((mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * 0.2) : 0);
 

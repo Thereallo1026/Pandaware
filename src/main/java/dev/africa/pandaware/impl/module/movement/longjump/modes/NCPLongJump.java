@@ -32,7 +32,7 @@ public class NCPLongJump extends ModuleMode<LongJumpModule> {
     EventCallback<MoveEvent> onMove = event -> {
         switch (mode.getValue()) {
             case NEW:
-                if (mc.isMoveMoving()) {
+                if (MovementUtils.isMoving()) {
                     if (PlayerUtils.isMathGround()) {
                         event.y = mc.thePlayer.motionY = 0.42f + (mc.thePlayer.isPotionActive(Potion.jump)
                                 ? PlayerUtils.getJumpBoostMotion() : 0);
@@ -50,7 +50,7 @@ public class NCPLongJump extends ModuleMode<LongJumpModule> {
                 }
                 break;
             case OLD:
-                if (mc.isMoveMoving()) {
+                if (MovementUtils.isMoving()) {
                     if (PlayerUtils.isMathGround()) {
                         event.y = mc.thePlayer.motionY = 0.42f + (mc.thePlayer.isPotionActive(Potion.jump)
                                 ? PlayerUtils.getJumpBoostMotion() : 0);

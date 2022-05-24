@@ -48,7 +48,7 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
             switch (this.verusMode.getValue()) {
                 case BHOP:
                 case SLAB:
-                    if (mc.isMoveMoving()) {
+                    if (MovementUtils.isMoving()) {
                         double speedAmplifier = (mc.thePlayer.isPotionActive(Potion.moveSpeed)
                                 ? ((mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * 0.15) : 0);
 
@@ -121,12 +121,12 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
         switch (this.verusMode.getValue()) {
             case BHOP:
             case SLAB:
-                if (mc.isMoveMoving()) {
+                if (MovementUtils.isMoving()) {
                     MovementUtils.strafe(event);
                 }
                 break;
             case YPORT:
-                if (mc.isMoveMoving()) {
+                if (MovementUtils.isMoving()) {
                     if (mc.thePlayer.isCollidedHorizontally) {
                         if (mc.thePlayer.onGround) {
                             this.stage = 0;
@@ -162,12 +162,12 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
                 }
                 break;
             case GROUND:
-                if (mc.isMoveMoving()) {
+                if (MovementUtils.isMoving()) {
                     this.shouldSpeed = true;
                 }
 
                 if (!mc.gameSettings.keyBindJump.pressed && this.shouldSpeed) {
-                    if (stage >= 7 && mc.isMoveMoving()) {
+                    if (stage >= 7 && MovementUtils.isMoving()) {
                         float add = mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.12f : -0.05f;
                         KillAuraModule aura = Client.getInstance().getModuleManager().getByClass(KillAuraModule.class);
                         boolean targetIsNull = aura.getTarget() == null;

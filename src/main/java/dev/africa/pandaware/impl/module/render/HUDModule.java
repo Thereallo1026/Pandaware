@@ -51,6 +51,8 @@ public class HUDModule extends Module {
     private final BooleanSetting irc = new BooleanSetting("IRC", false);
     private final BooleanSetting arraylistLine = new BooleanSetting("Arraylist line", true,
             this.arraylist::getValue);
+    private final BooleanSetting arraylistHideVisual = new BooleanSetting("Arraylist Hide Visuals", true,
+            this.arraylist::getValue);
     private final BooleanSetting borderlessFullscreen = new BooleanSetting("Borderless Fulscreen", true);
     private final BooleanSetting showCape = new BooleanSetting("Show Cape", true);
     private final BooleanSetting toggleSound = new BooleanSetting("Toggle sound", false);
@@ -112,6 +114,7 @@ public class HUDModule extends Module {
                 this.notificationsCenter,
                 this.borderlessFullscreen,
                 this.arraylistLine,
+                this.arraylistHideVisual,
                 this.colorTime,
                 this.colorIndexTime,
                 this.colorSpeed,
@@ -248,45 +251,47 @@ public class HUDModule extends Module {
         AtomicReference<Float> count = new AtomicReference<>(0f);
 
         modules.forEach(module -> {
-            double width = this.customFont.getValue() ? Fonts.getInstance().getProductSansMedium()
-                    .getStringWidth(this.getModuleName(module)) :
-                    mc.fontRendererObj.getStringWidth(this.getModuleName(module));
+            if (!arraylistHideVisual.getValue() || module.getData().getCategory() != Category.VISUAL) {
+                double width = this.customFont.getValue() ? Fonts.getInstance().getProductSansMedium()
+                        .getStringWidth(this.getModuleName(module)) :
+                        mc.fontRendererObj.getStringWidth(this.getModuleName(module));
 
-            double animate = ((width + 2) * module.getAnimatorX().getValue());
-            double x = (event.getResolution().getScaledWidth() - animate - (positionOffset - 1)) -
-                    (this.arraylistLine.getValue() ? 1 : 0);
-            float y = count.get() + positionOffset;
+                double animate = ((width + 2) * module.getAnimatorX().getValue());
+                double x = (event.getResolution().getScaledWidth() - animate - (positionOffset - 1)) -
+                        (this.arraylistLine.getValue() ? 1 : 0);
+                float y = count.get() + positionOffset;
 
-            this.setColors(this.getColor((int) y));
+                this.setColors(this.getColor((int) y));
 
-            double offset = (y <= positionOffset ? 0 : (modules.size() > 1 && modules.get(0).getAnimatorX().getValue() < 0.2f
-                    && module == modules.get(1) ? 0 : 1));
+                double offset = (y <= positionOffset ? 0 : (modules.size() > 1 && modules.get(0).getAnimatorX().getValue() < 0.2f
+                        && module == modules.get(1) ? 0 : 1));
 
-            int minecraftOffset = (this.customFont.getValue() ? 0 : 2);
+                int minecraftOffset = (this.customFont.getValue() ? 0 : 2);
 
-            RenderUtils.drawRect(x - 1f - minecraftOffset, y + offset,
-                    x + animate - 1, y + 11f,
-                    ColorUtils.getColorAlpha(UISettings.INTERNAL_COLOR,
-                            this.arrayBackgroundAlpha.getValue().intValue()).getRGB());
-            if (this.arraylistLine.getValue()) {
-                RenderUtils.drawRect(x + animate - 1,
-                        y + offset, x + animate - 1 + 1f,
-                        y + 11f, UISettings.CURRENT_COLOR.getRGB());
+                RenderUtils.drawRect(x - 1f - minecraftOffset, y + offset,
+                        x + animate - 1, y + 11f,
+                        ColorUtils.getColorAlpha(UISettings.INTERNAL_COLOR,
+                                this.arrayBackgroundAlpha.getValue().intValue()).getRGB());
+                if (this.arraylistLine.getValue()) {
+                    RenderUtils.drawRect(x + animate - 1,
+                            y + offset, x + animate - 1 + 1f,
+                            y + 11f, UISettings.CURRENT_COLOR.getRGB());
+                }
+
+                RenderUtils.startScissorBox();
+                RenderUtils.drawScissorBox(x - 1f, y + offset,
+                        (x + animate - 2) - (x - 1f), (y + 11f) - (y + offset));
+                if (this.customFont.getValue()) {
+                    Fonts.getInstance().getProductSansMedium()
+                            .drawStringWithShadow(this.getModuleName(module), x, y + 0.5, UISettings.CURRENT_COLOR.getRGB());
+                } else {
+                    mc.fontRendererObj
+                            .drawStringWithShadow(this.getModuleName(module), x - 1, y + 2, UISettings.CURRENT_COLOR.getRGB());
+                }
+                RenderUtils.endScissorBox();
+
+                count.updateAndGet(f -> f + (10f * module.getAnimatorY().getValue()));
             }
-
-            RenderUtils.startScissorBox();
-            RenderUtils.drawScissorBox(x - 1f, y + offset,
-                    (x + animate - 2) - (x - 1f), (y + 11f) - (y + offset));
-            if (this.customFont.getValue()) {
-                Fonts.getInstance().getProductSansMedium()
-                        .drawStringWithShadow(this.getModuleName(module), x, y + 0.5, UISettings.CURRENT_COLOR.getRGB());
-            } else {
-                mc.fontRendererObj
-                        .drawStringWithShadow(this.getModuleName(module), x - 1, y + 2, UISettings.CURRENT_COLOR.getRGB());
-            }
-            RenderUtils.endScissorBox();
-
-            count.updateAndGet(f -> f + (10f * module.getAnimatorY().getValue()));
         });
     }
 

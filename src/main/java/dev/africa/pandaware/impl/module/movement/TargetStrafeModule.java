@@ -14,6 +14,7 @@ import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import dev.africa.pandaware.utils.player.RotationUtils;
 import dev.africa.pandaware.utils.render.ColorUtils;
@@ -77,7 +78,7 @@ public class TargetStrafeModule extends Module {
                 Client.getInstance().getModuleManager()
                         .getByClass(SpeedModule.class).getData().isEnabled();
 
-        if (this.canStrafe && mc.isMoveMoving() && modulesEnabled && this.shouldStrafe) {
+        if (this.canStrafe && MovementUtils.isMoving() && modulesEnabled && this.shouldStrafe) {
             if (!PlayerUtils.inLiquid() && !mc.thePlayer.isOnLadder()) {
                 strafing = true;
 

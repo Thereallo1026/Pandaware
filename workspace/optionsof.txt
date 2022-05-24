@@ -33,9 +33,9 @@ ofAutoSaveTicks:4000
 ofBetterGrass:3
 ofConnectedTextures:3
 ofWeather:false
-ofSky:true
+ofSky:false
 ofStars:true
-ofSunMoon:true
+ofSunMoon:false
 ofVignette:0
 ofChunkUpdates:1
 ofChunkUpdatesDynamic:false
