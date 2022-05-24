@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.longjump.LongJumpModule;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
@@ -38,6 +39,7 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
 
             if (mc.thePlayer.fallDistance > 0 && mc.thePlayer.fallDistance < 0.3 && !mc.thePlayer.isPotionActive(Potion.jump)) {
                 mc.thePlayer.motionY = 1E-2 + MovementUtils.getHypixelFunny() * 1E-4;
+//                Printer.chat(mc.thePlayer.motionY + "");
             }
         }
     };

@@ -592,32 +592,32 @@ public class ScaffoldModule extends Module {
 
                             if (!MovementUtils.isMoving()) {
                                 MovementUtils.strafe(event, 0);
-//                                if (mc.thePlayer.onGround) {
-//                                    mc.thePlayer.jump();
-//                                    event.y = mc.thePlayer.motionY = 0.419;
+                                if (mc.thePlayer.onGround) {
+                                    mc.thePlayer.jump();
+                                    event.y = mc.thePlayer.motionY = 0.419;
+                                }
+//                                if(mc.thePlayer.ticksExisted % RandomUtils.nextInt(4, 6) == 0){
+//                                    event.x -= MovementUtils.getHypixelFunny() * 1E-4;
+//                                    event.z -= MovementUtils.getHypixelFunny() * 1E-4;
 //                                }
+
                             } else {
                                 MovementUtils.strafe(event, (mc.thePlayer.getDiagonalTicks() > 0 ? 0.158 : 0.205));
-                            }
-                            double offset = onHypixel ? 0.41 : 0.15;
 
-                            boolean towerMove = PlayerUtils.isOnGround(offset) && MovementUtils.isMoving();
-                            boolean shouldRun = !MovementUtils.isMoving() || towerMove;
+                                double offset = onHypixel ? 0.41 : 0.15;
+                                boolean towerMove = PlayerUtils.isOnGround(offset) && MovementUtils.isMoving();
+                                boolean shouldRun = !MovementUtils.isMoving() || towerMove;
 
-                            if (this.blockEntry != null && shouldRun) {
-                                event.y = mc.thePlayer.motionY = onHypixel ? 0.418f + (0.01 * MovementUtils.getHypixelFunny()) : 0.38f;
+                                if (this.blockEntry != null && shouldRun) {
+                                    event.y = mc.thePlayer.motionY = onHypixel ? 0.418f + (0.01 * MovementUtils.getHypixelFunny()) : 0.38f;
+                                    long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
+                                    if (this.towerTimer.reach(stopTime)) {
+                                        if (!onHypixel || mc.thePlayer.getDiagonalTicks() > 0) {
+                                            event.y = mc.thePlayer.motionY = towerMove ? -0.1 : 0;
+                                        }
 
-                                event.x -= MovementUtils.getHypixelFunny() * 1E-4;
-                                event.z -= MovementUtils.getHypixelFunny() * 1E-4;
-
-                                long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
-
-                                if (this.towerTimer.reach(stopTime)) {
-                                    if (!onHypixel || mc.thePlayer.getDiagonalTicks() > 0) {
-                                        event.y = mc.thePlayer.motionY = towerMove ? -0.1 : 0;
+                                        this.towerTimer.reset();
                                     }
-
-                                    this.towerTimer.reset();
                                 }
                             }
 

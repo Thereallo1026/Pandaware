@@ -28,8 +28,11 @@ public class AutoJoinModule extends Module {
             String message = packet.getChatComponent().getUnformattedText();
             if (message.contains("1st Killer -") || message.contains("You died! Want to play again? Click here!") ||
                     message.contains("You won! Want to play again?")) {
-                startTimer = true;
-                startDelay = System.currentTimeMillis();
+                if(!startTimer){
+                    startTimer = true;
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS,"Playing Again!", "Joining a new Game", delay.getValue().longValue() / 1000F);
+                    startDelay = System.currentTimeMillis();
+                }
             }
             if (message.contains("1st Killer -")) {
                 mc.thePlayer.sendChatMessage("/ac gg");
@@ -40,9 +43,8 @@ public class AutoJoinModule extends Module {
     @EventHandler
     EventCallback<TickEvent> onUpdate = event -> {
         if (startTimer) {
-            if (System.currentTimeMillis() - startDelay >= delay.getValue().longValue() && mc.thePlayer != null) {
+            if (System.currentTimeMillis() - startDelay >= delay.getValue().longValue()) {
                 String text = "/play " + mode.getValue().label.replace(" ", "_").toLowerCase();
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Playing a new game!", 1);
                 mc.thePlayer.sendChatMessage(text);
                 startTimer = false;
             }
