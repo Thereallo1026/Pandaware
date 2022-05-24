@@ -11,6 +11,6 @@ public class ProtocolUtils {
     }
 
     public boolean isMoreOrEqual(ProtocolCollection protocol) {
-        return ViaMCP.getInstance().getVersion() > protocol.getVersion().getVersion();
+        return ViaMCP.getInstance().getVersion() >= protocol.getVersion().getVersion();
     }
 }

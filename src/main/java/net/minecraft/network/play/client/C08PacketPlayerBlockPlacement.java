@@ -67,7 +67,7 @@ public class C08PacketPlayerBlockPlacement implements Packet<INetHandlerPlayServ
         buf.writeBlockPos(this.position);
         buf.writeByte(this.placedBlockDirection);
         buf.writeItemStackToBuffer(this.stack);
-        if (ViaMCP.getInstance().getVersion() >= ProtocolCollection.R1_11.getVersion().getVersion()) {
+        if (ProtocolUtils.isMoreOrEqual(ProtocolCollection.R1_11)) {
             buf.writeByte((int) (this.facingX));
             buf.writeByte((int) (this.facingY));
             buf.writeByte((int) (this.facingZ));

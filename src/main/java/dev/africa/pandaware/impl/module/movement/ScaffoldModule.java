@@ -533,6 +533,7 @@ public class ScaffoldModule extends Module {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
                     }
                 }
+                break;
         }
 
         if (mc.isMoveMoving()) {
@@ -562,8 +563,8 @@ public class ScaffoldModule extends Module {
                         if (this.blockEntry != null) {
                             if (mc.thePlayer.onGround) {
                                 event.y = mc.thePlayer.motionY = 0.42f;
-                            } else if (mc.thePlayer.getAirTicks() == 5 && !mc.isMoveMoving()) {
-                                event.y = mc.thePlayer.motionY = -0.4f;
+                            } else if (mc.thePlayer.getAirTicks() == 4 && !mc.isMoveMoving()) {
+                                event.y = mc.thePlayer.motionY = -0.2f;
                             }
                         }
                         break;

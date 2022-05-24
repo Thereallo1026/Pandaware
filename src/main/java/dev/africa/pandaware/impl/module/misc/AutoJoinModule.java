@@ -40,7 +40,7 @@ public class AutoJoinModule extends Module {
     @EventHandler
     EventCallback<TickEvent> onUpdate = event -> {
         if (startTimer) {
-            if (System.currentTimeMillis() - startDelay >= delay.getValue().longValue()) {
+            if (System.currentTimeMillis() - startDelay >= delay.getValue().longValue() && mc.thePlayer != null) {
                 String text = "/play " + mode.getValue().label.replace(" ", "_").toLowerCase();
                 Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Playing a new game!", 1);
                 mc.thePlayer.sendChatMessage(text);

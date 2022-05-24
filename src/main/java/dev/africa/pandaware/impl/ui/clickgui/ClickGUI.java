@@ -12,7 +12,6 @@ import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
-import dev.africa.pandaware.utils.render.ColorUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
 import dev.africa.pandaware.utils.render.animator.Easing;
@@ -241,6 +240,19 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     player.play();
                 } catch (JavaLayerException e) {
                     e.printStackTrace();
+                }
+            }).start();
+            easterEgg.delete(0, Short.MAX_VALUE);
+        }
+
+        if (this.easterEgg.toString().toLowerCase().contains("banana") && this.player == null) {
+            new Thread(() -> {
+                try {
+                    player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/banana.mp3"));
+                    player.play();
+                } catch (JavaLayerException e) {
+                    e.printStackTrace();
+                    System.out.println("who squished my banana");
                 }
             }).start();
             easterEgg.delete(0, Short.MAX_VALUE);
