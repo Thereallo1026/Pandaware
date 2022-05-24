@@ -37,7 +37,7 @@ public class EnumSetting<T extends Enum> extends Setting<T> {
     }
 
     public String getLabel(T value) {
-        return StringUtils.capitalize(value.name().replace("_", " ").toLowerCase());
+        return value.toString()/*StringUtils.capitalize(value.name().replace("_", " ").toLowerCase())*/;
     }
 
     @Override

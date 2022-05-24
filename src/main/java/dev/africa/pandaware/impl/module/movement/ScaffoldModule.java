@@ -791,6 +791,11 @@ public class ScaffoldModule extends Module {
         SPOOF("Spoof");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -804,6 +809,11 @@ public class ScaffoldModule extends Module {
         TELEPORT("Teleport");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -819,6 +829,11 @@ public class ScaffoldModule extends Module {
         SMOOTHGCD("Smooth GCD");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -829,6 +844,11 @@ public class ScaffoldModule extends Module {
         VULCAN("Vulcan");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -837,11 +857,16 @@ public class ScaffoldModule extends Module {
         KEEPY("KeepY");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @Override
     public String getSuffix() {
-        return this.rotationMode.getValue().label;
+        return this.scaffoldMode.getValue().label;
     }
 
     @AllArgsConstructor

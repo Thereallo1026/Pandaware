@@ -1187,6 +1187,11 @@ public class KillAuraModule extends Module {
         GREEK_SMOOTH("Greek Smooth");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -1199,6 +1204,11 @@ public class KillAuraModule extends Module {
         ATANH("Atanh");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -1208,6 +1218,11 @@ public class KillAuraModule extends Module {
         MULTI("Multi");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -1217,6 +1232,11 @@ public class KillAuraModule extends Module {
         AIM("Aim");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -1225,6 +1245,11 @@ public class KillAuraModule extends Module {
         RAYTRACE("Raytrace");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -1236,6 +1261,11 @@ public class KillAuraModule extends Module {
         FAKE("Fake");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -1245,6 +1275,11 @@ public class KillAuraModule extends Module {
         NONE("None");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -1259,5 +1294,10 @@ public class KillAuraModule extends Module {
         ONE_DOT_NINE_PLUS("1.9+");
 
         private String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

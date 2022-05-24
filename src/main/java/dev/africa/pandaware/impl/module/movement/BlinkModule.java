@@ -134,5 +134,10 @@ public class BlinkModule extends Module {
         DELAY("Delay");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

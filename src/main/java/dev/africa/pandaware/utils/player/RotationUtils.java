@@ -221,5 +221,10 @@ public class RotationUtils implements MinecraftInstance {
         FEET("Feet");
 
         private String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

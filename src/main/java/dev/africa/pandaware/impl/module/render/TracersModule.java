@@ -105,5 +105,10 @@ public class TracersModule extends Module {
         RAINBOW("Rainbow");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

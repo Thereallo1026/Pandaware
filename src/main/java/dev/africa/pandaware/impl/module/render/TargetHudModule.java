@@ -393,5 +393,10 @@ public class TargetHudModule extends Module {
         NOVOLINE("Novoline");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

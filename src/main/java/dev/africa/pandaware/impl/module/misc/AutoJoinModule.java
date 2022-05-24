@@ -66,5 +66,10 @@ public class AutoJoinModule extends Module {
         TEAMS_NORMAL("Teams Normal");
 
         private String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

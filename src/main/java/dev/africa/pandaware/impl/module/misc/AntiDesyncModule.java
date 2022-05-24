@@ -93,5 +93,10 @@ public class AntiDesyncModule extends Module {
         ALL_C0F("All C0F");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

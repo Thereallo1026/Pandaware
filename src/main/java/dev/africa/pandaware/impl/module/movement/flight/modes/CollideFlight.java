@@ -144,5 +144,10 @@ public class CollideFlight extends ModuleMode<FlightModule> {
         YPORT("Yport");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

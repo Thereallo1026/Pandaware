@@ -54,5 +54,10 @@ public class AnimationsModule extends Module {
         SWANK("Swank");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

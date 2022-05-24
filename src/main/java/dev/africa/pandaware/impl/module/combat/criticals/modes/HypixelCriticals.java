@@ -90,5 +90,10 @@ public class HypixelCriticals extends ModuleMode<CriticalsModule> implements ICr
         MELT("Melt");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

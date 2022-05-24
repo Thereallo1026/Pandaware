@@ -202,5 +202,10 @@ public class AutoClickerModule extends Module {
         ONE_DOT_NINE_PLUS("1.9+");
 
         private String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

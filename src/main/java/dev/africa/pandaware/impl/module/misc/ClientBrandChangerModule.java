@@ -74,5 +74,11 @@ public class ClientBrandChangerModule extends Module {
         PANDAWARE("Pandaware");
 
         private final String label;
+
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

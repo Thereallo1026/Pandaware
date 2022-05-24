@@ -337,6 +337,11 @@ public class TPAuraModule extends Module {
         ONE_PACKET("One Packet");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -346,6 +351,11 @@ public class TPAuraModule extends Module {
         AIM("Aim");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -355,6 +365,11 @@ public class TPAuraModule extends Module {
         ONE_DOT_NINE_PLUS("1.9+");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @Override

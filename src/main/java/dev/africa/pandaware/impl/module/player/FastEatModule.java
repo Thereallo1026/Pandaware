@@ -105,5 +105,10 @@ public class FastEatModule extends Module {
         DREAM("Dream");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

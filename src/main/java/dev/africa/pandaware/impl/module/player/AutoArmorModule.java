@@ -212,5 +212,10 @@ public class AutoArmorModule extends Module {
         FAKE("Silent");
 
         private String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

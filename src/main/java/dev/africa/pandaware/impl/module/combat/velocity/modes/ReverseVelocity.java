@@ -62,5 +62,10 @@ public class ReverseVelocity extends ModuleMode<VelocityModule> {
         SMOOTH("Smooth");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

@@ -125,5 +125,10 @@ public class VulcanCriticals extends ModuleMode<CriticalsModule> implements ICri
         OLD("Old");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

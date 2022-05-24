@@ -50,5 +50,10 @@ public class ClickGUIModule extends Module {
         PANDA("APandaWithAKnife");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

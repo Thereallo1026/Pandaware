@@ -318,6 +318,11 @@ public class ESPModule extends Module {
         FEMBOY("Femboy");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @AllArgsConstructor
@@ -327,5 +332,10 @@ public class ESPModule extends Module {
         MIXED_NUTS("Mixed Nuts");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

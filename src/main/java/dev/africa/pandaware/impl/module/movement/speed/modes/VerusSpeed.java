@@ -193,6 +193,11 @@ public class VerusSpeed extends ModuleMode<SpeedModule> {
         GROUND("Ground");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @Override

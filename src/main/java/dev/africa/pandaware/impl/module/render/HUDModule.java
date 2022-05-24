@@ -416,6 +416,11 @@ public class HUDModule extends Module {
         ASTOLFO("Astolfo");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     @Getter
