@@ -17,9 +17,10 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
             if (this.timerSpeed.getValue()) {
                 mc.timer.timerSpeed = 0.9f;
             }
-            mc.gameSettings.keyBindJump.pressed = true;
+//            mc.gameSettings.keyBindJump.pressed = true;
+            mc.thePlayer.jump();
             event.y = mc.thePlayer.motionY = 0.42f;
-            MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * 2.11);
+            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.11);
         } else if (mc.thePlayer.getAirTicks() == 5 && MovementUtils.isMoving()) {
             if (this.timerSpeed.getValue() && mc.thePlayer.fallDistance < 1) {
                 mc.timer.timerSpeed = 1.4f;
@@ -29,7 +30,7 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
             if (mc.timer.timerSpeed == 1.3f && mc.thePlayer.fallDistance > 1) {
                 mc.timer.timerSpeed = 1;
             }
-            mc.gameSettings.keyBindJump.pressed = false;
+//            mc.gameSettings.keyBindJump.pressed = false;
         }
     };
 

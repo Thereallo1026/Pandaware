@@ -294,6 +294,8 @@ public class KillAuraModule extends Module {
     private boolean dropping;
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
+        if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
+                .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
         if (event.getEventState() == PRE) {
             this.lastTarget = this.target;
             this.target = this.getTarget(this.antiSnap.getValue() ? this.range.getValue().floatValue() + 1 : this.range.getValue().floatValue());
@@ -367,8 +369,6 @@ public class KillAuraModule extends Module {
                             this.sentMagicPacket = true;
                         }
                         if (mc.thePlayer.getDistanceToEntity(this.target) <= this.range.getValue().floatValue()) {
-                            if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
-                                    .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
                             EntityLivingBase rayCastTarget = this.target;
 
                             if (this.rayCast.getValue()) {
@@ -948,7 +948,7 @@ public class KillAuraModule extends Module {
             if (entity instanceof EntityPlayer) {
                 if (!this.players.getValue() ||
                         Client.getInstance().getIgnoreManager().isIgnoreBoth((EntityPlayer) entity) ||
-                        this.teams.getValue() && PlayerUtils.isTeam((EntityPlayer) entity)) {
+                        (this.teams.getValue() && PlayerUtils.isTeam((EntityPlayer) entity))) {
                     valid = false;
                 }
             }

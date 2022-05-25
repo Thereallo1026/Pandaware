@@ -961,7 +961,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                 this.mcProfiler.clearProfiling();
             }
 
-            this.mcProfiler.profilingEnabled = true;
+//            this.mcProfiler.profilingEnabled = true;
             this.displayDebugInfo(i1);
         } else {
             this.mcProfiler.profilingEnabled = false;
@@ -970,7 +970,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         this.mcProfiler.profilingEnabled = false;
         this.mcProfiler.profilerGlobalEnabled = false;
-        this.mcProfiler.clearProfiling();
+//        this.mcProfiler.clearProfiling();
 
         this.guiAchievement.updateAchievementWindow();
         this.framebufferMc.unbindFramebuffer();

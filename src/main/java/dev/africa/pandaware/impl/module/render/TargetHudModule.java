@@ -245,7 +245,6 @@ public class TargetHudModule extends Module {
 
                 case NOVOLINE: {
                     this.height = 41;
-
                     double nameLength = Fonts.getInstance().getArialBdBig()
                             .getStringWidth(this.cachedEntity.getName());
                     this.width = ApacheMath.max((int) (35 + nameLength), 150);
@@ -280,19 +279,16 @@ public class TargetHudModule extends Module {
                     RenderUtils.drawHorizontalGradientRect(0, this.height - 4,
                             (this.armorAnimation) * (this.width - 4), 2,
                             new Color(0, 77, 178), new Color(0, 217, 255));
-
                     this.healthAnimation += ((healthPercentage - this.healthAnimation) / 5.5f) * RenderUtils.fpsMultiplier();
                     this.armorAnimation += ((armorPercentage - this.armorAnimation) / 5.5f) * RenderUtils.fpsMultiplier();
                     break;
                 }
 
-                case BASIC_BIG: {
+                case BASIC_SMALL: {
                     this.height = 25;
                     RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3, new Color(0, 0, 0, 100));
-                    double nameLength1 = Fonts.getInstance().getArialBdBig()
-                            .getStringWidth(this.cachedEntity.getName());
+                    double nameLength1 = Fonts.getInstance().getArialBdBig().getStringWidth(this.cachedEntity.getName());
                     this.width = ApacheMath.max((int) (35 + nameLength1), 150);
-
                     if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
                         Fonts.getInstance().getArialBdBig().drawString("********", this.height - 9, 1, -1);
                     } else {
@@ -300,26 +296,18 @@ public class TargetHudModule extends Module {
                     }
                     String playerHealth1 = String.valueOf(ApacheMath.round(this.cachedEntity.getHealth()) + " / " + this.cachedEntity.getMaxHealth());
                     String playerPing1 = PlayerUtils.getPing(this.cachedEntity) + "ms";
-
-                    Color playerHealthColor;
-
                     this.width = ApacheMath.max((int) (35 + nameLength1), 150);
-
                     Fonts.getInstance().getTahomaNormal().drawString(playerHealth1, this.height, 14, getPlayerColor().getRGB());
-                    Fonts.getInstance().getTahomaNormal().drawString(playerPing1, this.height + 100, 15, -1);
-
-
+                    Fonts.getInstance().getTahomaNormal().drawString(playerPing1, width - Fonts.getInstance().getTahomaNormal().getStringWidth(playerPing1), 15, -1);
                     RenderUtils.renderSkinHead(this.cachedEntity, 2, 2, this.height - 4);
                     break;
                 }
 
-                case BASIC_SMALL: {
+                case BASIC_BIG: {
                     this.height = 50;
                     RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3, new Color(0, 0, 0, 100));
-                    double nameLength = Fonts.getInstance().getArialBdBig()
-                            .getStringWidth(this.cachedEntity.getName());
+                    double nameLength = Fonts.getInstance().getArialBdBig().getStringWidth(this.cachedEntity.getName());
                     this.width = ApacheMath.max((int) (35 + nameLength), 150);
-
                     if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
                         Fonts.getInstance().getArialBdBig().drawString("********", this.height - 9, 1, -1);
                     } else {
@@ -328,24 +316,14 @@ public class TargetHudModule extends Module {
                     String playerHealth = String.valueOf(ApacheMath.round(this.cachedEntity.getHealth()));
                     String maxPlayerHealth = " / " + this.cachedEntity.getMaxHealth();
                     String playerPing = PlayerUtils.getPing(this.cachedEntity) + "ms";
-
-                    Color playerHealthColor;
-
-                    double legnth = Fonts.getInstance().getTahomaNormal().getStringWidth(maxPlayerHealth);
                     this.width = ApacheMath.max((int) (35 + nameLength), 150);
-
                     Fonts.getInstance().getTahomaNormal().drawString(playerHealth, this.height, 12, getPlayerColor().getRGB());
                     Fonts.getInstance().getTahomaNormal().drawString(maxPlayerHealth, this.height + 18, 12, -1);
-                    Fonts.getInstance().getTahomaNormal().drawString(playerPing, this.height + 75, 38, -1);
-
-
+                    Fonts.getInstance().getTahomaNormal().drawString(playerPing, width - Fonts.getInstance().getTahomaNormal().getStringWidth(playerPing), height - Fonts.getInstance().getTahomaNormal().FONT_HEIGHT, -1);
                     RenderUtils.renderSkinHead(this.cachedEntity, 2, 2, this.height - 4);
                 }
-
             }
-
             GlStateManager.popMatrix();
-
         }
     };
 

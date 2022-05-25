@@ -186,13 +186,14 @@ public class PlayerUtils implements MinecraftInstance {
     }
 
     public static boolean isTeam(EntityPlayer entity) {
-        if (entity.getTeam() != null && mc.thePlayer.getTeam() != null) {
-            char c1 = entity.getDisplayName().getFormattedText().charAt(1);
-            char c2 = mc.thePlayer.getDisplayName().getFormattedText().charAt(1);
-            return c1 == c2;
-        } else {
-            return false;
-        }
+        return mc.thePlayer.isOnSameTeam(entity);
+//        if (entity.getTeam() != null && mc.thePlayer.getTeam() != null) {
+//            char c1 = entity.getDisplayName().getFormattedText().charAt(1);
+//            char c2 = mc.thePlayer.getDisplayName().getFormattedText().charAt(1);
+//            return c1 == c2;
+//        } else {
+//            return false;
+//        }
     }
 
     public void setCollisionGround(CollisionEvent event) {

@@ -74,7 +74,7 @@ public class CustomSpeed extends ModuleMode<SpeedModule> {
         } else if (!mc.thePlayer.onGround && !this.useFriction.getValue()) {
             moveSpeed = this.airSpeed.getValue().floatValue();
         } else {
-            moveSpeed = lastDistance - lastDistance / 91;
+            moveSpeed = lastDistance * 0.91;
         }
         if (this.useFallMotion.getValue()) {
             if (mc.thePlayer.getAirTicks() == this.fallMotionTicks.getValue().intValue()) {

@@ -138,7 +138,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
         return new ArrayList<>(this.getMap().values());
     }
 
-    public <T extends Module> T getByClass(Class<? extends Module> clazz) {
+    public <T extends Module> T getByClass(Class<T> clazz) {
         return (T) this.getMap().get(clazz);
     }
 
