@@ -7,11 +7,14 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
+import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.math.TimeHelper;
+import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.AllArgsConstructor;
 import lombok.var;
+import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -21,6 +24,7 @@ public class FastEatModule extends Module {
     private final EnumSetting<FastEatMode> mode = new EnumSetting<>("Mode", FastEatMode.NCP);
     private final NumberSetting timer = new NumberSetting("Timer", 2, 1.01, 1.2, 0.01,
             () -> this.mode.getValue() == FastEatMode.TIMER);
+    private final BooleanSetting stopMoving = new BooleanSetting("Stop moving", false);
 
     private int packet;
     private boolean fixed;
@@ -28,14 +32,17 @@ public class FastEatModule extends Module {
     private final TimeHelper time = new TimeHelper();
 
     public FastEatModule() {
-        this.registerSettings(this.mode, this.timer);
+        this.registerSettings(
+                this.mode,
+                this.timer,
+                this.stopMoving);
     }
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.PRE) {
             if (mc.thePlayer.inventory.getCurrentItem() != null) {
-                if (mc.gameSettings.keyBindUseItem.isKeyDown()) {
+                if ((mc.gameSettings.keyBindUseItem.isKeyDown()) && (!this.stopMoving.getValue() || !MovementUtils.isMoving())) {
                     var heldItem = mc.thePlayer.inventory.getCurrentItem().getItem();
                     if (heldItem instanceof ItemFood || heldItem instanceof ItemPotion) {
                         fixed = false;
@@ -70,6 +77,7 @@ public class FastEatModule extends Module {
                                     }
                                     mc.playerController.onStoppedUsingItem(mc.thePlayer);
                                     time.reset();
+                                    if (mc.isSingleplayer()) mc.displayGuiScreen(new GuiWinGame());
                                 }
                                 mc.thePlayer.motionX = 0;
                                 mc.thePlayer.motionZ = 0;

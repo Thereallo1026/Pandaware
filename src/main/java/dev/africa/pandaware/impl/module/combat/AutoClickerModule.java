@@ -26,10 +26,8 @@ public class AutoClickerModule extends Module {
 
     private final NumberRangeSetting cpsRange =
             new NumberRangeSetting("CPS Range", 20, 0.5, 8, 14, 0.5);
-
     private final EnumSetting<ClickMode> clickMode
             = new EnumSetting<>("Click Mode", ClickMode.FULL_RANDOM);
-
     private final BooleanSetting weaponsOnly = new BooleanSetting("Weapons Only", false);
 
     public AutoClickerModule() {

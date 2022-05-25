@@ -490,21 +490,9 @@ public class ScaffoldModule extends Module {
                                     && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
                                 event.y = mc.thePlayer.motionY = 0.4f;
 
-                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 1.1);
-//                                MovementUtils.strafe((MovementUtils.getBaseMoveSpeed()) * 0.75 *
-//                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.65 : 1.05) *
-//                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.45 : 0.75) *
-//                                        (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
-                                jumped = true;
-                            }/* else if (jumped) {
-                                MovementUtils.strafe((lastDistance - 0.66F * (lastDistance - MovementUtils.getBaseMoveSpeed()))
-                                        * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.65 : 0.75));
-                                jumped = false;
-                            }*/
-                            /*if (!Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()) &&
-                                    !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
-                                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
-                            }*/
+                                MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() *
+                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.8 : 1.05));
+                            }
                         } else {
                             event.y = mc.thePlayer.motionY = Math.random() - (MovementUtils.getBaseMoveSpeed() / 6);
                         }
@@ -540,6 +528,7 @@ public class ScaffoldModule extends Module {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
                     }
                 }
+                break;
         }
 
         if (MovementUtils.isMoving()) {
@@ -569,8 +558,8 @@ public class ScaffoldModule extends Module {
                         if (this.blockEntry != null) {
                             if (mc.thePlayer.onGround) {
                                 event.y = mc.thePlayer.motionY = 0.42f;
-                            } else if (mc.thePlayer.getAirTicks() == 5 && !MovementUtils.isMoving()) {
-                                event.y = mc.thePlayer.motionY = -0.4f;
+                            } else if (mc.thePlayer.getAirTicks() == 4 && !MovementUtils.isMoving()) {
+                                event.y = mc.thePlayer.motionY = -0.2f;
                             }
                         }
                         break;
@@ -824,9 +813,9 @@ public class ScaffoldModule extends Module {
         FACING("Facing"),
         STATIC("Static"),
         MMC("MMC"),
-        VULCAN("Vulcan"),
         BACKWARDS("Backwards"),
-        SMOOTHGCD("Smooth GCD");
+        SMOOTHGCD("Smooth GCD"),
+        VULCAN("Vulcan");
 
         private final String label;
 

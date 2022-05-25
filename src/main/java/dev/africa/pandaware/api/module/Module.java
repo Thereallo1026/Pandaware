@@ -16,7 +16,6 @@ import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.client.SoundUtils;
 import dev.africa.pandaware.utils.render.animator.Animator;
-import javazoom.jl.player.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,8 +38,6 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
     private ModeSetting modeSetting;
 
     private TaskedEventListener<?> taskedEvent;
-
-    private Player player;
 
     private boolean script;
 

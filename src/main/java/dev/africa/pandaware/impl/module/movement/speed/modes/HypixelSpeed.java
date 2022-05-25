@@ -13,8 +13,6 @@ import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
-import net.minecraft.potion.Potion;
-import org.lwjgl.input.Keyboard;
 
 public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private boolean jumped;
@@ -51,26 +49,23 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     protected final EventCallback<MoveEvent> onMove = event -> {
-        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
+        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) &&
+                !(ServerUtils.compromised) && MovementUtils.isMoving()) {
             if (PlayerUtils.inLiquid()) {
                 this.getParent().toggle(false);
             }
-//            if (!mc.thePlayer.isCollidedHorizontally && !mc.thePlayer.isPotionActive(Potion.jump) &&
-//                    mc.thePlayer.fallDistance < 0.7 && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
-//                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
-//            }
-            if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
-                double motion = 0.4F;
+            if (mc.thePlayer.onGround) {
+                double motion = 0.41F;
                 motion += PlayerUtils.getJumpBoostMotion();
 
                 event.y = mc.thePlayer.motionY = motion;
-                this.movespeed = (MovementUtils.getBaseMoveSpeed() * 1.73);
+                this.movespeed = (MovementUtils.getBaseMoveSpeed() * 2);
                 this.jumped = true;
             } else if (this.jumped) {
                 this.movespeed = this.lastDistance - 0.66F * (this.lastDistance - MovementUtils.getBaseMoveSpeed());
                 this.jumped = false;
             } else {
-                this.movespeed = this.lastDistance - this.lastDistance / 94.2;
+                this.movespeed = this.lastDistance *= 0.941f;
                 if (mc.thePlayer.moveStrafing > 0 || TargetStrafeModule.isStrafing()) {
                     double multi = (MovementUtils.getSpeed() - this.lastDistance) * MovementUtils.getBaseMoveSpeed();
 
@@ -78,14 +73,9 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                     this.movespeed -= 0.01f;
                 }
             }
-            if (mc.thePlayer.getAirTicks() == 5 && !mc.thePlayer.isPotionActive(Potion.jump)/* &&
-                    Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())*/) {
-                event.y = mc.thePlayer.motionY = -0.02;
-            }
 
             MovementUtils.strafe(event, Math.max(this.movespeed, MovementUtils.getBaseMoveSpeed()));
         }
-
     };
 
     //AtomicReference<String> bobEsponja = new AtomicReference<>();

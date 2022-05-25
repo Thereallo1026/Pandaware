@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import dev.africa.pandaware.Client;
-import dev.africa.pandaware.impl.module.render.ClickGUIModule;
 import dev.africa.pandaware.impl.module.render.HUDModule;
-import dev.africa.pandaware.impl.setting.BooleanSetting;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -309,7 +307,7 @@ public class GuiChat extends GuiScreen
     {
         HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
 
-        if(!hud.getTransparentChat().getValue()) {
+        if(!hud.getTransparentChat().getValue() && hud.getData().isEnabled()) {
             drawRect(2, this.height - 14, this.width - 2, this.height - 2, Integer.MIN_VALUE);
         }
         this.inputField.drawTextBox();

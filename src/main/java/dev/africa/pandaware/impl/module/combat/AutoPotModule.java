@@ -8,6 +8,8 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
+import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
+import dev.africa.pandaware.impl.module.misc.disabler.modes.HypixelDisabler;
 import dev.africa.pandaware.impl.module.movement.ScaffoldModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
@@ -15,6 +17,7 @@ import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.player.block.BlockUtils;
 import lombok.Getter;
+import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemPotion;
@@ -73,6 +76,12 @@ public class AutoPotModule extends Module {
         if (event.getEventState() == Event.EventState.POST) return;
 
         if (!this.inCombat.getValue() && mc.thePlayer.isSwingInProgress) {
+            return;
+        }
+
+        DisablerModule disabler = Client.getInstance().getModuleManager().getByClass(DisablerModule.class);
+        if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) &&
+                disabler.getCurrentMode() instanceof HypixelDisabler && mc.thePlayer.ticksExisted < 100) {
             return;
         }
 

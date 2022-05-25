@@ -59,6 +59,7 @@ public class HUDModule extends Module {
     private final BooleanSetting toggleNotifications = new BooleanSetting("Toggle notifications", false);
     private final BooleanSetting notificationsCenter = new BooleanSetting("Notifications in Center", false);
     private final BooleanSetting scoreboardDynamic = new BooleanSetting("Dynamic Scoreboard", false);
+    private final BooleanSetting hidePotionParticles = new BooleanSetting("Hide potion particles", false);
     private final NumberSetting soundVolume = new NumberSetting("Toggle Sound volume", 100, 1, 20, 1,
             this.toggleSound::getValue);
     private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.CAR, this.showCape::getValue);
@@ -76,7 +77,7 @@ public class HUDModule extends Module {
     private final NumberSetting scoreboardPosition = new NumberSetting("Scoreboard position",
             400, 0, 200, 1, () -> !scoreboardDynamic.getValue());
 
-    private final NumberSetting arrayBackgroundAlpha = new NumberSetting("Arraylist background alpha",
+    private final NumberSetting arrayBackgroundAlpha = new NumberSetting("Arraylist alpha",
             255, 0, 100, 1, this.arraylist::getValue);
     private final NumberSetting arrayOffset = new NumberSetting("Arraylist offset",
             15, 0, 0, 1, this.arraylist::getValue);
@@ -109,6 +110,7 @@ public class HUDModule extends Module {
                 this.informations,
                 this.irc,
                 this.transparentChat,
+                this.hidePotionParticles,
                 this.showCape,
                 this.customFont,
                 this.toggleSound,

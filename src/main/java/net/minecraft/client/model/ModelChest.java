@@ -1,11 +1,5 @@
 package net.minecraft.client.model;
 
-import dev.africa.pandaware.Client;
-import dev.africa.pandaware.impl.module.render.ChestESPModule;
-import dev.africa.pandaware.impl.ui.UISettings;
-import dev.africa.pandaware.utils.render.ColorUtils;
-import org.lwjgl.opengl.GL11;
-
 public class ModelChest extends ModelBase
 {
     /** The chest lid in the chest's model. */
@@ -42,30 +36,8 @@ public class ModelChest extends ModelBase
     {
         this.chestKnob.rotateAngleX = this.chestLid.rotateAngleX;
 
-        ChestESPModule chestESP = Client.getInstance().getModuleManager().getByClass(ChestESPModule.class);
-        if (chestESP.getData().isEnabled()) {
-            GL11.glPushMatrix();
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glEnable(GL11.GL_LINE_SMOOTH);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glLineWidth(1);
-
-            ColorUtils.glColor(UISettings.CURRENT_COLOR);
-            this.chestLid.render(0.0625f);
-            this.chestKnob.render(0.0625F);
-            this.chestBelow.render(0.0625F);
-
-            GL11.glPopAttrib();
-            GL11.glPopMatrix();
-        } else {
-            this.chestLid.render(0.0625F);
-            this.chestKnob.render(0.0625F);
-            this.chestBelow.render(0.0625F);
-        }
+        this.chestLid.render(0.0625F);
+        this.chestKnob.render(0.0625F);
+        this.chestBelow.render(0.0625F);
     }
 }

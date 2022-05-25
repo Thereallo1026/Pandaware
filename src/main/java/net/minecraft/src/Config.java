@@ -26,6 +26,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
+
+import dev.africa.pandaware.Client;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import net.minecraft.client.LoadingScreenRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -782,6 +785,10 @@ public class Config
 
     public static boolean isPotionParticles()
     {
+        HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+        if (hud.getData().isEnabled() && hud.getHidePotionParticles().getValue()) {
+            return false;
+        }
         return gameSettings.ofPotionParticles;
     }
 

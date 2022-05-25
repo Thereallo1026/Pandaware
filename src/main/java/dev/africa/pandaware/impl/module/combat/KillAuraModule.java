@@ -16,7 +16,6 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberRangeSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
-import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
@@ -50,8 +49,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static dev.africa.pandaware.api.event.Event.EventState.PRE;
-
 @Getter
 @ModuleInfo(name = "Kill Aura", description = "Attacks small children because no one likes them", category = Category.COMBAT)
 public class KillAuraModule extends Module {
@@ -70,17 +67,17 @@ public class KillAuraModule extends Module {
             = new EnumSetting<>("Range Calculation Mode", RangeCalculation.RAYTRACE);
     private final EnumSetting<RenderEvent.Type> rotationEvent
             = new EnumSetting<>("Rotation Event Type", RenderEvent.Type.FRAME, this.rotate::getValue);
-    private final EnumSetting<dev.africa.pandaware.api.event.Event.EventState> eventType
-            = new EnumSetting<>("Event Type", PRE);
+    private final EnumSetting<Event.EventState> eventType
+            = new EnumSetting<>("Event Type", Event.EventState.PRE);
     private final EnumSetting<RotationUtils.RotationAt> lookAt
             = new EnumSetting<>("Look At", RotationUtils.RotationAt.CHEST, this.rotate::getValue);
     private final BooleanSetting autoBlock = new BooleanSetting("Auto Block", false);
     private final EnumSetting<AutoBlockMode> autoBlockMode
             = new EnumSetting<>("Auto Block Mode", AutoBlockMode.NORMAL, this.autoBlock::getValue);
-    private final EnumSetting<dev.africa.pandaware.api.event.Event.EventState> blockState
-            = new EnumSetting<>("Block State", dev.africa.pandaware.api.event.Event.EventState.POST, this.autoBlock::getValue);
-    private final EnumSetting<dev.africa.pandaware.api.event.Event.EventState> unblockState
-            = new EnumSetting<>("Unblock State", dev.africa.pandaware.api.event.Event.EventState.POST, this.autoBlock::getValue);
+    private final EnumSetting<Event.EventState> blockState
+            = new EnumSetting<>("Block State", Event.EventState.POST, this.autoBlock::getValue);
+    private final EnumSetting<Event.EventState> unblockState
+            = new EnumSetting<>("Unblock State", Event.EventState.PRE, this.autoBlock::getValue);
     private final EnumSetting<Strafemode> strafeMode
             = new EnumSetting<>("Strafe Mode", Strafemode.NONE);
     private final BooleanSetting cinematic = new BooleanSetting("Cinematic", false, this.rotate::getValue);
@@ -222,7 +219,7 @@ public class KillAuraModule extends Module {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (event.getPacket() instanceof C03PacketPlayer) {
-            C03PacketPlayer packet = (C03PacketPlayer) event.getPacket();
+            C03PacketPlayer packet = event.getPacket();
 
             if (packet.getRotating()) {
                 this.lastRotation = new Vec2f(packet.getYaw(), packet.getPitch());
@@ -296,7 +293,7 @@ public class KillAuraModule extends Module {
     EventCallback<MotionEvent> onMotion = event -> {
         if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
                 .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
-        if (event.getEventState() == PRE) {
+        if (event.getEventState() == Event.EventState.PRE) {
             this.lastTarget = this.target;
             this.target = this.getTarget(this.antiSnap.getValue() ? this.range.getValue().floatValue() + 1 : this.range.getValue().floatValue());
 
@@ -410,15 +407,6 @@ public class KillAuraModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-//
-//        Client.getInstance().getNotificationManager().addNotification(Notification.Type.OKAY,
-//                "§4Disabled §7" + this.getData().getName(), 2);
-//
-//        Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING,
-//                "§4Disabled §7" + this.getData().getName(), 2);
-//
-//        Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY,
-//                "§4Disabled §7" + this.getData().getName(), 2);
 
         if (this.vulcant.getValue()) {
             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
@@ -449,6 +437,14 @@ public class KillAuraModule extends Module {
     public void onDisable() {
         super.onDisable();
 
+        if (this.vulcant.getValue()) {
+            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
+                    mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw,
+                    mc.thePlayer.rotationPitch, mc.thePlayer.onGround
+            ));
+        }
+
+        this.sentMagicPacket = false;
         this.blockCount = 0;
         this.target = null;
         this.filterX.reset();
@@ -628,7 +624,7 @@ public class KillAuraModule extends Module {
             }
             case MATH_RANDOM: {
                 newRotation.setX((float) ((newRotation.getX() * ApacheMath.random()) + RandomUtils.nextFloat(-180f, 180f)));
-                newRotation.setY((float) ((newRotation.getY() * ApacheMath.random()) + RandomUtils.nextFloat(-45f, 45f)));
+                newRotation.setY((float) ((newRotation.getY() * ApacheMath.random()) + RandomUtils.nextFloat(-90f, 90f)));
                 break;
             }
             case ATANH: {
@@ -866,7 +862,7 @@ public class KillAuraModule extends Module {
     }
 
     private void doCallEventAndAttack(Entity entity) {
-        AttackEvent attackEvent = new AttackEvent(entity, PRE);
+        AttackEvent attackEvent = new AttackEvent(entity, Event.EventState.PRE);
         Client.getInstance().getEventDispatcher().dispatch(attackEvent);
 
         attacks++;
@@ -1174,7 +1170,7 @@ public class KillAuraModule extends Module {
 
     @Override
     public String getSuffix() {
-        return this.targetMode.getValue().label + " §7" + this.entities.size();
+        return this.getTargetMode().getValue().label;
     }
 
     @AllArgsConstructor
@@ -1293,7 +1289,7 @@ public class KillAuraModule extends Module {
         DROP_INCREASE("Drop Increase"),
         ONE_DOT_NINE_PLUS("1.9+");
 
-        private String label;
+        private final String label;
 
         @Override
         public String toString() {

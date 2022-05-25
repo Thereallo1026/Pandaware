@@ -4,6 +4,7 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
+import dev.africa.pandaware.impl.event.game.ServerJoinEvent;
 import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
@@ -87,6 +88,13 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
             if (mc.thePlayer != null && mc.theWorld != null) {
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(false));
             }
+        }
+    };
+
+    @EventHandler
+    EventCallback<ServerJoinEvent> onJoin = event -> {
+        if ((!event.getIp().equals("mc.hypixel.net") || !event.getIp().equals("hypixel.net")) && !ServerUtils.compromised) {
+            this.getParent().toggle(false);
         }
     };
 }

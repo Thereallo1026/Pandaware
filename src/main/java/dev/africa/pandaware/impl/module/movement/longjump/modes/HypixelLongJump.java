@@ -26,7 +26,6 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised) {
-
             if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 2 : 2.2));
                 mc.thePlayer.jump();
@@ -41,6 +40,8 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
                 mc.thePlayer.motionY = 1E-2 + MovementUtils.getHypixelFunny() * 1E-4;
 //                Printer.chat(mc.thePlayer.motionY + "");
             }
+        } else {
+            mc.thePlayer.motionX = mc.thePlayer.motionZ = mc.thePlayer.motionY *= 0.91f;
         }
     };
 
