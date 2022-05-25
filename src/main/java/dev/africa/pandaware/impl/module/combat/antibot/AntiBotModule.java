@@ -15,4 +15,9 @@ public class AntiBotModule extends Module {
                 new MatrixAntiBot("Matrix", this)
         );
     }
+
+    @Override
+    public String getSuffix() {
+        return getCurrentMode().getName();
+    }
 }
