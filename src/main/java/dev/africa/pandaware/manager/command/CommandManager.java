@@ -20,6 +20,7 @@ public class CommandManager extends Container<Command> implements Initializable 
     public void init() {
         this.addCommands(
                 new BindCommand(),
+                new PanicCommand(),
                 new HelpCommand(),
                 new ConfigCommand(),
                 new ToggleCommand(),

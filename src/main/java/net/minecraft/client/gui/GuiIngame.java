@@ -531,7 +531,7 @@ public class GuiIngame extends Gui {
         HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
 
         int i1 = collection.size() * this.getFontRenderer().FONT_HEIGHT;
-        int j1 = p_180475_2_.getScaledHeight() / 2 + i1 / 3 + hud.scoreboardPosition.getValue().intValue();
+        int j1 = hud.getScoreboardDynamic().getValue() ? (int) hud.getArraylistHeight() + i1 + 15: p_180475_2_.getScaledHeight() / 2 + i1 / 3 + hud.getScoreboardPosition().getValue().intValue();
         int k1 = 3;
         int l1 = p_180475_2_.getScaledWidth() - i - k1;
         int j = 0;

@@ -58,6 +58,7 @@ public class HUDModule extends Module {
     private final BooleanSetting toggleSound = new BooleanSetting("Toggle sound", false);
     private final BooleanSetting toggleNotifications = new BooleanSetting("Toggle notifications", false);
     private final BooleanSetting notificationsCenter = new BooleanSetting("Notifications in Center", false);
+    private final BooleanSetting scoreboardDynamic = new BooleanSetting("Dynamic Scoreboard", false);
     private final NumberSetting soundVolume = new NumberSetting("Toggle Sound volume", 100, 1, 20, 1,
             this.toggleSound::getValue);
     private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.CAR, this.showCape::getValue);
@@ -72,8 +73,8 @@ public class HUDModule extends Module {
             20, 1, 4, 1, () -> this.colorMode.getValue() == ColorMode.PANDAWARE
             || this.colorMode.getValue() == ColorMode.SHADE);
 
-    public final NumberSetting scoreboardPosition = new NumberSetting("Scoreboard position",
-            400, 0, 200, 1);
+    private final NumberSetting scoreboardPosition = new NumberSetting("Scoreboard position",
+            400, 0, 200, 1, () -> !scoreboardDynamic.getValue());
 
     private final NumberSetting arrayBackgroundAlpha = new NumberSetting("Arraylist background alpha",
             255, 0, 100, 1, this.arraylist::getValue);
@@ -91,6 +92,7 @@ public class HUDModule extends Module {
     private boolean lastFullscreen;
     private int animated = 1;
     private int caranimated = 1;
+    private double arraylistHeight;
     private final TimeHelper timer = new TimeHelper();
     private ResourceLocation animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(1).gif");
     private ResourceLocation car = new ResourceLocation("pandaware/icons/capes/car/car1.png");
@@ -112,6 +114,7 @@ public class HUDModule extends Module {
                 this.toggleSound,
                 this.toggleNotifications,
                 this.notificationsCenter,
+                this.scoreboardDynamic,
                 this.borderlessFullscreen,
                 this.arraylistLine,
                 this.arraylistHideVisual,
@@ -293,6 +296,7 @@ public class HUDModule extends Module {
                 count.updateAndGet(f -> f + (10f * module.getAnimatorY().getValue()));
             }
         });
+        arraylistHeight = count.get() + positionOffset;
     }
 
     void renderInformations(RenderEvent event) {
@@ -442,5 +446,10 @@ public class HUDModule extends Module {
 
         private final String label;
         private final ResourceLocation resource;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }
