@@ -1,6 +1,5 @@
 package dev.africa.pandaware.impl.module.movement;
 
-import com.sun.javafx.geom.Vec2d;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
@@ -38,6 +37,7 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Cylinder;
 
+import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -244,7 +244,7 @@ public class TargetStrafeModule extends Module {
             double pointX = entityLivingBase.posX + cos;
             double pointZ = entityLivingBase.posZ + sin;
 
-            Point point = new Point(new Vec2d(pointX, pointZ));
+            Point point = new Point(new Vector2d(pointX, pointZ));
 
             points.add(point);
         }
@@ -334,15 +334,15 @@ public class TargetStrafeModule extends Module {
     }
 
     public static class Point {
-        Vec2d position;
+        Vector2d position;
         boolean valid;
 
-        public Point(Vec2d position) {
+        public Point(Vector2d position) {
             this.position = position;
             this.valid = isPointValid(position);
         }
 
-        private boolean isPointValid(Vec2d position) {
+        private boolean isPointValid(Vector2d position) {
             Vec3 pointVec = new Vec3(position.x, mc.thePlayer.posY, position.y);
             IBlockState blockState = mc.theWorld.getBlockState(new BlockPos(pointVec));
 
