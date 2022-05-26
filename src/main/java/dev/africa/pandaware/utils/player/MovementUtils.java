@@ -84,6 +84,32 @@ public class MovementUtils implements MinecraftInstance {
         }
     }
 
+    public static void setSpeed(MoveEvent e, double speed, float forward, float strafing, float yaw) {
+        yaw = getDirection(forward, strafing, yaw);
+        double x = -ApacheMath.sin(ApacheMath.toRadians(yaw));
+        double z = ApacheMath.cos(ApacheMath.toRadians(yaw));
+        if (e != null) {
+            e.x = mc.thePlayer.motionX = (x * speed);
+            e.z = mc.thePlayer.motionZ = (z * speed);
+        } else {
+            mc.thePlayer.motionZ = z * speed;
+            mc.thePlayer.motionX = x * speed;
+        }
+    }
+
+    public static void setSpeed(MoveEvent e, double speed) {
+        float yaw = getDirection();
+        double x = -ApacheMath.sin(ApacheMath.toRadians(yaw));
+        double z = ApacheMath.cos(ApacheMath.toRadians(yaw));
+        if (e != null) {
+            e.x = (x * speed);
+            e.z = (z * speed);
+        } else {
+            mc.thePlayer.motionZ = z * speed;
+            mc.thePlayer.motionX = x * speed;
+        }
+    }
+
     public static double getSpeed() {
         return mc.thePlayer == null ? 0 : ApacheMath.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX
                 + mc.thePlayer.motionZ * mc.thePlayer.motionZ);
@@ -108,25 +134,21 @@ public class MovementUtils implements MinecraftInstance {
         return ApacheMath.hypot(mc.thePlayer.posX - mc.thePlayer.prevPosX, mc.thePlayer.posZ - mc.thePlayer.prevPosZ);
     }
 
-    public double getDirection() {
-        float rotationYaw = Minecraft.getMinecraft().thePlayer.rotationYaw;
+    public static float getDirection() {
+        return getDirection(mc.thePlayer.moveForward, mc.thePlayer.moveStrafing, mc.thePlayer.rotationYaw);
+    }
 
-        if (Minecraft.getMinecraft().thePlayer.moveForward < 0F)
-            rotationYaw += 180F;
-
-        float forward = 1F;
-        if (Minecraft.getMinecraft().thePlayer.moveForward < 0F)
-            forward = -0.5F;
-        else if (Minecraft.getMinecraft().thePlayer.moveForward > 0F)
-            forward = 0.5F;
-
-        if (Minecraft.getMinecraft().thePlayer.moveStrafing > 0F)
-            rotationYaw -= 90F * forward;
-
-        if (Minecraft.getMinecraft().thePlayer.moveStrafing < 0F)
-            rotationYaw += 90F * forward;
-
-        return rotationYaw;
+    public static float getDirection(float forward, float strafing, float yaw) {
+        if (forward == 0.0 && strafing == 0.0) return yaw;
+        boolean reversed = (forward < 0.0);
+        float strafingYaw = 90f * ((forward > 0) ? 0.5f : (reversed ? -0.5f : 1));
+        if (reversed) yaw += 180;
+        if (strafing > 0) {
+            yaw -= strafingYaw;
+        } else if (strafing < 0) {
+            yaw += strafingYaw;
+        }
+        return yaw;
     }
 
     public double getLowHopMotion(double motion) {

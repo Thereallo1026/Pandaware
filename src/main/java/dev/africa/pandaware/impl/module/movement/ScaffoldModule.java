@@ -758,7 +758,7 @@ public class ScaffoldModule extends Module {
         for (int i = 36; i >= 0; i--) {
             ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(i);
 
-            if (itemStack != null && itemStack.getItem() instanceof ItemBlock) {
+            if (itemStack != null && itemStack.getItem() instanceof ItemBlock && !BlockUtils.INVALID_BLOCKS.contains(((ItemBlock) itemStack.getItem()).getBlock())) {
                 if (count) {
                     itemCount += itemStack.stackSize;
                 } else {

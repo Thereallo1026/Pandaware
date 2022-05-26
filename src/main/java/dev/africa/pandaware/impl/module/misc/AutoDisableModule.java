@@ -32,17 +32,17 @@ public class AutoDisableModule extends Module {
         if (event.getPacket() instanceof S08PacketPlayerPosLook) {
             FlightModule flightModule = Client.getInstance().getModuleManager().getByClass(FlightModule.class);
             if (flightModule.getData().isEnabled() && this.fly.getValue()) {
-                flightModule.getData().setEnabled(false);
+                flightModule.toggle(false);
             }
 
             SpeedModule speedModule = Client.getInstance().getModuleManager().getByClass(SpeedModule.class);
             if (speedModule.getData().isEnabled() && this.speed.getValue()) {
-                speedModule.getData().setEnabled(false);
+                speedModule.toggle(false);
             }
 
             LongJumpModule longJumpModule = Client.getInstance().getModuleManager().getByClass(LongJumpModule.class);
             if (longJumpModule.getData().isEnabled() && this.longjump.getValue()) {
-                longJumpModule.getData().setEnabled(false);
+                longJumpModule.toggle(false);
             }
         }
     };

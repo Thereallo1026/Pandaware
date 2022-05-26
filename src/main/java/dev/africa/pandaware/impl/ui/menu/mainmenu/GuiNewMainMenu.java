@@ -48,7 +48,7 @@ public class GuiNewMainMenu extends GuiScreen {
 
         RenderUtils.drawImage(new ResourceLocation("/pandaware/icons/panda.png"), width / 2f - 105, 35, 204, 90);
         hugeFont.drawCenteredRainbowStringWithShadow(Client.getInstance().getManifest().getClientName() + "   ", width / 2f, 20, 3, 3);
-        normFont.drawCenteredStringWithShadow(Client.getInstance().getManifest().getClientVersion(), width / 2f + 40, 22, -1);
+        normFont.drawStringWithShadow(Client.getInstance().getManifest().getClientVersion(), width / 2f + 30, 22, -1);
         smallFont.drawCenteredStringWithShadow("By Anticheat Alert & Others.", width / 2f, 10, -1);
         normFont.drawCenteredStringWithShadow("Minecraft is a copyright of Mojang, which Pandaware is based on.", width / 2f, 228, -1);
 

@@ -19,6 +19,7 @@ public class FlightModule extends Module {
                 new FuncraftFlight("Funcraft", this),
                 new PacketFlight("Packet", this),
                 new VulcanFlight("Vulcan", this),
+                new AAC3Flight("AAC3", this),
                 new MineboxFlight("Minebox", this),
                 new DamageFlight("Damage", this)
         );

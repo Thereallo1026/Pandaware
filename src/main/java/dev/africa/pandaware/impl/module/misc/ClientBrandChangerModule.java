@@ -23,7 +23,7 @@ public class ClientBrandChangerModule extends Module {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (event.getPacket() instanceof C17PacketCustomPayload) {
-            final C17PacketCustomPayload packet = (C17PacketCustomPayload) event.getPacket();
+            final C17PacketCustomPayload packet = event.getPacket();
             if (packet.getChannelName().equals("MC|Brand")) {
                 event.cancel();
                 switch (mode.getValue()) {
@@ -60,7 +60,6 @@ public class ClientBrandChangerModule extends Module {
             }
         }
     };
-
 
     @AllArgsConstructor
     private enum Brand {
