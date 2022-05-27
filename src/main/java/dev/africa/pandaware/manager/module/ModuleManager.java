@@ -87,6 +87,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
 
                     // Player
                     new NoFallModule(),
+                    new FastBowModule(),
                     new AntiServerModule(),
                     new ChestStealerModule(),
                     new InventoryManagerModule(),

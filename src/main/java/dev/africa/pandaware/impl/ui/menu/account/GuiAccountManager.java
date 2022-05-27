@@ -213,6 +213,8 @@ public class GuiAccountManager extends GuiScreen {
                             return;
                         }
 
+                        if(data.contains("\n")) data = data.replaceAll("\n", "");
+
                         String[] credentials = data.split(":");
                         usernameBox.setText(credentials[0]);
                         passwordBox.setText(credentials[1]);

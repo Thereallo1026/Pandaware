@@ -14,6 +14,7 @@ public class DisablerModule extends Module {
                 new C03ReplaceDisabler("C03 Replace", this),
                 new S08Disabler("S08", this),
                 new BlocksMCDisabler("Verus (old BlocksMC)", this),
+                new HazelMCDisabler("HazelMC (old Verus)", this),
                 new FuncraftDisabler("Funcraft Staff", this),
                 new VerusCombatDisabler("Verus Combat", this),
                 new CancelDmgPacketDisabler("Cancel Damage", this),

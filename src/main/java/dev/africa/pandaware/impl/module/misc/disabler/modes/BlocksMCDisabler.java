@@ -84,7 +84,7 @@ public class BlocksMCDisabler extends ModuleMode<DisablerModule> {
         if (event.getPacket() instanceof S08PacketPlayerPosLook && (this.expectedTeleport)) {
             this.expectedTeleport = false;
 
-            var packet = (S08PacketPlayerPosLook) event.getPacket();
+            S08PacketPlayerPosLook packet = event.getPacket();
 
             if (mc.thePlayer.ticksExisted > 50) {
                 event.cancel();

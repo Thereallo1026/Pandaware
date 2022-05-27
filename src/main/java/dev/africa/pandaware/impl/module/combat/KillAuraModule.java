@@ -472,7 +472,7 @@ public class KillAuraModule extends Module {
     }
 
     private Vec2f generateRotations(RenderEvent event) {
-        if (this.target == null) return new Vec2f(0, 0);
+        if (this.target == null || mc.thePlayer == null) return new Vec2f(0, 0);
 
         RotationUtils.RotationAt rotationAt = (this.randomizeAimPoint.getValue() ?
                 RotationUtils.RotationAt.values()
