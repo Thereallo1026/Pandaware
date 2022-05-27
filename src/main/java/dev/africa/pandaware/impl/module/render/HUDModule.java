@@ -442,6 +442,7 @@ public class HUDModule extends Module {
         MOJANG_OLD("Old Mojang (2010 - 2015)", new ResourceLocation("pandaware/icons/capes/old_mojang.png")),
         MOJANG("Mojang (2015 - 2021)", new ResourceLocation("pandaware/icons/capes/mojang.png")),
         MOJANG_NEW("New Mojang (2021 - Now)", new ResourceLocation("pandaware/icons/capes/mojang_studios.png")),
+        NO_PANDAWARE("No Pandaware?", new ResourceLocation("pandaware/icons/capes/nopandaware.png")),
 
         YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png")),
         CAR("Car", new ResourceLocation("pandaware/icons/capes/car.png"));
