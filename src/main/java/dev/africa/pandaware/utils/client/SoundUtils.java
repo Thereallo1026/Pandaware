@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
 import javax.sound.sampled.*;

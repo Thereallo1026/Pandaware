@@ -11,8 +11,10 @@ import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.client.ServerUtils;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
+import net.minecraft.potion.Potion;
 
 public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private boolean jumped;
@@ -32,11 +34,8 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
-        if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
-            if (event.getEventState() == Event.EventState.PRE) {
-                this.lastDistance = MovementUtils.getLastDistance();
-                mc.gameSettings.keyBindJump.pressed = false;
-            }
+        if (event.getEventState() == Event.EventState.PRE) {
+            this.lastDistance = ApacheMath.hypot(mc.thePlayer.posX - mc.thePlayer.prevPosX, mc.thePlayer.posZ - mc.thePlayer.prevPosZ);
         }
     };
 
@@ -65,8 +64,9 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 this.movespeed = this.lastDistance - 0.66F * (this.lastDistance - MovementUtils.getBaseMoveSpeed());
                 this.jumped = false;
             } else {
-                this.movespeed = this.lastDistance *= 0.941f;
-                if (mc.thePlayer.moveStrafing > 0 || TargetStrafeModule.isStrafing()) {
+                this.movespeed = this.lastDistance * 0.93f;
+                this.movespeed += mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.03f : 0.0275f;
+                if (TargetStrafeModule.isStrafing()) {
                     double multi = (MovementUtils.getSpeed() - this.lastDistance) * MovementUtils.getBaseMoveSpeed();
 
                     this.movespeed += multi;
