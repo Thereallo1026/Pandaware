@@ -14,14 +14,21 @@ public class JumpStep extends ModuleMode<StepModule> {
     private final NumberSetting jumpMotion = new NumberSetting("Jump Motion", 1, 0.38, 0.42, 0.01);
     private final BooleanSetting stopMidair = new BooleanSetting("Stop Midair", false);
     private final BooleanSetting constantMotion = new BooleanSetting("Constant Motion", false);
-    private final NumberSetting midairTick = new NumberSetting("Midair Tick", 5, 3, 3, 1, this.stopMidair::getValue);
+    private final NumberSetting midairTick = new NumberSetting("Midair Tick", 5, 1, 3, 1, this.stopMidair::getValue);
+    private final NumberSetting midairMotion = new NumberSetting("Midair stop motion", 1, -1, 0, 0.1, this.stopMidair::getValue);
 
     private final TimeHelper timer = new TimeHelper();
 
     public JumpStep(String name, StepModule parent) {
         super(name, parent);
 
-        this.registerSettings(this.jumpMotion, this.stopMidair, this.constantMotion, this.midairTick);
+        this.registerSettings(
+                this.jumpMotion,
+                this.stopMidair,
+                this.constantMotion,
+                this.midairTick,
+                this.midairMotion
+        );
     }
 
     @EventHandler
@@ -32,9 +39,11 @@ public class JumpStep extends ModuleMode<StepModule> {
             timer.reset();
         }
 
-        if (mc.thePlayer.getAirTicks() == this.midairTick.getValue().intValue() && this.stopMidair.getValue() &&
-                !(timer.getMs() > 300)) {
-            mc.thePlayer.motionY = 0;
+        if (this.stopMidair.getValue()) {
+            if (mc.thePlayer.getAirTicks() == this.midairTick.getValue().intValue() &&
+                    !(timer.getMs() > (this.midairTick.getValue().intValue() + 0.25) * 50L)) {
+                mc.thePlayer.motionY = this.midairMotion.getValue().floatValue();
+            }
         }
     };
 }

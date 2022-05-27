@@ -90,6 +90,12 @@ public class ScaffoldModule extends Module {
     private boolean sloted;
     private int c09slot;
 
+    float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
+    float gcd = f * f * f * 1.2F;
+    float smoothness;
+    float smoothnessValue;
+    Vec2f smoothed;
+
     public ScaffoldModule() {
         this.registerSettings(
                 this.scaffoldMode,
@@ -371,7 +377,7 @@ public class ScaffoldModule extends Module {
                     event.setPitch(80.5f);
                     break;
 
-                case MMC:
+                case SMOOTH:
                     switch (this.aimBlockEntry.getFacing()) {
                         case NORTH:
                             event.setYaw(0);
@@ -389,7 +395,39 @@ public class ScaffoldModule extends Module {
                             event.setYaw(90);
                             break;
                     }
-                    event.setPitch(80f);
+
+                    float smoothness = 60f;
+
+                    if (this.currentRotation == null) {
+                        this.currentRotation = new Vec2f(
+                                this.smoothRotations.getX(),
+                                this.smoothRotations.getY()
+                        );
+                    }
+
+                    float smoothnessValue = 1 * (smoothness / 100f);
+
+                    Vec2f smoothed = new Vec2f(
+                            RotationUtils.updateRotation(
+                                    this.currentRotation.getX(),
+                                    this.smoothRotations.getX(),
+                                    Math.max(1, 180 * smoothnessValue)
+                            ),
+                            RotationUtils.updateRotation(
+                                    this.currentRotation.getY(),
+                                    this.smoothRotations.getY(),
+                                    Math.max(1, 90f * smoothnessValue)
+                            )
+                    );
+
+                    smoothed.setX(smoothed.getX() - ((smoothed.getX() % gcd) - f));
+
+                    this.currentRotation = smoothed;
+
+                    event.setYaw(smoothed.getX());
+                    event.setPitch(smoothed.getY());
+
+                    event.setPitch(80.5f + RandomUtils.nextFloat(0, 1));
                     break;
                 case SMOOTHGCD:
                     if (this.aimBlockEntry != null) {
@@ -417,7 +455,7 @@ public class ScaffoldModule extends Module {
                                 break;
                         }
 
-                        float smoothness = 70f;
+                        smoothness = 70f;
 
                         if (this.currentRotation == null) {
                             this.currentRotation = new Vec2f(
@@ -426,9 +464,9 @@ public class ScaffoldModule extends Module {
                             );
                         }
 
-                        float smoothnessValue = 1 - (smoothness / 100f);
+                        smoothnessValue = 1 - (smoothness / 100f);
 
-                        Vec2f smoothed = new Vec2f(
+                        smoothed = new Vec2f(
                                 RotationUtils.updateRotation(
                                         this.currentRotation.getX(),
                                         this.smoothRotations.getX(),
@@ -437,12 +475,9 @@ public class ScaffoldModule extends Module {
                                 RotationUtils.updateRotation(
                                         this.currentRotation.getY(),
                                         this.smoothRotations.getY(),
-                                        Math.max(1, 90f * smoothnessValue)
+                                        Math.max(1, 90f / smoothnessValue)
                                 )
                         );
-
-                        float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
-                        float gcd = f * f * f * 1.2F;
 
                         smoothed.setX(smoothed.getX() - ((smoothed.getX() % gcd) - f));
 
@@ -516,7 +551,7 @@ public class ScaffoldModule extends Module {
                     int slot = spoofMode.getValue() == SpoofMode.SPOOF ? c09slot : mc.thePlayer.inventory.currentItem;
                     if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize >= 7) {
                         event.y = mc.thePlayer.motionY = 0.42f;
-                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.1);
+                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.8 : 2.1));
                     } else {
                         MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.7);
                     }
@@ -812,7 +847,7 @@ public class ScaffoldModule extends Module {
         NEW("New"),
         FACING("Facing"),
         STATIC("Static"),
-        MMC("MMC"),
+        SMOOTH("Smooth"),
         BACKWARDS("Backwards"),
         SMOOTHGCD("Smooth GCD"),
         VULCAN("Vulcan");

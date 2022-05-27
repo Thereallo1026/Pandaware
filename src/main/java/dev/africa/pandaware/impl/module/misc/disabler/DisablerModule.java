@@ -18,7 +18,8 @@ public class DisablerModule extends Module {
                 new VerusCombatDisabler("Verus Combat", this),
                 new CancelDmgPacketDisabler("Cancel Damage", this),
                 new InvalidPosDisabler("Invalid Position", this),
-                new PlaceDisabler("1.17+ Place", this)
+                new PlaceDisabler("1.17+ Place", this),
+                new SparkyDisabler("Sparky", this)
         );
     }
 

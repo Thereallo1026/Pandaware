@@ -120,6 +120,7 @@ public class GameUtils {
             "was turned to gingerbread by %PLAYER%",
             "ha muerto por %PLAYER%",
             "ha sido tirado al vacio por %PLAYER%",
-            "ha sido asesinado por %PLAYER%"
+            "ha sido asesinado por %PLAYER%",
+            "fue asesinado por %PLAYER%"
     );
 }

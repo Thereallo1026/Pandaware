@@ -26,7 +26,6 @@ public class VulcanNoFall extends ModuleMode<NoFallModule> {
                 mc.timer.timerSpeed = 0.9f;
             }
             if (mc.thePlayer.fallDistance > 3.5f) {
-                mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(null));
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));
                 mc.thePlayer.motionY = -0.1f;
                 mc.thePlayer.fallDistance = 0;

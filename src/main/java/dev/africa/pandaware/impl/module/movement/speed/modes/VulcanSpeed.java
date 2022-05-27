@@ -7,6 +7,7 @@ import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.utils.player.MovementUtils;
+import net.minecraft.potion.Potion;
 
 public class VulcanSpeed extends ModuleMode<SpeedModule> {
     private final BooleanSetting timerSpeed = new BooleanSetting("Timer", false);
@@ -20,10 +21,10 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
 //            mc.gameSettings.keyBindJump.pressed = true;
             mc.thePlayer.jump();
             event.y = mc.thePlayer.motionY = 0.42f;
-            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 2.11);
+            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.8 : 2.1));
         } else if (mc.thePlayer.getAirTicks() == 5 && MovementUtils.isMoving()) {
             if (this.timerSpeed.getValue() && mc.thePlayer.fallDistance < 1) {
-                mc.timer.timerSpeed = 1.4f;
+                mc.timer.timerSpeed = 1.35f;
             }
             event.y = mc.thePlayer.motionY = -0.42f;
         } else {
