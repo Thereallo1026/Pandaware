@@ -87,6 +87,9 @@ public class GuiConnecting extends GuiScreen {
                     GuiConnecting.this.networkManager.setNetHandler(new NetHandlerLoginClient(GuiConnecting.this.networkManager, GuiConnecting.this.mc, GuiConnecting.this.previousGuiScreen));
                     GuiConnecting.this.networkManager.sendPacket(new C00Handshake(47, serverJoinEvent.getIp(), serverJoinEvent.getPort(), EnumConnectionState.LOGIN));
                     GuiConnecting.this.networkManager.sendPacket(new C00PacketLoginStart(GuiConnecting.this.mc.getSession().getProfile()));
+
+                    Client.getInstance().getDiscordRPCInstance().updateStatus("Playing " + ip + (port != 25565 ? ":" + port : ""), "He's destroying.");
+
                 } catch (UnknownHostException unknownhostexception) {
                     if (GuiConnecting.this.cancel) {
                         return;

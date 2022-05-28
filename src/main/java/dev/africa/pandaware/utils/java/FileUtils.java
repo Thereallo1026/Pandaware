@@ -1,14 +1,19 @@
 package dev.africa.pandaware.utils.java;
 
+import com.github.javafaker.App;
+import com.sun.jna.platform.win32.WinBase;
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
+import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import oshi.software.os.windows.WindowsOperatingSystem;
 
 import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -102,7 +107,8 @@ public class FileUtils implements MinecraftInstance {
     }
 
     public String getRandomTitleLine() {
-        String[] lines = {"Try death!",
+        String[] lines = {
+                "Try death!",
                 "Now on a computer near you!",
                 "*Insert Dead Joke*",
                 "KA is Overpowered",
@@ -156,7 +162,31 @@ public class FileUtils implements MinecraftInstance {
                 "Developed at 2710 English Ivy Ct. Longwood, Florida",
                 "no autoblock?",
                 "Do you like my ascii penis?",
-                "RIP your chances at losing your virginity"};
+                "Moist Man > You",
+                "If it crashes, it's a user error",
+                "UID: " + ApacheMath.random() * 1000,
+                "Your UID is too high for this.",
+                "Panda says 'Hello User, thanks for your token!'",
+                "Remember when Panda Meow'd on stream?",
+                "Remember when Hypixel was fun to cheat on? I do.",
+                "Remember when you weren't fat?",
+                "Remember when your parents loved you?",
+                "Remember when you was actually passing maths instead of sitting on this stupid fucking client? Yeah, I do too, the difference is, I'm actually fucking passing maths, unlike your dumb ass, which isn't, so go fucking study.",
+                "RIP your chances at losing your virginity",
+                "It's currently",
+                "想象一下没有 pandaware 摇头",
+                "Zambo78 绕过 Minecraft 色情性强奸绕过 100% 工作无诈骗无陷阱",
+                "Dort Humor",
+                "Developed in Taumatawhakatangihangakoauauotamateaturipukakapiki-maungahoronukupokaiwhenuakitnatahu",
+                "TESTED IN LLANFAIRPWLLGWYNGYLLGOGERYCHWYRNDROBWLLLLANTYSILIOGOGOGOCH",
+                "*Insert r/funny/ Joke*",
+                String.valueOf(Math.E),
+                String.valueOf(Math.PI),
+                "---- Minecraft Crash Report ----",
+                "https://www.youtube.com/watch?v=xvFZjo5PgG0",
+                "https://youtu.be/7zpxgyG7eGk?t=29"
+                };
+
         return lines[RandomUtils.nextInt(0, lines.length)];
     }
 }

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class GuiNewMainMenu extends GuiScreen {
 
-    // TODO: Needs Improvement
+    // TODO: Needs Improvement && Re-Add back Languages button.
 
     private TTFFontRenderer smallFont = Fonts.getInstance().getProductSansMedium();
     private TTFFontRenderer normFont = Fonts.getInstance().getProductSansMedium();
@@ -22,6 +22,10 @@ public class GuiNewMainMenu extends GuiScreen {
 
     @Override
     public void initGui() {
+
+        Client.getInstance().getDiscordRPCInstance().updateStatus("In the Main Menu.", "Likely Idle.");
+
+
         try {
             smallFont = Fonts.getInstance().getProductSansMedium();
             normFont = Fonts.getInstance().getProductSansMedium();

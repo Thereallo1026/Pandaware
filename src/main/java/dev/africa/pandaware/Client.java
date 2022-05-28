@@ -13,6 +13,7 @@ import dev.africa.pandaware.impl.ui.menu.account.GuiAccountManager;
 import dev.africa.pandaware.manager.account.AccountManager;
 import dev.africa.pandaware.manager.command.CommandManager;
 import dev.africa.pandaware.manager.config.ConfigManager;
+import dev.africa.pandaware.manager.discord.DiscordRP;
 import dev.africa.pandaware.manager.file.FileManager;
 import dev.africa.pandaware.manager.ignore.IgnoreManager;
 import dev.africa.pandaware.manager.module.ModuleManager;
@@ -30,6 +31,7 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.Getter;
 import lombok.Setter;
+import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.main.Main;
 import org.lwjgl.opengl.Display;
 
@@ -46,6 +48,8 @@ import java.util.concurrent.ScheduledExecutorService;
 public class Client implements Initializable {
     @Getter
     private static final Client instance = new Client();
+
+    public String randomTitleText = FileUtils.getRandomTitleLine();
 
     private final Manifest manifest = new Manifest(
             "Pandaware", "DEV-0.4",
@@ -73,6 +77,11 @@ public class Client implements Initializable {
     private final HWIDUtil hwidUtil = new HWIDUtil();
     private final GameListener gameListener = new GameListener();
     private final ScriptManager scriptManager = new ScriptManager();
+    private final DiscordRP discordRP = new DiscordRP();
+
+    public DiscordRP getDiscordRPCInstance() {
+        return discordRP;
+    }
 
     private final List<String> files = new ArrayList<>();
 
@@ -103,8 +112,8 @@ public class Client implements Initializable {
         }).start();
 
         this.checkFDPClient();
-
         this.initTitle();
+        this.initDiscordRP();
         this.initMisc();
 
         new Thread(() -> {
@@ -194,14 +203,13 @@ public class Client implements Initializable {
     }
 
     void initTitle() {
-        String randomTitleText = FileUtils.getRandomTitleLine();
 
         if (randomTitleText != null) {
             Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion() + " - " + randomTitleText);
-            System.out.println("Set Title to: " + randomTitleText + ".");
+            System.out.println("[STARTUP - TITLE SETTING] Set Title to: " + randomTitleText + ".");
         } else {
             Display.setTitle("Pandaware (Beta) - " + this.manifest.getClientVersion());
-            System.out.println("Failed to set title, set default title.");
+            System.out.println("[STARTUP - TITLE SETTING] Failed to set title, set default title.");
         }
     }
 
@@ -238,4 +246,12 @@ public class Client implements Initializable {
             listFilesForFolder(fdp);
         }
     }
+
+    void initDiscordRP() {
+        System.out.println("Starting Discord RP...");
+        discordRP.start();
+
+
+    }
+
 }

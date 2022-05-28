@@ -50,6 +50,9 @@ public class GuiAccountManager extends GuiScreen {
 
     @Override
     public void initGui() {
+
+        Client.getInstance().getDiscordRPCInstance().updateStatus("Using the Alt Manager.", "WHAT?! HE JUST LOGGED INTO SIMON HYPIXEL'S ACCOUNT?!");
+
         super.initGui();
         selectedAccount = null;
 

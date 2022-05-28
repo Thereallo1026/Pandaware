@@ -5,6 +5,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+
+import dev.africa.pandaware.Client;
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -46,6 +48,9 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
      */
     public void initGui()
     {
+        Client.getInstance().getDiscordRPCInstance().updateStatus("Browsing Singleplayer Worlds.", "How lonely?");
+
+
         this.field_146628_f = I18n.format("selectWorld.title", new Object[0]);
 
         try

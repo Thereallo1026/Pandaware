@@ -54,6 +54,10 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
      * window resizes, the buttonList is cleared beforehand.
      */
     public void initGui() {
+
+        Client.getInstance().getDiscordRPCInstance().updateStatus("In the Multiplayer Menu.", "What server to destroy?");
+
+
         Keyboard.enableRepeatEvents(true);
         this.buttonList.clear();
 
