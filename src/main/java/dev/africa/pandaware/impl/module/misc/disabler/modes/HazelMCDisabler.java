@@ -88,4 +88,10 @@ public class HazelMCDisabler extends ModuleMode<DisablerModule> {
         }
 
     };
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "Wait for the 'Did funny' notification before flying.", 5);
+    }
 }
