@@ -55,7 +55,7 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
      */
     public void initGui() {
 
-        Client.getInstance().getDiscordRPCInstance().updateStatus("In the Multiplayer Menu.", "What server to destroy?");
+        Client.getInstance().getDiscordRP().updateStatus("In the Multiplayer Menu.", "What server to destroy?");
 
 
         Keyboard.enableRepeatEvents(true);

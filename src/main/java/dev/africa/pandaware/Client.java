@@ -7,6 +7,8 @@ import dev.africa.pandaware.api.manifest.Manifest;
 import dev.africa.pandaware.impl.event.EventListener;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.microshit.MicrosoftProvider;
+import dev.africa.pandaware.impl.protection.Debugger;
+import dev.africa.pandaware.impl.protection.HWIDCheck;
 import dev.africa.pandaware.impl.socket.SocketHandler;
 import dev.africa.pandaware.impl.ui.clickgui.ClickGUI;
 import dev.africa.pandaware.impl.ui.menu.account.GuiAccountManager;
@@ -31,7 +33,6 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.Getter;
 import lombok.Setter;
-import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.main.Main;
 import org.lwjgl.opengl.Display;
 
@@ -59,6 +60,9 @@ public class Client implements Initializable {
     private final ScheduledExecutorService executor = Executors
             .newScheduledThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
+    private final Debugger debugger = new Debugger();
+    private final HWIDCheck hwid = new HWIDCheck();
+
     private final EventDispatcher eventDispatcher = new EventDispatcher();
     private final FileManager fileManager = new FileManager();
     private final ModuleManager moduleManager = new ModuleManager();
@@ -79,10 +83,6 @@ public class Client implements Initializable {
     private final ScriptManager scriptManager = new ScriptManager();
     private final DiscordRP discordRP = new DiscordRP();
 
-    public DiscordRP getDiscordRPCInstance() {
-        return discordRP;
-    }
-
     private final List<String> files = new ArrayList<>();
 
     @Setter
@@ -99,6 +99,9 @@ public class Client implements Initializable {
 
     @Override
     public void init() {
+        if (System.getProperty("98aef67c-7cfe-4cb2-afc4-17fe02efdf37") == null) {
+            return;
+        }
         new Thread(() -> {
             try {
                 ServerSocket socket = new ServerSocket(3000);
@@ -187,7 +190,6 @@ public class Client implements Initializable {
             ServerUtils.checkHosts();
         } catch (Exception ignored) {
         }
-
     }
 
     void initVia() {
@@ -250,8 +252,13 @@ public class Client implements Initializable {
     void initDiscordRP() {
         System.out.println("Starting Discord RP...");
         discordRP.start();
-
-
     }
-
+    //DONT COMMENT UNLESS RELEASE VERSION
+   static {
+       System.setProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6", "a");
+       System.setProperty("a755e611-6014-4ffa-8ab8-7204b31a840e", "b");
+       System.setProperty("98aef67c-7cfe-4cb2-afc4-17fe02efdf37", "c");
+       System.setProperty("24c6ba8a-4e4f-4bad-906a-8eff47f36e15", "d");
+       System.setProperty("fcb4a890-3d2f-4c50-895a-845b4dde1a12", "e");
+   }
 }

@@ -14,21 +14,23 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
-        if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
-            if (this.timerSpeed.getValue()) {
-                mc.timer.timerSpeed = 0.9f;
-            }
-            mc.thePlayer.jump();
-            event.y = mc.thePlayer.motionY = 0.42f;
-            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.8 : 2.1));
-        } else if (mc.thePlayer.getAirTicks() == 5 && MovementUtils.isMoving()) {
-            if (this.timerSpeed.getValue() && mc.thePlayer.fallDistance < 1) {
-                mc.timer.timerSpeed = 1.35f;
-            }
-            event.y = mc.thePlayer.motionY = -0.42f;
-        } else {
-            if (mc.timer.timerSpeed == 1.3f && mc.thePlayer.fallDistance > 1) {
-                mc.timer.timerSpeed = 1;
+        if (MovementUtils.isMoving()) {
+            if (mc.thePlayer.onGround) {
+                if (this.timerSpeed.getValue()) {
+                    mc.timer.timerSpeed = 0.9f;
+                }
+                mc.thePlayer.jump();
+                event.y = mc.thePlayer.motionY = 0.42f;
+                MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.8 : 2.1));
+            } else if (mc.thePlayer.getAirTicks() == 5) {
+                if (this.timerSpeed.getValue() && mc.thePlayer.fallDistance < 1) {
+                    mc.timer.timerSpeed = 1.35f;
+                }
+                event.y = mc.thePlayer.motionY = -0.42f;
+            } else {
+                if (mc.timer.timerSpeed == 1.3f && mc.thePlayer.fallDistance > 1) {
+                    mc.timer.timerSpeed = 1;
+                }
             }
         }
     };

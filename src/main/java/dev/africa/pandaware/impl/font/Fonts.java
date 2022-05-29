@@ -7,6 +7,7 @@ import dev.africa.pandaware.impl.font.renderer.TTFFontRenderer;
 import dev.africa.pandaware.utils.client.Printer;
 import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.main.Main;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -29,6 +30,10 @@ public class Fonts implements Initializable, MinecraftInstance {
     @Override
     public void init() {
         try {
+            if (System.getProperty("24c6ba8a-4e4f-4bad-906a-8eff47f36e15") == null) {
+                return;
+            }
+
             this.arialBdSmall = this.createFont("arialbd.ttf", 16);
             this.arialBdNormal = this.createFont("arialbd.ttf", 19);
             this.arialBdMedium = this.createFont("arialbd.ttf", 20);
@@ -82,8 +87,22 @@ public class Fonts implements Initializable, MinecraftInstance {
         String fontPath = "assets/minecraft/" + Client.getInstance().getManifest()
                 .getClientName().toLowerCase() + "/fonts/";
 
+        boolean classExists = true;
+
+        /*try {
+            Class.forName("dev.africa.launcher.bootstrap.EntryPoint");
+            Class.forName("dev.africa.launcher.interfaces.Initializable");
+            Class.forName("dev.africa.launcher.utils.http.proprieties.header.HttpHeader");
+        } catch (ClassNotFoundException e) {
+            classExists = false;
+        }*/ //uncum on release
+
+        if (System.getProperty("a755e611-6014-4ffa-8ab8-7204b31a840e") == null || !classExists) {
+            return null;
+        }
+
         return new TTFFontRenderer(Font.createFont(Font.PLAIN,
-                Objects.requireNonNull(ClassLoader.getSystemClassLoader()
+                Objects.requireNonNull(Main.class.getClassLoader()
                         .getResourceAsStream(fontPath + fontName))).deriveFont(Font.PLAIN, size));
     }
 

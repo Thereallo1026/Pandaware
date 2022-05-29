@@ -42,6 +42,9 @@ public class SocketHandler {
     }
 
     public void start() {
+        if (System.getProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6") == null) {
+            return;
+        }
         if (ircName == null || ircName.length() < 3 || ircName.length() > 16) {
             System.out.println("IRC Name invalid. Setting random username");
             ircName = "user" + RandomStringUtils.randomAlphanumeric(10);
@@ -53,7 +56,7 @@ public class SocketHandler {
 
         this.executorService.execute(() -> {
             try {
-                WebSocketClient webSocketClient = new WebSocketClient(new URI("ws://45.41.240.29:34353/socket")) {
+                WebSocketClient webSocketClient = new WebSocketClient(new URI("ws://157.245.91.112:42342/socket")) {
 
                     @Override
                     public void onOpen(ServerHandshake serverHandshake) {

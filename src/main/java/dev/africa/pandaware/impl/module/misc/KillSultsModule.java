@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 @ModuleInfo(name = "Kill Sults", description = "stop looking through the src ty <3")
 public class KillSultsModule extends Module {
     private final NumberSetting delay = new NumberSetting("Delay", 5000, 0, 0, 50);
+    private final BooleanSetting randomization = new BooleanSetting("Randomization", false);
+    private final NumberSetting maxRandomization = new NumberSetting("Max Randomization", 5000, 0, 0, 50, this.randomization::getValue);
     private final BooleanSetting shout = new BooleanSetting("Shout", false);
     private File insultsFile;
     private final TimeHelper timer = new TimeHelper();
@@ -38,6 +40,8 @@ public class KillSultsModule extends Module {
     public KillSultsModule() {
         this.registerSettings(
                 this.delay,
+                this.maxRandomization,
+                this.randomization,
                 this.shout
         );
 
@@ -47,7 +51,7 @@ public class KillSultsModule extends Module {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (event.getPacket() instanceof S02PacketChat && mc.thePlayer != null) {
-            S02PacketChat packet = (S02PacketChat) event.getPacket();
+            S02PacketChat packet = event.getPacket();
             message = packet.getChatComponent().getUnformattedText();
             if (message.toLowerCase().contains(mc.thePlayer.getName().toLowerCase())) {
                 for (String announcement : GameUtils.KILL_ANNOUNCEMENTS) {
@@ -76,7 +80,7 @@ public class KillSultsModule extends Module {
         } else {
             killMessage = killMessages.get(0);
         }
-        if (timer.reach(delay.getValue().intValue()) && !killMessages.isEmpty()) {
+        if (timer.reach(delay.getValue().intValue() + (this.randomization.getValue() ? RandomUtils.nextInt(0, this.maxRandomization.getValue().intValue()) : 0)) && !killMessages.isEmpty()) {
             mc.thePlayer.sendChatMessage((shout.getValue() ? "/shout " : "") + killMessage);
             killMessages.remove(0);
             timer.reset();

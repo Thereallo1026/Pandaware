@@ -16,6 +16,7 @@ import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberRangeSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
+import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
@@ -743,18 +744,21 @@ public class KillAuraModule extends Module {
                     break;
 
                 case HYPIXEL:
-                    if (!mc.thePlayer.isBlockingSword()) {
-                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
-                                new BlockPos(-1, -1, -1), 254, mc.thePlayer.inventory.getCurrentItem(),
-                                0.008124124f, 0.00004921712f, 0.0081248912f
-                        ));
-                        if (this.target instanceof EntityPlayer) {
-                            mc.playerController.interactWithEntitySendPacket(mc.thePlayer, this.target);
+                    if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) &&
+                        !ServerUtils.compromised) {
+                        if (!mc.thePlayer.isBlockingSword()) {
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
+                                    new BlockPos(-1, -1, -1), 254, mc.thePlayer.inventory.getCurrentItem(),
+                                    0.008124124f, 0.00004921712f, 0.0081248912f
+                            ));
+                            if (this.target instanceof EntityPlayer) {
+                                mc.playerController.interactWithEntitySendPacket(mc.thePlayer, this.target);
 
-                            this.target.interactAt((EntityPlayer) this.target, new Vec3(-1, -1, -1));
+                                this.target.interactAt((EntityPlayer) this.target, new Vec3(-1, -1, -1));
+                            }
                         }
-                        mc.thePlayer.setBlockingSword(true);
                     }
+                    mc.thePlayer.setBlockingSword(true);
                     break;
 
                 case NORMAL:
@@ -808,8 +812,8 @@ public class KillAuraModule extends Module {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new
                                 C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
                                 BlockPos.ORIGIN, EnumFacing.DOWN));
-                        mc.thePlayer.setBlockingSword(false);
                     }
+                    mc.thePlayer.setBlockingSword(false);
                     break;
 
                 case NORMAL:

@@ -58,15 +58,15 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 motion += PlayerUtils.getJumpBoostMotion();
 
                 event.y = mc.thePlayer.motionY = motion;
-                this.movespeed = (MovementUtils.getBaseMoveSpeed() * 2);
+                this.movespeed = (MovementUtils.getBaseMoveSpeed() * 1.95);
                 this.jumped = true;
             } else if (this.jumped) {
                 this.movespeed = this.lastDistance - 0.66F * (this.lastDistance - MovementUtils.getBaseMoveSpeed());
                 this.jumped = false;
             } else {
-                this.movespeed = this.lastDistance * 0.93f;
-                this.movespeed += mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.03f : 0.0275f;
-                if (TargetStrafeModule.isStrafing()) {
+                this.movespeed = this.lastDistance * 0.925f;
+                this.movespeed += mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.037f : 0.026f;
+                if (TargetStrafeModule.isStrafing() || mc.thePlayer.moveStrafing > 0) {
                     double multi = (MovementUtils.getSpeed() - this.lastDistance) * MovementUtils.getBaseMoveSpeed();
 
                     this.movespeed += multi;

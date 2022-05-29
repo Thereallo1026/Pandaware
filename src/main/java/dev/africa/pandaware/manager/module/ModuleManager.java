@@ -110,7 +110,8 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new GhostBlockModule(),
                     new No003Module(),
                     new AntiBanModule(),
-                    new AutoDisableModule()
+                    new AutoDisableModule(),
+                    new VLResetModule()
             );
 
             Client.getInstance().getEventDispatcher().subscribe(this);

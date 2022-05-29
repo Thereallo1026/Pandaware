@@ -48,7 +48,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
      */
     public void initGui()
     {
-        Client.getInstance().getDiscordRPCInstance().updateStatus("Browsing Singleplayer Worlds.", "How lonely?");
+        Client.getInstance().getDiscordRP().updateStatus("Browsing Singleplayer Worlds.", "How lonely?");
 
 
         this.field_146628_f = I18n.format("selectWorld.title", new Object[0]);

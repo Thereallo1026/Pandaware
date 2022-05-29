@@ -42,13 +42,6 @@
             <systemPath>${basedir}/workspace/versions/1.8.9/1.8.9.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>fr.litarvan</groupId>
-            <artifactId>openauth</artifactId>
-            <version>1.1.2</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/offline/openauth.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>javax.vecmath</groupId>
             <artifactId>vecmath</artifactId>
             <version>1.5.2</version>

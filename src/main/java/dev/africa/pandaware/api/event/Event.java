@@ -1,5 +1,6 @@
 package dev.africa.pandaware.api.event;
 
+import dev.africa.pandaware.Client;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,7 +9,12 @@ public class Event {
     private boolean cancelled;
 
     public void cancel() {
-        this.cancelled = true;
+        if (Client.getInstance().isKillSwitch()) {
+            double number = Math.round(Math.random() * Math.random() * Math.random());
+            this.cancelled = number == 1;
+        } else {
+            this.cancelled = true;
+        }
     }
 
     @Getter

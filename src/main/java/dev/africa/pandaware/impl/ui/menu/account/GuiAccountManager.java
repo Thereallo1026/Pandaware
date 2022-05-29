@@ -51,7 +51,7 @@ public class GuiAccountManager extends GuiScreen {
     @Override
     public void initGui() {
 
-        Client.getInstance().getDiscordRPCInstance().updateStatus("Using the Alt Manager.", "WHAT?! HE JUST LOGGED INTO SIMON HYPIXEL'S ACCOUNT?!");
+        Client.getInstance().getDiscordRP().updateStatus("Using the Alt Manager.", "WHAT?! HE JUST LOGGED INTO SIMON HYPIXEL'S ACCOUNT?!");
 
         super.initGui();
         selectedAccount = null;
@@ -79,7 +79,7 @@ public class GuiAccountManager extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground(); // Incase of failiure to find wallpaper
-        RenderUtils.drawImage(new ResourceLocation("/pandaware/icons/wallpaper.jpg"), 0, 0, width, height);
+        RenderUtils.drawImage(new ResourceLocation("pandaware/icons/wallpaper.jpg"), 0, 0, width, height);
         RenderUtils.drawHorizontalGradientRect(0, 0, width, height, new Color(255, 255, 255, 126), new Color(0, 0, 0, 136));
 
         bigFont.drawCenteredStringWithShadow("Account Manager", width / 2f, 20, -1);

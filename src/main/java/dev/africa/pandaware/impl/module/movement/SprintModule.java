@@ -25,7 +25,7 @@ public class SprintModule extends Module {
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.PRE) {
             if (Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
-            if (omniSprint.getValue() && MovementUtils.isMoving()) {
+            if (omniSprint.getValue() && MovementUtils.isMoving() && mc.thePlayer.onGround) {
                 mc.thePlayer.setSprinting(true);
             } else if (mc.thePlayer.moveForward > 0) {
                 mc.thePlayer.setSprinting(true);

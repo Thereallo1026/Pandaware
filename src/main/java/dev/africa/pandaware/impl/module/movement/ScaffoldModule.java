@@ -526,8 +526,8 @@ public class ScaffoldModule extends Module {
                                 event.y = mc.thePlayer.motionY = 0.4f;
 
                                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() *
-                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.8 : 1.05) *
-                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.9 : 1));
+                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.75 : 0.925) *
+                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.75 : 1));
                             }
                         } else {
                             event.y = mc.thePlayer.motionY = Math.random() - (MovementUtils.getBaseMoveSpeed() / 6);
@@ -595,7 +595,7 @@ public class ScaffoldModule extends Module {
                             if (mc.thePlayer.onGround) {
                                 event.y = mc.thePlayer.motionY = 0.42f;
                             } else if (mc.thePlayer.getAirTicks() == 4 && !MovementUtils.isMoving()) {
-                                event.y = mc.thePlayer.motionY = -0.2f;
+                                event.y = mc.thePlayer.motionY = -0.15f;
                             }
                         }
                         break;

@@ -6,8 +6,6 @@ import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
 
 public class DiscordRP {
-
-    private boolean running = true;
     private long created = 0;
 
     public void updateStatus(String lineOne, String lineTwo) {
@@ -17,14 +15,11 @@ public class DiscordRP {
         builder.setStartTimestamps(created);
         DiscordRPC.discordUpdatePresence(builder.build());
         System.out.println("[DISCORD RPC] Updated Status.");
-
     }
 
     public void start() {
         this.created = System.currentTimeMillis();
         System.out.println("[DISCORD RPC] Starting RPC...");
-
-
 
         DiscordEventHandlers discordEventHandlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
 
@@ -40,9 +35,7 @@ public class DiscordRP {
         new Thread("Discord RPC Callback") {
             @Override
             public void run() {
-                while (running) {
-                    DiscordRPC.discordRunCallbacks();
-                }
+                DiscordRPC.discordRunCallbacks();
             }
         }.start();
 
@@ -50,7 +43,6 @@ public class DiscordRP {
     }
 
     public void shutdown() {
-        running = false;
         DiscordRPC.discordShutdown();
     }
 

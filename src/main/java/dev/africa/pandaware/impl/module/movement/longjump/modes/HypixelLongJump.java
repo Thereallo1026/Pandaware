@@ -15,6 +15,7 @@ import net.minecraft.potion.Potion;
 
 public class HypixelLongJump extends ModuleMode<LongJumpModule> {
     private double lastDistance;
+    private double movespeed;
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
@@ -26,19 +27,24 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised) {
-            if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
-                MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 2 : 2.2));
-                mc.thePlayer.jump();
-                event.y = mc.thePlayer.motionY = 0.42f + (mc.thePlayer.isPotionActive(Potion.jump)
-                        ? PlayerUtils.getJumpBoostMotion() * 1.1 : 0);
-            }
-            if (mc.thePlayer.moveStrafing != 0 && !mc.thePlayer.onGround) {
-                MovementUtils.strafe(event, this.lastDistance * 0.905f);
-            }
+            if (MovementUtils.isMoving()) {
+                if (mc.thePlayer.onGround) {
+                    this.movespeed = MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 2.1 : 2.4);
+                    mc.thePlayer.jump();
+                    event.y = mc.thePlayer.motionY = 0.42f + (mc.thePlayer.isPotionActive(Potion.jump)
+                            ? PlayerUtils.getJumpBoostMotion() * 1.1 : 0);
+                }
 
-            if (mc.thePlayer.fallDistance > 0 && mc.thePlayer.fallDistance < 0.3 && !mc.thePlayer.isPotionActive(Potion.jump)) {
-                mc.thePlayer.motionY = 1E-2 + MovementUtils.getHypixelFunny() * 1E-4;
-//                Printer.chat(mc.thePlayer.motionY + "");
+                if (!mc.thePlayer.onGround) {
+                    this.movespeed = this.lastDistance * 0.91f;
+                }
+
+                if (mc.thePlayer.fallDistance > 0 && mc.thePlayer.fallDistance < 0.3 && !mc.thePlayer.isPotionActive(Potion.jump)) {
+                    mc.thePlayer.motionY = 1E-2 + MovementUtils.getHypixelFunny() *
+                            (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1E-6 : 1E-4);
+                }
+
+                MovementUtils.strafe(event, Math.max(MovementUtils.getBaseMoveSpeed(), this.movespeed));
             }
         } else {
             mc.thePlayer.motionX = mc.thePlayer.motionZ = mc.thePlayer.motionY *= 0.91f;
@@ -52,5 +58,6 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
     @Override
     public void onEnable() {
         this.lastDistance = MovementUtils.getLastDistance();
+        this.movespeed = MovementUtils.getBaseMoveSpeed();
     }
 }

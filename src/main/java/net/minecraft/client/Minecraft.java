@@ -13,6 +13,7 @@ import dev.africa.pandaware.impl.event.game.GameLoopEvent;
 import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.module.player.FastPlaceModule;
+import dev.africa.pandaware.impl.protection.Debugger;
 import dev.africa.pandaware.impl.ui.menu.mainmenu.GuiNewMainMenu;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.Setter;
@@ -440,6 +441,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
         this.mcMusicTicker = new MusicTicker(this);
         this.fontRendererObj = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.renderEngine, false);
+
+        new Debugger();
 
         if (this.gameSettings.language != null) {
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());
@@ -1900,7 +1903,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         networkmanager.sendPacket(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN));
         networkmanager.sendPacket(new C00PacketLoginStart(this.getSession().getProfile()));
         this.myNetworkManager = networkmanager;
-        Client.getInstance().getDiscordRPCInstance().updateStatus("Playing Singleplayer.", "In Game.");
+        Client.getInstance().getDiscordRP().updateStatus("Playing Singleplayer.", "In Game.");
     }
 
     /**
