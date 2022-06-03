@@ -746,9 +746,8 @@ public class KillAuraModule extends Module {
                 case HYPIXEL:
                     if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) &&
                         !ServerUtils.compromised) {
-                        if (!mc.thePlayer.isBlockingSword()) {
                             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
-                                    new BlockPos(-1, -1, -1), 254, mc.thePlayer.inventory.getCurrentItem(),
+                                    new BlockPos(-1, -1, -1), 256, mc.thePlayer.inventory.getCurrentItem(),
                                     0.008124124f, 0.00004921712f, 0.0081248912f
                             ));
                             if (this.target instanceof EntityPlayer) {
@@ -756,7 +755,6 @@ public class KillAuraModule extends Module {
 
                                 this.target.interactAt((EntityPlayer) this.target, new Vec3(-1, -1, -1));
                             }
-                        }
                     }
                     mc.thePlayer.setBlockingSword(true);
                     break;

@@ -30,7 +30,6 @@ public class GuiNewMainMenu extends GuiScreen {
 
         Client.getInstance().getDiscordRP().updateStatus("In the Main Menu.", "Likely Idle.");
 
-
         try {
             smallFont = Fonts.getInstance().getProductSansMedium();
             normFont = Fonts.getInstance().getProductSansMedium();
@@ -58,6 +57,13 @@ public class GuiNewMainMenu extends GuiScreen {
                 break;
             case "hD+HJAdr8I0pQOnn8YhAhUjtABT4v7U9vfqIa+ctRV0so7UlTqgEjiXF+OpnC+N0fPUS0k3KsENU5JaPbF4ttg==":
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/image0.jpeg"), 0, 0, width, height);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/siren.png"), 200, 150, 150, 100);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/felix2.png"), 0, 0, 250, 250);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/venti.png"), 550, 300, 10, 10);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/greek.png"), 570, 300, 10, 10);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/nsfwastolfo.png"), 725, 400, 125, 125);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/mixednuts.png"), 770, 490, 50, 25);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo3.png"), 780, 400, 125, 125);
                 break;
             case "aoz6TQtwKK9gjfA/fECcqxBJuPua3RpFAnvjDnuRKW+uV7zlB3GPFAkWFz+aBRW7GiJtBN5/eH35RMignbrlAA==":
                 if (lol == 1) {
@@ -65,6 +71,10 @@ public class GuiNewMainMenu extends GuiScreen {
                 } else {
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/orialeng.png"), 0, 0, width, height);
                 }
+                break;
+            case "ry0nQxTzaljoYJiIfldXMMMLTPN+ZP8ztTs9SYMinE/P99dWBB1GWjeWU+xqjOCc3bcFwqVY+HyACDxOorQWag==":
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/lucky.png"), 0, 0, width, height);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/mixednuts.png"), 450, 400, 50, 25);
                 break;
             default:
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/wallpaper.jpg"), 0, 0, width, height);

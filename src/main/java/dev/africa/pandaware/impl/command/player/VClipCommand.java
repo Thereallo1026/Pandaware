@@ -11,10 +11,9 @@ public class VClipCommand extends Command {
     @Override
     public void process(String[] arguments) {
         try {
-            double dist = MathHelper.clamp_double(Double.parseDouble(arguments[1]), -100, 100);
             mc.thePlayer.setPositionAndUpdate(mc.thePlayer.posX, mc.thePlayer.posY
-                    + dist, mc.thePlayer.posZ);
-            Printer.chat("Teleported " + dist + " blocks");
+                    + Double.parseDouble(arguments[1]), mc.thePlayer.posZ);
+            Printer.chat("Teleported " + Double.parseDouble(arguments[1]) + " blocks");
         } catch (Exception e) {
             this.sendInvalidArgumentsMessage("Height");
         }

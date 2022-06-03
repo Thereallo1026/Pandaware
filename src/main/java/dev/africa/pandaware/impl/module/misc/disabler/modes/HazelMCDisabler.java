@@ -10,7 +10,7 @@ import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
 import dev.africa.pandaware.impl.ui.notification.Notification;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
-import lombok.var;
+
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -28,6 +28,7 @@ public class HazelMCDisabler extends ModuleMode<DisablerModule> {
     private final Queue<Packet<?>> linkedQueue = new LinkedBlockingQueue<>();
     private final TimeHelper timer = new TimeHelper();
     private boolean expectedTeleport;
+    private boolean funny;
 
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = event -> {
@@ -80,7 +81,10 @@ public class HazelMCDisabler extends ModuleMode<DisablerModule> {
 
             if (mc.thePlayer.ticksExisted % 50 == 0) {
                 this.expectedTeleport = true;
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Did funny", 1);
+                if (!funny) {
+                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Did funny", 1);
+                    funny = true;
+                }
 
                 packet.setOnGround(false);
                 packet.setY(-0.015625);
@@ -91,7 +95,7 @@ public class HazelMCDisabler extends ModuleMode<DisablerModule> {
 
     @Override
     public void onEnable() {
-        super.onEnable();
+        funny = false;
         Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "Wait for the 'Did funny' notification before flying.", 5);
     }
 }

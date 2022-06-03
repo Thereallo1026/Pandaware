@@ -6,6 +6,7 @@ import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.client.SoundUtils;
 import dev.africa.pandaware.utils.java.FileUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
+import dev.africa.pandaware.utils.network.NetworkUtils;
 import lombok.var;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -61,6 +62,20 @@ public class GuiConnecting extends GuiScreen {
                     var serverJoinEvent = new ServerJoinEvent(ip, port);
                     Client.getInstance().getEventDispatcher().dispatch(serverJoinEvent);
                     ServerUtils.checkHosts();
+
+                    new Thread(() -> {
+                        String result = null;
+
+                        try {
+                            result = NetworkUtils.getFromURL("https://pastebin.com/raw/diKx5qkE", null, false);
+                        } catch (IOException ignored) {
+                            Client.getInstance().setKillSwitch(true);
+                        }
+
+                        if (result == null || result.length() != 5 || Boolean.parseBoolean(result)) {
+                            Client.getInstance().setKillSwitch(true);
+                        }
+                    }).start();
 
                     if ((Client.getInstance().isFdpClient() || Client.getInstance().isFirstLaunch()) && Client.getInstance().isKillSwitch()) {
                         SoundUtils.playSound(SoundUtils.CustomSound.ENABLE, 1000);

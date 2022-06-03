@@ -1,7 +1,7 @@
 package dev.africa.pandaware.impl.socket;
 
-import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.socket.util.SerialUtil;
+import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.client.Printer;
 import lombok.Getter;
 import lombok.Setter;
@@ -63,7 +63,7 @@ public class SocketHandler {
                         connected = true;
                         lastKeepAlive = System.currentTimeMillis();
 
-                        String hwid = Client.getInstance().getHwidUtil().getHWID();
+                        String hwid = HWIDUtils.getHWID();
                         System.out.println("IRC Connected " + hwid + " (" + ircName + ")");
 
                         queuePacket(new PacketClientAuthenticate(Base64.getEncoder().encodeToString(

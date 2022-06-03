@@ -19,7 +19,8 @@ public class AntiVoidModule extends Module {
                 new PacketAntiVoid("Packet", this),
                 new CollideAntiVoid("Collide", this),
                 new BlinkAntiVoid("Blink", this),
-                new FuncraftAntiVoid("Funcraft", this)
+                new FuncraftAntiVoid("Funcraft", this),
+                new DEVAntiVoid("DEV", this)
         );
     }
 }

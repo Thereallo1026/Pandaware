@@ -22,6 +22,6 @@ public class DataUtils {
     }
 
     public JsonElement parseJson(String text) {
-        return JsonParser.parseString(text);
+        return new JsonParser().parse(text);
     }
 }

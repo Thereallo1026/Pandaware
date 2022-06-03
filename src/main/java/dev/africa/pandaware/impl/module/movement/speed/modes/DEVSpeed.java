@@ -16,11 +16,10 @@ public class DEVSpeed extends ModuleMode<SpeedModule> {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if (MovementUtils.isMoving()) {
-            if (mc.thePlayer.onGround) {
+            if (mc.thePlayer.ticksExisted % 2 == 0) {
+                event.y = 0.42f;
                 double speedAmplifier = (mc.thePlayer.isPotionActive(Potion.moveSpeed)
                         ? ((mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * 0.025) : 0);
-                event.y = mc.thePlayer.motionY = 0.42f;
-                MovementUtils.strafe(0.49 + speedAmplifier);
             } else {
                 MovementUtils.strafe(MovementUtils.getSpeed());
             }

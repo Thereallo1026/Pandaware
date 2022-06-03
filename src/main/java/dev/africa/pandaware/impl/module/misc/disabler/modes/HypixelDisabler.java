@@ -93,7 +93,7 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
 
     @EventHandler
     EventCallback<ServerJoinEvent> onJoin = event -> {
-        if ((!event.getIp().equals("mc.hypixel.net") || !event.getIp().equals("hypixel.net")) && !ServerUtils.compromised) {
+        if (!(event.getIp().equals("mc.hypixel.net") || event.getIp().equals("hypixel.net")) && !ServerUtils.compromised) {
             this.getParent().toggle(false);
         }
     };

@@ -512,21 +512,21 @@ public class ScaffoldModule extends Module {
                 switch (this.hypixelMode.getValue()) {
                     case NORMAL:
                         if (PlayerUtils.isMathGround() && !mc.gameSettings.keyBindSneak.isKeyDown()) {
-                            MovementUtils.strafe(event, 0.287 *
+                            MovementUtils.strafe(event, 0.255 *
                                     (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                         } else if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
-                            mc.thePlayer.motionX *= 0.7;
-                            mc.thePlayer.motionZ *= 0.7;
+                            mc.thePlayer.motionX *= 0.25;
+                            mc.thePlayer.motionZ *= 0.25;
                         }
                         break;
                     case KEEPY:
                         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
                             if (mc.thePlayer.onGround && MovementUtils.isMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
                                     && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
-                                event.y = mc.thePlayer.motionY = 0.4f;
+                                event.y = mc.thePlayer.motionY = 0.41f;
 
                                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() *
-                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.75 : 0.925) *
+                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.8 : 0.925) *
                                         (mc.thePlayer.getDiagonalTicks() > 0 ? 0.75 : 1));
                             }
                         } else {
@@ -621,31 +621,28 @@ public class ScaffoldModule extends Module {
                                     mc.thePlayer.jump();
                                     event.y = mc.thePlayer.motionY = 0.419f;
                                 }
-//                                if(mc.thePlayer.ticksExisted % RandomUtils.nextInt(4, 6) == 0){
-//                                    event.x -= MovementUtils.getHypixelFunny() * 1E-4;
-//                                    event.z -= MovementUtils.getHypixelFunny() * 1E-4;
-//                                }
-
                             } else {
-                                MovementUtils.strafe(event, (mc.thePlayer.getDiagonalTicks() > 0 ? 0.158 : 0.205));
+                                MovementUtils.strafe(event, (mc.thePlayer.getDiagonalTicks() > 0 ?
+                                        0.14 - MovementUtils.getHypixelFunny() * 1E-4 : 0.2 - MovementUtils.getHypixelFunny() * 1E-4));
 
                                 double offset = onHypixel ? 0.41 : 0.15;
                                 boolean towerMove = PlayerUtils.isOnGround(offset) && MovementUtils.isMoving();
                                 boolean shouldRun = !MovementUtils.isMoving() || towerMove;
 
                                 if (this.blockEntry != null && shouldRun) {
-                                    event.y = mc.thePlayer.motionY = onHypixel ? 0.418f + (0.01 * MovementUtils.getHypixelFunny()) : 0.38f;
-                                    long stopTime = towerMove && mc.thePlayer.getDiagonalTicks() > 0 ? 250L : 1600L;
+                                    long stopTime = 750L;
+                                    if (mc.thePlayer.ticksExisted % 2 == 0) {
+                                        event.y = mc.thePlayer.motionY = 0.419f;
+                                    }
                                     if (this.towerTimer.reach(stopTime)) {
-                                        if (!onHypixel || mc.thePlayer.getDiagonalTicks() > 0) {
-                                            event.y = mc.thePlayer.motionY = towerMove ? -0.1 : 0;
+                                        if (onHypixel || mc.thePlayer.getDiagonalTicks() > 0) {
+                                            event.y = mc.thePlayer.motionY = -0f;
                                         }
 
                                         this.towerTimer.reset();
                                     }
                                 }
                             }
-
                         }
                         break;
 

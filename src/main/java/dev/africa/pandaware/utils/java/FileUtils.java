@@ -8,6 +8,7 @@ import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang.RandomStringUtils;
 import oshi.software.os.windows.WindowsOperatingSystem;
 
 import javax.swing.*;
@@ -164,7 +165,7 @@ public class FileUtils implements MinecraftInstance {
                 "Do you like my ascii penis?",
                 "Moist Man > You",
                 "If it crashes, it's a user error",
-                "UID: " + ApacheMath.random() * 1000,
+                "UID: " + RandomStringUtils.random(100),
                 "Your UID is too high for this.",
                 "Panda says 'Hello User, thanks for your token!'",
                 "Remember when Panda Meow'd on stream?",
@@ -184,7 +185,9 @@ public class FileUtils implements MinecraftInstance {
                 String.valueOf(Math.PI),
                 "---- Minecraft Crash Report ----",
                 "https://www.youtube.com/watch?v=xvFZjo5PgG0",
-                "https://youtu.be/7zpxgyG7eGk?t=29"
+                "https://youtu.be/7zpxgyG7eGk?t=29",
+                "https://pastebin.com/dgULkjXS",
+                "当您因 Boosting、Exploiting、Blacklisted Modifications 或 Watchdog Ban 而被禁止时,您将执行 适用于整个服务器的正常禁令。之后, 你将被禁止玩被视为竞技游戏的游戏。"
                 };
 
         return lines[RandomUtils.nextInt(0, lines.length)];

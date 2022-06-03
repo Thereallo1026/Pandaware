@@ -14,6 +14,7 @@ import dev.africa.pandaware.impl.setting.ColorSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.impl.ui.UISettings;
+import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.player.MovementUtils;
@@ -207,16 +208,29 @@ public class HUDModule extends Module {
         }
     };
 
+    private final String hwid = HWIDUtils.getHWID();
     void renderWatermark() {
-        Fonts.getInstance().getProductSansVeryBig().drawStringWithShadow(
-                Client.getInstance().getManifest().getClientName(),
-                2, 2, UISettings.CURRENT_COLOR.getRGB()
-        );
+        if (hwid.equals("hD+HJAdr8I0pQOnn8YhAhUjtABT4v7U9vfqIa+ctRV0so7UlTqgEjiXF+OpnC+N0fPUS0k3KsENU5JaPbF4ttg==")) {
+            Fonts.getInstance().getProductSansVeryBig().drawStringWithShadow(
+                    "BrettHack",
+                    2, 2, UISettings.CURRENT_COLOR.getRGB()
+            );
 
-        Fonts.getInstance().getProductSansSmall().drawStringWithShadow(
-                Client.getInstance().getManifest().getClientVersion(),
-                75.69, 3, -1
-        );
+            Fonts.getInstance().getProductSansSmall().drawStringWithShadow(
+                    Client.getInstance().getManifest().getClientVersion(),
+                    69.69, 3, -1
+            );
+        } else {
+            Fonts.getInstance().getProductSansVeryBig().drawStringWithShadow(
+                    Client.getInstance().getManifest().getClientName(),
+                    2, 2, UISettings.CURRENT_COLOR.getRGB()
+            );
+
+            Fonts.getInstance().getProductSansSmall().drawStringWithShadow(
+                    Client.getInstance().getManifest().getClientVersion(),
+                    75.69, 3, -1
+            );
+        }
     }
 
     void renderArraylist(RenderEvent event) {

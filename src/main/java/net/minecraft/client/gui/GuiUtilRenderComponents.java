@@ -40,7 +40,10 @@ public class GuiUtilRenderComponents
 
             String s4 = func_178909_a(ichatcomponent1.getChatStyle().getFormattingCode() + s, p_178908_4_);
             String s5 = s4.endsWith("\n") ? s4.substring(0, s4.length() - 1) : s4;
-            int i1 = p_178908_2_.getStringWidth(s5);
+            int i1 = 0;
+            if (s5 != null) {
+                i1 = p_178908_2_.getStringWidth(s5);
+            }
             ChatComponentText chatcomponenttext1 = new ChatComponentText(s5);
             chatcomponenttext1.setChatStyle(ichatcomponent1.getChatStyle().createShallowCopy());
 

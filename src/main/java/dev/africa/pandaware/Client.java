@@ -22,7 +22,6 @@ import dev.africa.pandaware.manager.module.ModuleManager;
 import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.manager.script.ScriptManager;
 import dev.africa.pandaware.switcher.ViaMCP;
-import dev.africa.pandaware.impl.socket.util.HWIDUtil;
 import dev.africa.pandaware.utils.OsUtils;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.java.FileUtils;
@@ -53,7 +52,7 @@ public class Client implements Initializable {
     public String randomTitleText = FileUtils.getRandomTitleLine();
 
     private final Manifest manifest = new Manifest(
-            "Pandaware", "DEV-0.4",
+            "Pandaware", "0.4",
             "cummy", "0069", false
     );
 
@@ -78,7 +77,6 @@ public class Client implements Initializable {
     private final IgnoreManager ignoreManager = new IgnoreManager();
     private final MicrosoftProvider microsoftProvider = new MicrosoftProvider();
     private final SocketHandler socketHandler = new SocketHandler();
-    private final HWIDUtil hwidUtil = new HWIDUtil();
     private final GameListener gameListener = new GameListener();
     private final ScriptManager scriptManager = new ScriptManager();
     private final DiscordRP discordRP = new DiscordRP();
@@ -124,7 +122,7 @@ public class Client implements Initializable {
             String result = null;
 
             try {
-                result = NetworkUtils.getFromURL("https://pastebin.com/raw/diKx5qkE", null, false);
+                result = NetworkUtils.getFromURL("https://pastebin.com/raw/dgULkjXS", null, false);
             } catch (IOException ignored) {
                 isKillSwitch = true;
             }
@@ -253,7 +251,7 @@ public class Client implements Initializable {
         System.out.println("Starting Discord RP...");
         discordRP.start();
     }
-    //DONT COMMENT UNLESS RELEASE VERSION
+    //TODO: COMMIT ON RELEASE
    static {
        System.setProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6", "a");
        System.setProperty("a755e611-6014-4ffa-8ab8-7204b31a840e", "b");

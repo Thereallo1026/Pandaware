@@ -21,13 +21,14 @@ public class VLResetModule extends Module {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if (mc.thePlayer.onGround) {
-            event.y = mc.thePlayer.motionY = 0.03f;
+            event.y = mc.thePlayer.motionY = 0.42f;
+            mc.thePlayer.jump();
         }
     };
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
-        if (this.timer.reach(1500) && mc.thePlayer.onGround) {
+        if (this.timer.reach(1000) && mc.thePlayer.onGround) {
             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
             this.toggle(false);
         }

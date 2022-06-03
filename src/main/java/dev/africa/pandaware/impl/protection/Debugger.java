@@ -18,7 +18,7 @@ public class Debugger {
         for (String argument : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
             for (String flag : this.flags) {
                 if (argument.toLowerCase().contains(flag.toLowerCase())) {
-                    // DONT UNCOMMENT UNLESS RELEASE VERSION
+                    //TODO: UNCOMMIT ON RELEASE
                     //System.exit(3);
                 }
             }
@@ -26,7 +26,7 @@ public class Debugger {
                 return;
             }
 
-            // DONT UNCOMMENT UNLESS RELEASE VERSION
+            //TODO: UNCOMMIT ON RELEASE
             //System.exit(9);
         }
     }

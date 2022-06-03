@@ -21,7 +21,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private double lastDistance;
     private double movespeed;
 
-    private final NumberSetting timer = new NumberSetting("Timer", 5.0, 1.0, 1, 0.1);
+    private final NumberSetting timer = new NumberSetting("Timer", 1.3, 1.0, 1, 0.1);
 
     public HypixelSpeed(String name, SpeedModule parent) {
         super(name, parent);
@@ -64,13 +64,13 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 this.movespeed = this.lastDistance - 0.66F * (this.lastDistance - MovementUtils.getBaseMoveSpeed());
                 this.jumped = false;
             } else {
-                this.movespeed = this.lastDistance * 0.925f;
-                this.movespeed += mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.037f : 0.026f;
+                this.movespeed = this.lastDistance * (float) 0.91f;
+                this.movespeed += mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.042f : 0.033f;
                 if (TargetStrafeModule.isStrafing() || mc.thePlayer.moveStrafing > 0) {
                     double multi = (MovementUtils.getSpeed() - this.lastDistance) * MovementUtils.getBaseMoveSpeed();
 
                     this.movespeed += multi;
-                    this.movespeed -= 0.01f;
+                    this.movespeed -= 0.011f;
                 }
             }
 

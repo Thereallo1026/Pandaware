@@ -13,6 +13,7 @@ import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.Getter;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.potion.Potion;
 
 @Getter
 @ModuleInfo(name = "Sprint", category = Category.MOVEMENT)
@@ -25,7 +26,7 @@ public class SprintModule extends Module {
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.PRE) {
             if (Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
-            if (omniSprint.getValue() && MovementUtils.isMoving() && mc.thePlayer.onGround) {
+            if (omniSprint.getValue() && MovementUtils.isMoving() && mc.thePlayer.onGround && !mc.thePlayer.isPotionActive(Potion.blindness)) {
                 mc.thePlayer.setSprinting(true);
             } else if (mc.thePlayer.moveForward > 0) {
                 mc.thePlayer.setSprinting(true);

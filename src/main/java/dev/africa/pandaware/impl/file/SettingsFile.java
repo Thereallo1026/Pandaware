@@ -33,7 +33,7 @@ public class SettingsFile extends FileObject {
 
     @Override
     public void load() throws Exception {
-        JsonObject jsonParser = JsonParser.parseReader(new FileReader(this.getFile())).getAsJsonObject();
+        JsonObject jsonParser = new JsonParser().parse(new FileReader(this.getFile())).getAsJsonObject();
 
         Client.getInstance().setFirstLaunch(jsonParser.get("firstLaunch").getAsBoolean());
 

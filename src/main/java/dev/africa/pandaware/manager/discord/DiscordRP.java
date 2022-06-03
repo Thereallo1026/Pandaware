@@ -45,6 +45,4 @@ public class DiscordRP {
     public void shutdown() {
         DiscordRPC.discordShutdown();
     }
-
-
 }

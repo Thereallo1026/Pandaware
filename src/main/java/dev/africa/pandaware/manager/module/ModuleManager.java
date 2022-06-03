@@ -67,6 +67,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new BlinkModule(),
                     new TimerModule(),
                     new SafeWalkModule(),
+                    new JesusModule(),
 
                     // Visual
                     new AnimationsModule(),

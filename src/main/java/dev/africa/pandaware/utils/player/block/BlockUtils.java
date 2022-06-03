@@ -28,7 +28,7 @@ public class BlockUtils implements MinecraftInstance {
             Blocks.stone_pressure_plate, Blocks.wooden_pressure_plate, Blocks.noteblock, Blocks.dropper, Blocks.tnt,
             Blocks.standing_banner, Blocks.cactus, Blocks.wall_banner, Blocks.redstone_torch, Blocks.air, Blocks.water,
             Blocks.fire, Blocks.flowing_water, Blocks.lava, Blocks.flowing_lava, Blocks.beacon, Blocks.red_flower,
-            Blocks.yellow_flower, Blocks.double_plant
+            Blocks.yellow_flower, Blocks.double_plant, Blocks.carpet, Blocks.tripwire_hook
     );
 
     public static Block getBlockAtPos(BlockPos pos) {

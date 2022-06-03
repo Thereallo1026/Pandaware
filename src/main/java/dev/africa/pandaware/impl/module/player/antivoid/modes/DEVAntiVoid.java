@@ -5,7 +5,6 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.player.antivoid.AntiVoidModule;
-import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -29,8 +28,14 @@ public class DEVAntiVoid extends ModuleMode<AntiVoidModule> {
 
             if (!PlayerUtils.isBlockUnder()) {
                 if (mc.thePlayer.fallDistance >= this.getParent().getFallDistance().getValue().floatValue()) {
-                    mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C04PacketPlayerPosition(
-                            posX, posY - MovementUtils.MODULO_GROUND, posZ, true));
+                    mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
+                            new BlockPos(posX, posY, posX), 256, mc.thePlayer.inventory.getCurrentItem(),
+                            (float) (posX - 0.1f), (float) (posY - 0.1f), (float) (posZ - 0.1f)
+                    ));
+                    mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
+                            posX, posY + 1, posZ, mc.thePlayer.rotationYaw - 180, 80.5f, true
+                    ));
+                    mc.thePlayer.fallDistance = 0;
                 }
             }
         }

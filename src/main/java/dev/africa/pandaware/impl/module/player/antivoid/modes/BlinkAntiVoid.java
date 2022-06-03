@@ -20,7 +20,8 @@ public class BlinkAntiVoid extends ModuleMode<AntiVoidModule> {
     EventCallback<PacketEvent> onPacket = event -> {
         if (mc.thePlayer == null || mc.theWorld == null) return;
         if (event.getPacket() instanceof C03PacketPlayer && !PlayerUtils.isBlockUnder() && mc.thePlayer.fallDistance >=
-                this.getParent().getFallDistance().getValue().floatValue() && !(mc.thePlayer.capabilities.allowFlying)) {
+                this.getParent().getFallDistance().getValue().floatValue() &&
+                !((mc.thePlayer.capabilities.allowFlying) || mc.thePlayer.capabilities.isFlying)) {
             this.cummyList.add(event.getPacket());
             event.cancel();
         }

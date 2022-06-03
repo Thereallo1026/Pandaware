@@ -23,12 +23,12 @@ public class AutoJoinModule extends Module {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (event.getPacket() instanceof S02PacketChat && mc.thePlayer != null) {
-            S02PacketChat packet = (S02PacketChat) event.getPacket();
+            S02PacketChat packet = event.getPacket();
 
             String message = packet.getChatComponent().getUnformattedText();
             if (message.contains("1st Killer -") || message.contains("You died! Want to play again? Click here!") ||
                     message.contains("You won! Want to play again?")) {
-                if(!startTimer){
+                if (!startTimer) {
                     startTimer = true;
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS,"Playing Again!", "Joining a new Game", delay.getValue().longValue() / 1000F);
                     startDelay = System.currentTimeMillis();
@@ -42,7 +42,7 @@ public class AutoJoinModule extends Module {
 
     @EventHandler
     EventCallback<TickEvent> onUpdate = event -> {
-        if (startTimer) {
+        if (startTimer && mc.thePlayer != null) {
             if (System.currentTimeMillis() - startDelay >= delay.getValue().longValue()) {
                 String text = "/play " + mode.getValue().label.replace(" ", "_").toLowerCase();
                 mc.thePlayer.sendChatMessage(text);

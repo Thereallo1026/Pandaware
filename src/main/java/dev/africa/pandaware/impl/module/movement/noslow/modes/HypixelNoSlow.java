@@ -13,6 +13,7 @@ import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
+import dev.africa.pandaware.utils.player.PlayerUtils;
 
 public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
     private final BooleanSetting slabSafe = new BooleanSetting("Slab Protection", false);
@@ -29,10 +30,10 @@ public class HypixelNoSlow extends ModuleMode<NoSlowModule> {
         boolean usingItem = mc.thePlayer.isUsingItem() && mc.thePlayer.getCurrentEquippedItem() != null && MovementUtils.isMoving();
 
         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
-            if (usingItem && MovementUtils.isMoving() &&
+            if (usingItem &&
                     !Client.getInstance().getModuleManager().getByClass(SpeedModule.class).getData().isEnabled()
                     && event.getEventState() == Event.EventState.PRE &&
-                    mc.thePlayer.onGround && mc.thePlayer.ticksExisted % 2 == 0) {
+                    PlayerUtils.isMathGround() && mc.thePlayer.ticksExisted % 2 == 0) {
                 event.setY(event.getY() + 0.05);
                 event.setOnGround(false);
             }

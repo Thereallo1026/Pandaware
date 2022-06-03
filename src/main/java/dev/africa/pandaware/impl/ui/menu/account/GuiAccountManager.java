@@ -461,7 +461,7 @@ public class GuiAccountManager extends GuiScreen {
                             "http://localhost:WEB_PORT/auth?code=%s&state=STORAGE_ID&reauth=true", refreshToken)
                     .replace("WEB_PORT", String.valueOf(AuthManagerWebServer.WEB_PORT)), null, false);
 
-            JsonObject jsonObject = JsonParser.parseString(result.contains(":") ?
+            JsonObject jsonObject = new JsonParser().parse(result.contains(":") ?
                     decryptInput(result.split(":")[1]) : "").getAsJsonObject();
 
             return jsonObject.has("access_token") ? jsonObject.get("access_token").getAsString() : null;
