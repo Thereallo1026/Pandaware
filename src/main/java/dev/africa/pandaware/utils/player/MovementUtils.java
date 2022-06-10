@@ -155,15 +155,15 @@ public class MovementUtils implements MinecraftInstance {
         double base = MathUtils.roundToDecimal(mc.thePlayer.posY - (int) mc.thePlayer.posY, 2);
 
         if (base == 0.4) {
-            return 0.31f + getHypixelFunny();
+            return 0.31f;
         } else if (base == 0.71) {
-            return 0.04f + getHypixelFunny();
-        } else if (base == 0.75) {
-            return -0.2f + getHypixelFunny();
-        } else if (base == 0.55) {
-            return -0.19f + getHypixelFunny();
-        } else if (base == 0.41) {
-            return -0.2f + getHypixelFunny();
+            return 0.05f;
+        } else if (base == 0.76) {
+            return -0.2f;
+        } else if (base == 0.56) {
+            return -0.19f;
+        } else if (base == 0.42) {
+            return -0.15f;
         }
 
         return motion;

@@ -184,6 +184,7 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer<TileEntit
 
             f = 1.0F - f;
             f = 1.0F - f * f * f;
+            modelchest.chestLid.rotateAngleX = -f;
             modelchest.chestLid.offsetY = 0.01f;
             modelchest.chestLid.rotateAngleX = -(f * (float)Math.PI / 2.0F * RandomUtils.nextFloat(-0.1f, 0.1f));
             modelchest.renderAll();

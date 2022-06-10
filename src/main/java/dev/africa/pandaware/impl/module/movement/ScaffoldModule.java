@@ -32,14 +32,14 @@ import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.var;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.C09PacketHeldItemChange;
-import net.minecraft.network.play.client.C0APacketAnimation;
-import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.network.play.client.*;
+import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -96,6 +96,13 @@ public class ScaffoldModule extends Module {
     float smoothnessValue;
     Vec2f smoothed;
 
+    private BlockPos position;
+    private int placedBlockDirection;
+    private ItemStack stack;
+    private float facingX;
+    private float facingY;
+    private float facingZ;
+
     public ScaffoldModule() {
         this.registerSettings(
                 this.scaffoldMode,
@@ -151,6 +158,8 @@ public class ScaffoldModule extends Module {
 
         if (this.scaffoldMode.getValue() == ScaffoldMode.VULCAN) {
             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
+            mc.thePlayer.motionX *= 0.7;
+            mc.thePlayer.motionZ *= 0.7;
         }
 
         if (this.spoofMode.getValue() == SpoofMode.SWITCH) {
@@ -327,20 +336,40 @@ public class ScaffoldModule extends Module {
                 }
             }
         }
+        if (this.towerMode.getValue() == TowerMode.HYPIXEL && Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())
+                && MovementUtils.isMoving() && ((ServerUtils.isOnServer("mc.hypixel.net") ||
+                ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised)) {
+            if (event.getPacket() instanceof C08PacketPlayerBlockPlacement) {
+                if (position != null) event.cancel();
+                var c08 = (C08PacketPlayerBlockPlacement) event.getPacket();
+                position = c08.getPosition();
+                placedBlockDirection = c08.getPlacedBlockDirection();
+                stack = c08.getStack();
+                facingX = c08.getPlacedBlockOffsetX();
+                facingY = c08.getPlacedBlockOffsetY();
+                facingZ = c08.getPlacedBlockOffsetZ();
+            }
+        }
+        if (event.getPacket() instanceof S01PacketJoinGame) {
+            position = null;
+        }
     };
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.POST) return;
 
+        if (this.towerMode.getValue() == TowerMode.HYPIXEL && mc.gameSettings.keyBindJump.isKeyDown() &&
+                MovementUtils.isMoving() && position != null) {
+            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
+                    position, placedBlockDirection, stack, facingX, facingY, facingZ
+            ));
+        }
+
         lastDistance = MovementUtils.getLastDistance();
 
         if (this.rotate.getValue() && this.rotations != null) {
             switch (this.rotationMode.getValue()) {
-                case VULCAN:
-                    event.setPitch(-50);
-                    event.setYaw(mc.thePlayer.rotationYaw - 180);
-                    break;
                 case SNAP:
                 case NEW:
                 case OLD:
@@ -351,6 +380,10 @@ public class ScaffoldModule extends Module {
                     break;
                 case FACING:
                     event.setPitch(90f);
+                    break;
+                case MMC:
+                    event.setYaw(mc.thePlayer.rotationYaw - 180);
+                    event.setPitch(80.5f);
                     break;
                 case STATIC:
                     switch (this.aimBlockEntry.getFacing()) {
@@ -487,6 +520,10 @@ public class ScaffoldModule extends Module {
                         event.setPitch(smoothed.getY());
                     }
                     break;
+                case VULCAN:
+                    event.setYaw(mc.thePlayer.rotationYaw - 180 + (RandomUtils.nextInt(-5, 5)));
+                    event.setPitch(80.5f);
+                    break;
             }
         }
 
@@ -497,7 +534,7 @@ public class ScaffoldModule extends Module {
                         && (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) &&
                         !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) && PlayerUtils.isMathGround() &&
                         mc.thePlayer.ticksExisted % 2 == 0) {
-                    event.setY(event.getY() + 0.05);
+                    event.setY(event.getY() + 0.03);
                     event.setOnGround(false);
                 }
             }
@@ -523,11 +560,15 @@ public class ScaffoldModule extends Module {
                         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
                             if (mc.thePlayer.onGround && MovementUtils.isMoving() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
                                     && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
-                                event.y = mc.thePlayer.motionY = 0.41f;
+                                event.y = mc.thePlayer.motionY = 0.4f;
 
                                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() *
-                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.8 : 0.925) *
-                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.75 : 1));
+                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.875 : 1.125) *
+                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.85 : 1));
+                            } else if (!mc.thePlayer.onGround && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())
+                                    && MovementUtils.isMoving()) {
+                                MovementUtils.strafe(event, MovementUtils.getSpeed());
+                                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
                             }
                         } else {
                             event.y = mc.thePlayer.motionY = Math.random() - (MovementUtils.getBaseMoveSpeed() / 6);
@@ -550,18 +591,20 @@ public class ScaffoldModule extends Module {
             case VULCAN:
                 if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
                     int slot = spoofMode.getValue() == SpoofMode.SPOOF ? c09slot : mc.thePlayer.inventory.currentItem;
-                    if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize >= 7) {
-                        event.y = mc.thePlayer.motionY = 0.42f;
-                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.8 : 2.1));
-                    } else {
-                        MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.7);
-                    }
-                    if (this.vulcanTimer.reach(500)) {
-                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SNEAKING));
-                        vulcanTimer.reset();
-                    }
-                    if (this.vulcanTimer.getMs() == 75 + RandomUtils.nextInt(0, 100)) {
-                        mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
+                    if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize > 0) {
+                        if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize >= 7) {
+                            event.y = mc.thePlayer.motionY = 0.42f;
+                            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.9 : 2.1));
+                        } else {
+                            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.7);
+                        }
+                        if (this.vulcanTimer.reach(500)) {
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SNEAKING));
+                            vulcanTimer.reset();
+                        }
+                        if (this.vulcanTimer.getMs() == 75 + RandomUtils.nextInt(0, 100)) {
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SNEAKING));
+                        }
                     }
                 }
                 break;
@@ -611,6 +654,7 @@ public class ScaffoldModule extends Module {
                         break;
 
                     case HYPIXEL:
+                        /*
                         if (!mc.thePlayer.isPotionActive(Potion.jump)) {
                             boolean onHypixel = (ServerUtils.isOnServer("mc.hypixel.net") ||
                                     ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised;
@@ -630,19 +674,48 @@ public class ScaffoldModule extends Module {
                                 boolean shouldRun = !MovementUtils.isMoving() || towerMove;
 
                                 if (this.blockEntry != null && shouldRun) {
-                                    long stopTime = 750L;
-                                    if (mc.thePlayer.ticksExisted % 2 == 0) {
-                                        event.y = mc.thePlayer.motionY = 0.419f;
+                                    long stopTime = 1000L;
+                                    if (mc.thePlayer.ticksExisted % 4 == 0) {
+                                        event.y = mc.thePlayer.motionY = 0.4199f;
                                     }
                                     if (this.towerTimer.reach(stopTime)) {
                                         if (onHypixel || mc.thePlayer.getDiagonalTicks() > 0) {
-                                            event.y = mc.thePlayer.motionY = -0f;
+                                            event.y = mc.thePlayer.motionY = -0.05f;
                                         }
 
                                         this.towerTimer.reset();
                                     }
                                 }
                             }
+                        }
+                        break;*/
+                        if (!mc.thePlayer.isPotionActive(Potion.jump)) {
+                            boolean onHypixel = (ServerUtils.isOnServer("mc.hypixel.net") ||
+                                    ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised;
+
+                            if (!MovementUtils.isMoving()) {
+                                if (mc.thePlayer.onGround) {
+                                    mc.thePlayer.jump();
+                                    event.y = mc.thePlayer.motionY = 0.419f;
+                                }
+                            } else {
+                                mc.thePlayer.motionX *= 0.7f;
+                                mc.thePlayer.motionZ *= 0.7f;
+                                double offset = onHypixel ? 0.42 : 0.15;
+                                boolean towerMove = PlayerUtils.isOnGround(offset) && MovementUtils.isMoving();
+                                boolean shouldRun = (MovementUtils.isMoving() || towerMove) && mc.thePlayer.ticksExisted % 3 == 0;
+
+                                if (this.blockEntry != null && shouldRun) {
+                                    event.y = mc.thePlayer.motionY = onHypixel ? 0.419f : 0.38f;
+                                    long stopTime = towerMove ? 1600L : 250L;
+                                    if (this.towerTimer.reach(stopTime)) {
+                                        event.y = mc.thePlayer.motionY = 0;
+
+                                        this.towerTimer.reset();
+                                    }
+                                }
+                            }
+
                         }
                         break;
 
@@ -844,6 +917,7 @@ public class ScaffoldModule extends Module {
         OLD("Old"),
         NEW("New"),
         FACING("Facing"),
+        MMC("MMC"),
         STATIC("Static"),
         SMOOTH("Smooth"),
         BACKWARDS("Backwards"),

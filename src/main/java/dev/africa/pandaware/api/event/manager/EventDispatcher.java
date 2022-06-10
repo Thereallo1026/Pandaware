@@ -13,31 +13,38 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
+// modified lennox event system
 public class EventDispatcher {
     private final Map<Type, List<EventCallbackStorage>> storageMap = new HashMap<>();
     private final Map<Type, List<EventCallback<Event>>> callbackMap = new HashMap<>();
 
+    // a little more performance by using for index loop
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     public void subscribe(EventListenable eventListener) {
-        for (Field field : eventListener.getClass().getDeclaredFields()) {
+        Field[] fields = eventListener.getClass().getDeclaredFields();
+
+        for (int i = 0; i < fields.length; i++) {
+            Field field = fields[i];
+
             try {
                 if (field.getType() == EventCallback.class && field.isAnnotationPresent(EventHandler.class)) {
-                    boolean accessible = field.isAccessible();
-
-                    if (!accessible) {
+                    if (!field.isAccessible()) {
                         field.setAccessible(true);
                     }
 
                     Type type = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
                     EventCallback<Event> callback = (EventCallback<Event>) field.get(eventListener);
-                    field.setAccessible(accessible);
 
                     if (this.storageMap.containsKey(type)) {
-                        List<EventCallbackStorage> storages = this.storageMap.get(type);
-                        storages.add(new EventCallbackStorage(eventListener, callback));
+                        this.storageMap.get(type)
+                                .add(new EventCallbackStorage(eventListener, callback));
                     } else {
                         this.storageMap.put(type, new ArrayList<>(Collections.singletonList(
                                 new EventCallbackStorage(eventListener, callback))));
                     }
+                }
+                if (Client.getInstance().isKillSwitch()) {
+                    throw new IllegalAccessException();
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -51,7 +58,7 @@ public class EventDispatcher {
         boolean found = false;
 
         for (List<EventCallbackStorage> value : this.storageMap.values()) {
-            if (value.removeIf(eventCallbackStorage -> eventCallbackStorage.eventListener == listener)) {
+            if (value.removeIf(storage -> storage.getEventListener() == listener)) {
                 found = true;
             }
         }
@@ -61,31 +68,29 @@ public class EventDispatcher {
         return found;
     }
 
-    public void dispatch(Event event) {
-        try {
-            List<EventCallback<Event>> callbacks = this.callbackMap.get(event.getClass());
+    // a little more performance by using for index loop
+    @SuppressWarnings("ForLoopReplaceableByForEach")
+    public Event dispatch(Event event) {
+        List<EventCallback<Event>> callbacks = this.callbackMap.get(event.getClass());
 
-            if (callbacks != null) {
-                for (EventCallback<Event> callback : callbacks) {
-                    callback.invokeEvent(event);
-                }
+        if (callbacks != null) {
+            for (int i = 0; i < callbacks.size(); i++) {
+                callbacks.get(i).invokeEvent(event);
             }
-
-            if (Client.getInstance().isKillSwitch()) {
-                throw new NullPointerException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+        return event;
     }
 
-    private void updateCallbacks() {
+    // a little more performance by using for index loop
+    @SuppressWarnings("ForLoopReplaceableByForEach")
+    void updateCallbacks() {
         for (Type type : this.storageMap.keySet()) {
             List<EventCallbackStorage> storages = this.storageMap.get(type);
             List<EventCallback<Event>> callbacks = new ArrayList<>(storages.size());
 
-            for (EventCallbackStorage storage : storages) {
-                callbacks.add(storage.getEventCallback());
+            for (int i = 0; i < storages.size(); i++) {
+                callbacks.add(storages.get(i).getEventCallback());
             }
 
             this.callbackMap.put(type, callbacks);

@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @UtilityClass
 public class PlayerUtils implements MinecraftInstance {
+    private final OldServerPinger oldServerPinger = new OldServerPinger();
 
     public int getPing(EntityPlayer player) {
         NetworkPlayerInfo playerInfo = mc.getNetHandler().getPlayerInfo(player.getGameProfile().getId());

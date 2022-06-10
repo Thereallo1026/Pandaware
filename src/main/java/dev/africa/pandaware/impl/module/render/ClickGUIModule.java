@@ -9,6 +9,7 @@ import dev.africa.pandaware.impl.setting.ColorSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -19,12 +20,15 @@ public class ClickGUIModule extends Module {
     private final BooleanSetting showCummyMen = new BooleanSetting("Show Femboys", true);
     private final EnumSetting<FemboyMode> cummyMode = new EnumSetting<>("Femboy Mode", FemboyMode.GREEK,
             this.showCummyMen::getValue);
+    private final BooleanSetting allowNSFW = new BooleanSetting("Allow NSFW (18+) pictures", false,
+            this.showCummyMen::getValue);
     private final ColorSetting clickColor = new ColorSetting("Click Color", Color.WHITE);
 
     public ClickGUIModule() {
         this.registerSettings(
                 this.showCummyMen,
                 this.cummyMode,
+                this.allowNSFW,
                 this.clickColor
         );
     }
@@ -40,6 +44,8 @@ public class ClickGUIModule extends Module {
     public enum FemboyMode {
         ASTOLFO("Astolfo"),
         ASTOLFO2("Astolfo 2"),
+        ASTOLFO3("Astolfo 3"),
+        ASTOLFO4("Astolfo 4"),
         NSFWASTOLFO("Astolfo (18+)"),
         FELIX("Felix"),
         FELIX2("Felix 2"),

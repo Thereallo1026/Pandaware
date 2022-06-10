@@ -49,7 +49,9 @@ public class LongJumpModule extends Module {
 
     @Override
     public void onDisable() {
-        MovementUtils.slowdown();
+        if (!(this.getCurrentMode() instanceof HypixelLongJump)) {
+            MovementUtils.slowdown();
+        }
         this.wasOnGround = false;
         airTicks = 0;
     }

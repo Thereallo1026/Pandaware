@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
@@ -322,7 +323,12 @@ public class HUDModule extends Module {
 
         double y = event.getResolution().getScaledHeight() - 11;
         String text = "§7BPS: §f" + MathUtils.roundToDecimal(MovementUtils.getBps(), 2);
-        String latencyText = "§7Ping: §f" + PlayerUtils.getPing(mc.thePlayer);
+        String latencyText;
+        if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) && mc.getCurrentServerData().serverIP.contains("hypixel")) {
+            latencyText = "§7Ping: §f" + mc.getCurrentServerData().pingToServer;
+        } else {
+            latencyText = "§7Ping: §f" + PlayerUtils.getPing(mc.thePlayer);
+        }
 
         double informationX;
         if (this.customFont.getValue()) {

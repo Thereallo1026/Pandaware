@@ -52,7 +52,7 @@ public class AccountsFile extends FileObject {
         if (!this.getFile().exists()) return;
 
         String json = FileUtils.readFromFile(this.getFile());
-        JsonObject altList = JsonParser.parseString(json).getAsJsonObject();
+        JsonObject altList = new JsonParser().parse(json).getAsJsonObject();
 
         altList.entrySet().forEach(emp -> {
             JsonObject altObject = (JsonObject) ((JsonObject) emp.getValue()).get("account");

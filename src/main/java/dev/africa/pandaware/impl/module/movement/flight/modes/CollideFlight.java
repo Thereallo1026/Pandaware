@@ -31,24 +31,14 @@ public class CollideFlight extends ModuleMode<FlightModule> {
 
     @EventHandler
     EventCallback<CollisionEvent> onCollision = event -> {
-        switch (this.mode.getValue()) {
-            case NORMAL:
-            case SILENT_ACCEPT:
-                if (mc.thePlayer != null && !mc.thePlayer.isSneaking()) {
-                    event.setCollisionBox(new AxisAlignedBB(-100, -2, -100, 100, 1, 100)
-                            .offset(event.getBlockPos().getX(), event.getBlockPos().getY(), event.getBlockPos().getZ()));
-                }
-                break;
-            case JUMP:
-            case YPORT:
-                if (mc.gameSettings.keyBindSneak.isKeyDown() && mc.thePlayer.posY <= startY) {
-                    startY = Math.floor(mc.thePlayer.posY);
-                }
-                if (mc.thePlayer != null && !mc.thePlayer.isSneaking() && event.getBlockPos().getY() <= startY - 1) {
-                    event.setCollisionBox(new AxisAlignedBB(-100, -2, -100, 100, 1, 100)
-                            .offset(event.getBlockPos().getX(), event.getBlockPos().getY(), event.getBlockPos().getZ()));
-                }
-                break;
+        if (mc.gameSettings.keyBindSneak.isKeyDown() && mc.thePlayer.posY <= startY) {
+            startY = Math.floor(mc.thePlayer.posY);
+        } else if (mc.gameSettings.keyBindJump.isKeyDown()) {
+            startY = Math.ceil(mc.thePlayer.posY);
+        }
+        if (mc.thePlayer != null && !mc.thePlayer.isSneaking() && event.getBlockPos().getY() <= startY - 1) {
+            event.setCollisionBox(new AxisAlignedBB(-100, -2, -100, 100, 1, 100)
+                    .offset(event.getBlockPos().getX(), event.getBlockPos().getY(), event.getBlockPos().getZ()));
         }
     };
 

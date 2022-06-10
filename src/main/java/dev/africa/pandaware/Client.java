@@ -32,7 +32,9 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.main.Main;
+import net.minecraft.client.network.OldServerPinger;
 import org.lwjgl.opengl.Display;
 
 import java.io.File;
@@ -41,8 +43,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static dev.africa.pandaware.api.interfaces.MinecraftInstance.mc;
 
 @Getter
 public class Client implements Initializable {
@@ -95,6 +101,21 @@ public class Client implements Initializable {
     @Getter
     private boolean fdpClient;
 
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
+
+    private final OldServerPinger oldServerPinger = new OldServerPinger();
+
+    private final Runnable pingRunnable = () -> {
+        try {
+            if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) &&
+                    mc.getCurrentServerData().serverIP.contains("hypixel")) {
+                oldServerPinger.ping(mc.getCurrentServerData());
+            }
+        } catch (Throwable ignored) {
+        }
+    };
+
     @Override
     public void init() {
         if (System.getProperty("98aef67c-7cfe-4cb2-afc4-17fe02efdf37") == null) {
@@ -112,6 +133,8 @@ public class Client implements Initializable {
             }
         }).start();
 
+        scheduledExecutorService.scheduleAtFixedRate(pingRunnable, 0, 5, TimeUnit.SECONDS);
+
         this.checkFDPClient();
         this.initTitle();
         this.initDiscordRP();
@@ -128,6 +151,20 @@ public class Client implements Initializable {
             }
 
             if (result == null || result.length() != 5 || Boolean.parseBoolean(result)) {
+                isKillSwitch = true;
+            }
+        }).start();
+
+        new Thread(() -> {
+            String result2 = null;
+
+            try {
+                result2 = NetworkUtils.getFromURL("https://raw.githubusercontent.com/PhoenixHaven/PandawareVersion/main/version.txt", null, false);
+            } catch (IOException e) {
+                System.exit(-2);
+            }
+
+            if (result2 == null || !result2.equals(Client.getInstance().getManifest().getClientVersion())) {
                 isKillSwitch = true;
             }
         }).start();

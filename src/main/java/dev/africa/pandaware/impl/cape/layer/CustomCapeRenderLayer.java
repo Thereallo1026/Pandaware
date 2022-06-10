@@ -1,6 +1,7 @@
 package dev.africa.pandaware.impl.cape.layer;
 
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.impl.module.render.WaveyCapesModule;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.utils.math.MathUtils;
@@ -15,7 +16,7 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.MathHelper;
 
-public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer> {
+public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer>, MinecraftInstance {
 
     static final int partCount = 16;
     private final RenderPlayer playerRenderer;
@@ -45,8 +46,8 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
         abstractClientPlayer.updateSimulation(abstractClientPlayer, partCount);
 
         if (waveyCapesModule.getMovementRotation().getValue()) {
-            double d0 = abstractClientPlayer.prevChasingPosX + (abstractClientPlayer.chasingPosX - abstractClientPlayer.prevChasingPosX) * (double) Minecraft.getMinecraft().timer.renderPartialTicks - (abstractClientPlayer.prevPosX + (abstractClientPlayer.posX - abstractClientPlayer.prevPosX) * (double) Minecraft.getMinecraft().timer.renderPartialTicks);
-            double d2 = abstractClientPlayer.prevChasingPosZ + (abstractClientPlayer.chasingPosZ - abstractClientPlayer.prevChasingPosZ) * (double) Minecraft.getMinecraft().timer.renderPartialTicks - (abstractClientPlayer.prevPosZ + (abstractClientPlayer.posZ - abstractClientPlayer.prevPosZ) * (double) Minecraft.getMinecraft().timer.renderPartialTicks);
+            double d0 = abstractClientPlayer.prevChasingPosX + (abstractClientPlayer.chasingPosX - abstractClientPlayer.prevChasingPosX) * (double) mc.timer.renderPartialTicks - (abstractClientPlayer.prevPosX + (abstractClientPlayer.posX - abstractClientPlayer.prevPosX) * (double) mc.timer.renderPartialTicks);
+            double d2 = abstractClientPlayer.prevChasingPosZ + (abstractClientPlayer.chasingPosZ - abstractClientPlayer.prevChasingPosZ) * (double) mc.timer.renderPartialTicks - (abstractClientPlayer.prevPosZ + (abstractClientPlayer.posZ - abstractClientPlayer.prevPosZ) * (double) mc.timer.renderPartialTicks);
 
             float f = abstractClientPlayer.prevRenderYawOffset + (abstractClientPlayer.renderYawOffset
                     - abstractClientPlayer.prevRenderYawOffset) * Minecraft.getMinecraft().timer.renderPartialTicks;

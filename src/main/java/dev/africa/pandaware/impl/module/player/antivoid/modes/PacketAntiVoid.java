@@ -13,7 +13,8 @@ public class PacketAntiVoid extends ModuleMode<AntiVoidModule> {
     EventCallback<MoveEvent> onMove = event -> {
         if (mc.thePlayer.fallDistance >= this.getParent().getFallDistance().getValue().floatValue() && !PlayerUtils.isBlockUnder()) {
             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C04PacketPlayerPosition(
-                    mc.thePlayer.posX, mc.thePlayer.posY + 3, mc.thePlayer.posZ, true));
+                    mc.thePlayer.posX, mc.thePlayer.posY + 0.5, mc.thePlayer.posZ, true));
+            mc.thePlayer.fallDistance = 0;
         }
     };
 

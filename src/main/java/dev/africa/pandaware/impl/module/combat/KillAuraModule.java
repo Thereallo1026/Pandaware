@@ -108,6 +108,8 @@ public class KillAuraModule extends Module {
             = new BooleanSetting("LockView", false, this.rotate::getValue);
     private final BooleanSetting keepSprint
             = new BooleanSetting("Keep Sprint", true);
+    private final BooleanSetting onlySprintInAir = new BooleanSetting("Only in air", false,
+            this.keepSprint::getValue);
     private final BooleanSetting antiSnap
             = new BooleanSetting("Anti snap", false, this.rotate::getValue);
     private final BooleanSetting swing
@@ -136,7 +138,6 @@ public class KillAuraModule extends Module {
     public long lastFrame = 0;
     private int backRotationTicks;
     public EntityLivingBase target;
-    private EntityLivingBase lastTarget;
     private int attacks;
     private boolean sentMagicPacket;
 
@@ -174,6 +175,7 @@ public class KillAuraModule extends Module {
                 this.cinematicFilterAfterRotation,
                 this.lockView,
                 this.keepSprint,
+                this.onlySprintInAir,
                 this.rayCast,
                 this.rayTrace,
                 this.swing,
@@ -295,18 +297,11 @@ public class KillAuraModule extends Module {
         if (this.returnOnScaffold.getValue() && Client.getInstance().getModuleManager()
                 .getByClass(ScaffoldModule.class).getData().isEnabled()) return;
         if (event.getEventState() == Event.EventState.PRE) {
-            this.lastTarget = this.target;
             this.target = this.getTarget(this.antiSnap.getValue() ? this.range.getValue().floatValue() + 1 : this.range.getValue().floatValue());
 
             if (this.target != null && RotationUtils.getYawRotationDifference(this.target) >
                     this.attackAngle.getValue().doubleValue()) {
                 this.target = null;
-            }
-        }
-
-        if (this.autoBlock.getValue() && this.target != null) {
-            if (event.getEventState() == this.blockState.getValue()) {
-                this.block();
             }
         }
 
@@ -392,6 +387,11 @@ public class KillAuraModule extends Module {
                             mc.leftClickCounter = 0;
                             this.timer.reset();
                         }
+                    }
+                }
+                if (this.autoBlock.getValue()) {
+                    if (event.getEventState() == this.blockState.getValue()) {
+                        this.block();
                     }
                 }
             }
@@ -745,16 +745,15 @@ public class KillAuraModule extends Module {
 
                 case HYPIXEL:
                     if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) &&
-                        !ServerUtils.compromised) {
-                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
-                                    new BlockPos(-1, -1, -1), 256, mc.thePlayer.inventory.getCurrentItem(),
-                                    0.008124124f, 0.00004921712f, 0.0081248912f
-                            ));
-                            if (this.target instanceof EntityPlayer) {
-                                mc.playerController.interactWithEntitySendPacket(mc.thePlayer, this.target);
-
-                                this.target.interactAt((EntityPlayer) this.target, new Vec3(-1, -1, -1));
-                            }
+                            !ServerUtils.compromised) {
+                        if (mc.thePlayer.swingProgressInt == -1) {
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C07PacketPlayerDigging(
+                                    C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
+                        } else if (mc.thePlayer.swingProgressInt < 0.5) {
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement
+                                    (new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(),
+                                            0.0081284124F, 0.00004921712F, 0.0081248912F));
+                        }
                     }
                     mc.thePlayer.setBlockingSword(true);
                     break;
@@ -806,7 +805,7 @@ public class KillAuraModule extends Module {
                     break;
 
                 case HYPIXEL:
-                    if (mc.thePlayer.isBlockingSword() && this.target == null) {
+                    if (mc.thePlayer.isBlockingSword() && this.getTarget() == null) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new
                                 C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
                                 BlockPos.ORIGIN, EnumFacing.DOWN));
@@ -868,7 +867,13 @@ public class KillAuraModule extends Module {
         Client.getInstance().getEventDispatcher().dispatch(attackEvent);
 
         attacks++;
-        PlayerUtils.attackEntityProtocol(entity, this.swing.getValue(), this.keepSprint.getValue());
+        if (this.onlySprintInAir.getValue() && !mc.thePlayer.onGround) {
+            PlayerUtils.attackEntityProtocol(entity, this.swing.getValue(), true);
+        } else if (this.onlySprintInAir.getValue() && mc.thePlayer.onGround) {
+            PlayerUtils.attackEntityProtocol(entity, this.swing.getValue(), false);
+        } else {
+            PlayerUtils.attackEntityProtocol(entity, this.swing.getValue(), this.keepSprint.getValue());
+        }
 
         attackEvent.setEventState(Event.EventState.POST);
         Client.getInstance().getEventDispatcher().dispatch(attackEvent);

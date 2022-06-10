@@ -9,24 +9,29 @@ import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
+import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
+import lombok.AllArgsConstructor;
 import net.minecraft.potion.Potion;
+import org.lwjgl.input.Keyboard;
 
 public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private boolean jumped;
     private double lastDistance;
     private double movespeed;
 
+    private final EnumSetting<Mode> mode = new EnumSetting<>("Mode", Mode.LOWHOP);
     private final NumberSetting timer = new NumberSetting("Timer", 1.3, 1.0, 1, 0.1);
 
     public HypixelSpeed(String name, SpeedModule parent) {
         super(name, parent);
 
         this.registerSettings(
+                this.mode,
                 this.timer
         );
     }
@@ -54,7 +59,13 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 this.getParent().toggle(false);
             }
             if (mc.thePlayer.onGround) {
-                double motion = 0.41F;
+                double motion;
+                if (this.mode.getValue() == Mode.LOWHOP || this.mode.getValue() == Mode.DYNAMIC &&
+                        !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
+                    motion = 0.4F;
+                } else {
+                    motion = 0.41f;
+                }
                 motion += PlayerUtils.getJumpBoostMotion();
 
                 event.y = mc.thePlayer.motionY = motion;
@@ -64,14 +75,21 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 this.movespeed = this.lastDistance - 0.66F * (this.lastDistance - MovementUtils.getBaseMoveSpeed());
                 this.jumped = false;
             } else {
-                this.movespeed = this.lastDistance * (float) 0.91f;
-                this.movespeed += mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.042f : 0.033f;
+                this.movespeed = this.lastDistance * 0.91f;
+                this.movespeed += mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.042f : 0.034f;
                 if (TargetStrafeModule.isStrafing() || mc.thePlayer.moveStrafing > 0) {
                     double multi = (MovementUtils.getSpeed() - this.lastDistance) * MovementUtils.getBaseMoveSpeed();
 
                     this.movespeed += multi;
-                    this.movespeed -= 0.011f;
+                    this.movespeed -= 0.015f;
                 }
+            }
+            if (!(mc.thePlayer.fallDistance > 0.6) && !mc.thePlayer.isCollidedHorizontally && PlayerUtils.isBlockUnder()
+                    && (this.mode.getValue() == Mode.LOWHOP || this.mode.getValue() == Mode.DYNAMIC &&
+                            !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()))) {
+                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
+                if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) this.movespeed -= 0.011f;
+                else this.movespeed -= 0.007f;
             }
 
             MovementUtils.strafe(event, Math.max(this.movespeed, MovementUtils.getBaseMoveSpeed()));
@@ -96,4 +114,12 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
         this.movespeed = 0;
     }
 
+    @AllArgsConstructor
+    private enum Mode {
+        LOWHOP("Lowhop"),
+        BHOP("Bhop"),
+        DYNAMIC("Dynamic");
+
+        private final String label;
+    }
 }

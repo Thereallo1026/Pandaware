@@ -56,6 +56,8 @@ public class GuiNewMainMenu extends GuiScreen {
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/siren.png"), 0, 0, width, height);
                 break;
             case "hD+HJAdr8I0pQOnn8YhAhUjtABT4v7U9vfqIa+ctRV0so7UlTqgEjiXF+OpnC+N0fPUS0k3KsENU5JaPbF4ttg==":
+            case "dXEtbS/0rsaL5ZpJDkBwtrY+DMBobFAntbomscbI1cBJnA+dR9tonthu80cbpY7hVNoBM0r8DMKo19++tDVjRQ==":
+            case "1UKeTYBV6PoRe36cnOL6/icRl1UeTOtOi2GM2FxJjwdTT+4mSNl0+BkdMghfrhGRscPEMEVwLFXXzhCdJ5WBQQ==":
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/image0.jpeg"), 0, 0, width, height);
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/siren.png"), 200, 150, 150, 100);
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/felix2.png"), 0, 0, 250, 250);
@@ -64,6 +66,7 @@ public class GuiNewMainMenu extends GuiScreen {
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/nsfwastolfo.png"), 725, 400, 125, 125);
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/mixednuts.png"), 770, 490, 50, 25);
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo3.png"), 780, 400, 125, 125);
+                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo4.png"), 500, 400, 200, 300);
                 break;
             case "aoz6TQtwKK9gjfA/fECcqxBJuPua3RpFAnvjDnuRKW+uV7zlB3GPFAkWFz+aBRW7GiJtBN5/eH35RMignbrlAA==":
                 if (lol == 1) {

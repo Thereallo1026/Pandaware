@@ -6,6 +6,7 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.player.nofall.NoFallModule;
+import dev.africa.pandaware.utils.player.PlayerUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.util.Vec3;
 
@@ -34,7 +35,7 @@ public class BlinkNoFall extends ModuleMode<NoFallModule> {
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         if (this.getParent().canFall() && !mc.isIntegratedServerRunning()) {
-            if (mc.thePlayer.fallDistance > 2.5) {
+            if (mc.thePlayer.fallDistance > 2.5 && !PlayerUtils.inLiquid() && !mc.thePlayer.capabilities.isFlying) {
                 this.shouldBlink = true;
 
                 if (this.packets.size() > 0) {

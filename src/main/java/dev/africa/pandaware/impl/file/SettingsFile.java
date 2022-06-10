@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.file.FileObject;
+import dev.africa.pandaware.impl.module.render.ClickGUIModule;
 import dev.africa.pandaware.utils.java.FileUtils;
 
 import java.io.File;
@@ -23,6 +24,8 @@ public class SettingsFile extends FileObject {
 
         jsonObject.addProperty("femboyPositionXXX", Client.getInstance().getClickGUI().getFemboyPosition().getX());
         jsonObject.addProperty("femboyPositionYYY", Client.getInstance().getClickGUI().getFemboyPosition().getY());
+
+        jsonObject.addProperty("Is 18+", Client.getInstance().getModuleManager().getByClass(ClickGUIModule.class).getAllowNSFW().getValue());
 
         if (Client.getInstance().getSocketHandler().getIrcName() != null) {
             jsonObject.addProperty("ircName", Client.getInstance().getSocketHandler().getIrcName());

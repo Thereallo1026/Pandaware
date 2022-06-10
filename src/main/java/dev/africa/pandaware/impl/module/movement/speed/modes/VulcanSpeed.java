@@ -21,7 +21,7 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
                 }
                 mc.thePlayer.jump();
                 event.y = mc.thePlayer.motionY = 0.42f;
-                MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.8 : 2.1));
+                MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.9 : 2.1));
             } else if (mc.thePlayer.getAirTicks() == 5) {
                 if (this.timerSpeed.getValue() && mc.thePlayer.fallDistance < 1) {
                     mc.timer.timerSpeed = 1.35f;

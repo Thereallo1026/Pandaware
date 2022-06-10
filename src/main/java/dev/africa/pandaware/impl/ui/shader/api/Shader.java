@@ -59,6 +59,12 @@ public class Shader implements IShader, MinecraftInstance {
         GL20.glUniform3f(this.uniformsMap.get(name), first, second, third);
     }
 
+    public void setUniform4f(String name, float first, float second, float third, float fourth) {
+        this.setupUniform(name);
+
+        GL20.glUniform4f(this.uniformsMap.get(name), first, second, third, fourth);
+    }
+
     void setupUniform(String uniformName) {
         if (!this.uniformsMap.containsKey(uniformName)) {
             this.uniformsMap.put(uniformName, GL20.glGetUniformLocation(this.shaderProgram.getProgramID(), uniformName));

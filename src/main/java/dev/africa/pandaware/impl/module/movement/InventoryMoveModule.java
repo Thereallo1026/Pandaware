@@ -24,7 +24,8 @@ public class InventoryMoveModule extends Module {
                 mc.gameSettings.keyBindLeft,
                 mc.gameSettings.keyBindRight,
                 mc.gameSettings.keyBindBack,
-                mc.gameSettings.keyBindJump
+                mc.gameSettings.keyBindJump,
+                mc.gameSettings.keyBindSprint
         };
 
         if (mc.currentScreen != null && !(mc.currentScreen instanceof GuiChat) && !inClickGui.getValue()) {

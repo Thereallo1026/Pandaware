@@ -3,8 +3,10 @@ package dev.africa.pandaware.impl.ui.clickgui;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.interfaces.Initializable;
 import dev.africa.pandaware.api.module.interfaces.Category;
+import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.api.screen.ScreenGUI;
 import dev.africa.pandaware.impl.module.render.ClickGUIModule;
+import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.ui.circle.ClickCircle;
 import dev.africa.pandaware.impl.ui.clickgui.panel.Panel;
 import dev.africa.pandaware.impl.ui.clickgui.setting.SettingPanel;
@@ -56,7 +58,8 @@ public class ClickGUI extends ScreenGUI implements Initializable {
     private final Animator animator = new Animator();
 
     private Player player;
-    private boolean done = false;
+
+    private int closePlayer;
 
     @Override
     public void init() {
@@ -112,9 +115,22 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo2.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 210, 297);
                     break;
+                case ASTOLFO3:
+                    RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo3.png"), femboyPosition.getX(),
+                            femboyPosition.getY(), 202, 307);
+                    break;
+                case ASTOLFO4:
+                    RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo4.png"), femboyPosition.getX(),
+                            femboyPosition.getY(), 210, 297);
+                    break;
                 case NSFWASTOLFO:
-                    RenderUtils.drawImage(new ResourceLocation("pandaware/icons/nsfwastolfo.png"), femboyPosition.getX(),
-                            femboyPosition.getY(), 215, 304);
+                    if (clickGUI.getAllowNSFW().getValue()) {
+                        RenderUtils.drawImage(new ResourceLocation("pandaware/icons/nsfwastolfo.png"), femboyPosition.getX(),
+                                femboyPosition.getY(), 215, 304);
+                    } else {
+                        Printer.chat("Please allow NSFW pictures to proceed.");
+                        clickGUI.getCummyMode().setValue(ClickGUIModule.FemboyMode.ASTOLFO);
+                    }
                     break;
                 case FELIX:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/felix.png"), femboyPosition.getX(),
@@ -145,7 +161,6 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     break;
             }
         }
-
         if (this.easterEgg.toString().toLowerCase().contains("dawson")) {
             if (clickGUI.getCummyMode().getValue() != ClickGUIModule.FemboyMode.GREEK) {
                 RenderUtils.drawImage(new ResourceLocation("pandaware/icons/dawson.jpg"), 0, 0, this.width,
@@ -190,6 +205,30 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                 }
             }
         }
+        if (this.easterEgg.toString().toLowerCase().contains("alts.top")) {
+            new Thread(() -> {
+                try {
+                    player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/alts.top.mp3"));
+                    player.play();
+                } catch (JavaLayerException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            mc.displayGuiScreen(null);
+        }
+
+        if (this.easterEgg.toString().toLowerCase().contains("banana") && this.player == null) {
+            new Thread(() -> {
+                try {
+                    player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/banana.mp3"));
+                    player.play();
+                } catch (JavaLayerException e) {
+                    e.printStackTrace();
+                    System.out.println("who squished my banana");
+                }
+            }).start();
+            mc.displayGuiScreen(null);
+        }
 
         this.panelList.forEach(panel -> panel.handleRender(mousePosition, pTicks));
 
@@ -233,30 +272,6 @@ public class ClickGUI extends ScreenGUI implements Initializable {
         }
 
         this.easterEgg.append(typedChar);
-        if (this.easterEgg.toString().toLowerCase().contains("alts.top") && this.player == null) {
-            new Thread(() -> {
-                try {
-                    player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/alts.top.mp3"));
-                    player.play();
-                } catch (JavaLayerException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-            easterEgg.delete(0, Short.MAX_VALUE);
-        }
-
-        if (this.easterEgg.toString().toLowerCase().contains("banana") && this.player == null) {
-            new Thread(() -> {
-                try {
-                    player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/banana.mp3"));
-                    player.play();
-                } catch (JavaLayerException e) {
-                    e.printStackTrace();
-                    System.out.println("who squished my banana");
-                }
-            }).start();
-            easterEgg.delete(0, Short.MAX_VALUE);
-        }
 
         this.panelList.forEach(panel -> panel.handleKeyboard(typedChar, keyCode));
 
@@ -328,12 +343,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
     @Override
     public void handleGuiClose() {
-
-        easterEgg.delete(0, Short.MAX_VALUE);
-
         this.shouldClose = false;
-
-        if (this.player != null) this.player.close();
 
         this.animator.resetMax();
 
@@ -354,7 +364,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
 
         this.animator.resetMax();
 
-        this.easterEgg = new StringBuilder();
+        this.easterEgg = new StringBuilder("");
 
         this.panelList.forEach(Panel::handleGuiInit);
 

