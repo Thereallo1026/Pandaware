@@ -3,8 +3,12 @@ package net.minecraft.client.gui;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
+
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;

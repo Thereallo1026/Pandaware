@@ -5,6 +5,8 @@ import dev.africa.pandaware.impl.event.player.CollisionEvent;
 import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.experimental.UtilityClass;
+import lombok.val;
+import lombok.var;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
@@ -221,5 +223,33 @@ public class PlayerUtils implements MinecraftInstance {
         if (!ProtocolUtils.isOneDotEight() && swing) {
             mc.thePlayer.swingItem();
         }
+    }
+
+    public double findGround() {
+        double y = mc.thePlayer.posY;
+        AxisAlignedBB playerBoundingBox = mc.thePlayer.getEntityBoundingBox();
+        double blockHeight = 1.0;
+        for (double ground = y; ground > 0.0; ground -= blockHeight) {
+            AxisAlignedBB customBox = new AxisAlignedBB(playerBoundingBox.maxX, ground + blockHeight,
+                    playerBoundingBox.maxZ, playerBoundingBox.minX, ground, playerBoundingBox.minZ);
+            if (!mc.theWorld.checkBlockCollision(customBox)) continue;
+            if (blockHeight <= 0.05) {
+                return ground + blockHeight;
+            }
+            ground += blockHeight;
+            blockHeight = 0.05;
+        }
+        return 0.0;
+    }
+
+    public static List<EntityPlayer> getPlayers() {
+        List<NetworkPlayerInfo> list = GuiPlayerTabOverlay.field_175252_a.sortedCopy(mc.thePlayer.sendQueue.getPlayerInfoMap());
+        List<EntityPlayer> players = new ArrayList<>();
+        for (NetworkPlayerInfo player : list) {
+            if (player != null) {
+                players.add(mc.theWorld.getPlayerEntityByName(player.getGameProfile().getName()));
+            }
+        }
+        return players;
     }
 }

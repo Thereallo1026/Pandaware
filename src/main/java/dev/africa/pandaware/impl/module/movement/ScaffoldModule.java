@@ -534,7 +534,7 @@ public class ScaffoldModule extends Module {
                         && (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) &&
                         !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) && PlayerUtils.isMathGround() &&
                         mc.thePlayer.ticksExisted % 2 == 0) {
-                    event.setY(event.getY() + 0.03);
+                    event.setY(event.getY() + 0.05);
                     event.setOnGround(false);
                 }
             }
@@ -549,7 +549,7 @@ public class ScaffoldModule extends Module {
                 switch (this.hypixelMode.getValue()) {
                     case NORMAL:
                         if (PlayerUtils.isMathGround() && !mc.gameSettings.keyBindSneak.isKeyDown()) {
-                            MovementUtils.strafe(event, 0.255 *
+                            MovementUtils.strafe(event, 0.2525 *
                                     (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                         } else if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                             mc.thePlayer.motionX *= 0.25;

@@ -33,7 +33,7 @@ public class SpeedModule extends Module {
 
     @Override
     public void onDisable() {
-        if (PlayerUtils.inLiquid() && this.getCurrentMode() instanceof HypixelSpeed) {
+        if (PlayerUtils.inLiquid() && (this.getCurrentMode() instanceof HypixelSpeed || this.getCurrentMode() instanceof NCPSpeed)) {
             Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Disabled speed to prevent flags", 1);
         }
         MovementUtils.slowdown();

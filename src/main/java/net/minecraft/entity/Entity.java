@@ -1881,10 +1881,10 @@ public abstract class Entity implements ICommandSender {
      * Get if the Entity is sprinting.
      */
     public boolean isSprinting() {
-        SprintModule sprint = Client.getInstance().getModuleManager().getByClass(SprintModule.class);
+        /*SprintModule sprint = Client.getInstance().getModuleManager().getByClass(SprintModule.class);
         if (sprint.getData().isEnabled() && sprint.getApplySpeed().getValue()) {
             return true;
-        }
+        }*/
         return this.getFlag(3);
     }
 

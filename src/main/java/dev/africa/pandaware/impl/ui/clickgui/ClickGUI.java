@@ -132,6 +132,15 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                         clickGUI.getCummyMode().setValue(ClickGUIModule.FemboyMode.ASTOLFO);
                     }
                     break;
+                case JOHNNYSINS:
+                    if (clickGUI.getAllowNSFW().getValue()) {
+                        RenderUtils.drawImage(new ResourceLocation("pandaware/icons/johnny.png"), femboyPosition.getX(),
+                                femboyPosition.getY(), 289, 212);
+                    } else {
+                        Printer.chat("Please allow NSFW pictures to proceed.");
+                        clickGUI.getCummyMode().setValue(ClickGUIModule.FemboyMode.ASTOLFO);
+                    }
+                    break;
                 case FELIX:
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/felix.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 220, 242);

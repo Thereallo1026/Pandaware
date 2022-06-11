@@ -47,6 +47,7 @@ public class ClickGUIModule extends Module {
         ASTOLFO3("Astolfo 3"),
         ASTOLFO4("Astolfo 4"),
         NSFWASTOLFO("Astolfo (18+)"),
+        JOHNNYSINS("Johnny Sins (18+)"),
         FELIX("Felix"),
         FELIX2("Felix 2"),
         HIDERI("Hideri"),

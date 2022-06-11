@@ -186,7 +186,6 @@ public class FileUtils implements MinecraftInstance {
                 "---- Minecraft Crash Report ----",
                 "https://www.youtube.com/watch?v=xvFZjo5PgG0",
                 "https://youtu.be/7zpxgyG7eGk?t=29",
-                "https://pastebin.com/dgULkjXS",
                 "当您因 Boosting、Exploiting、Blacklisted Modifications 或 Watchdog Ban 而被禁止时,您将执行 适用于整个服务器的正常禁令。之后, 你将被禁止玩被视为竞技游戏的游戏。"
                 };
 

@@ -1162,7 +1162,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         ChestStealerModule chestStealer = Client.getInstance().getModuleManager().getByClass(ChestStealerModule.class);
 
-        boolean focus = (chestStealer.getAim().getValue() || chestStealer.getSilent().getValue()) && chestStealer.getData().isEnabled();
+        boolean focus = chestStealer != null && (chestStealer.getAim().getValue() || chestStealer.getSilent().getValue()) && chestStealer.getData().isEnabled();
 
         if (mc.currentScreen instanceof GuiChest) {
             GuiChest chest = (GuiChest) mc.currentScreen;

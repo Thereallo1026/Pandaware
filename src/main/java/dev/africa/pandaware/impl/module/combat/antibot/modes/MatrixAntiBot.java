@@ -20,7 +20,7 @@ public class MatrixAntiBot extends ModuleMode<AntiBotModule> {
     @EventHandler
     EventCallback<PacketEvent> onPacket = e -> {
         if (e.getPacket() instanceof S0CPacketSpawnPlayer) {
-            S0CPacketSpawnPlayer packet = (S0CPacketSpawnPlayer) e.getPacket();
+            S0CPacketSpawnPlayer packet = e.getPacket();
 
             if (packet.func_148944_c().size() < 10) {
                 botIDs.add(packet.getEntityID());
@@ -33,12 +33,9 @@ public class MatrixAntiBot extends ModuleMode<AntiBotModule> {
     @EventHandler
     EventCallback<UpdateEvent> onUpdate = e -> {
         mc.theWorld.playerEntities.forEach(entityPlayer -> {
-            if (entityPlayer != mc.thePlayer
-                    && botIDs.contains(entityPlayer.getEntityId())) {
-                if (!Client.getInstance().getIgnoreManager().isIgnore(entityPlayer, false)) {
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Detected bot: §l" + entityPlayer.getName(), 3);
-                    Client.getInstance().getIgnoreManager().add(entityPlayer, false);
-                }
+            if (entityPlayer != mc.thePlayer && botIDs.contains(entityPlayer.getEntityId())) {
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Detected bot: §l" + entityPlayer.getName(), 3);
+                mc.theWorld.removeEntity(entityPlayer);
             }
         });
     };

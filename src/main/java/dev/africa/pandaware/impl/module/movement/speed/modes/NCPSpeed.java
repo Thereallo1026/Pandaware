@@ -17,13 +17,10 @@ public class NCPSpeed extends ModuleMode<SpeedModule> {
     private final NumberSetting acceleration = new NumberSetting("Acceleration", 10, 0, 2,0.1);
     private final NumberSetting deceleration = new NumberSetting("Deceleration", 10, 0, 2.4,0.1);
     private final BooleanSetting timer = new BooleanSetting("Timer", false);
-    private final NumberSetting timerSpeed = new NumberSetting("Timer Speed", 2, 1, 1.3, 0.1,
-            this.timer::getValue);
 
     private double moveSpeed;
     private boolean jumped;
     private double lastDistance;
-    private boolean isTimer;
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
@@ -34,25 +31,21 @@ public class NCPSpeed extends ModuleMode<SpeedModule> {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if (MovementUtils.isMoving() && !PlayerUtils.onLiquid() && !mc.thePlayer.isInLava() && !mc.thePlayer.isInWater()) {
-            if (mc.thePlayer.ticksExisted % 10 == 0 && timer.getValue()) {
-                if (isTimer) {
-                    mc.timer.timerSpeed = 1f;
-                    isTimer = false;
-                } else {
-                    mc.timer.timerSpeed = timerSpeed.getValue().floatValue();
-                    isTimer = true;
-                }
+            if (this.timer.getValue()) {
+                mc.timer.timerSpeed = 1.05f;
+            } else if (mc.timer.timerSpeed == 1.06f) {
+                mc.timer.timerSpeed = 1f;
             }
-
             if (mc.thePlayer.onGround) {
-                double motion = 0.4F;
+                double motion = 0.42f;
                 motion += PlayerUtils.getJumpBoostMotion();
 
                 event.y = mc.thePlayer.motionY = motion;
                 moveSpeed = MovementUtils.getBaseMoveSpeed() * this.acceleration.getValue().floatValue();
                 jumped = true;
             } else if (jumped) {
-                moveSpeed = lastDistance - 0.66F * (lastDistance - MovementUtils.getBaseMoveSpeed());
+                event.y = mc.thePlayer.motionY -= 0.005f;
+                moveSpeed = lastDistance - 0.66f * (lastDistance - MovementUtils.getBaseMoveSpeed());
                 jumped = false;
             } else {
                 moveSpeed = lastDistance - lastDistance / (this.deceleration.getValue().floatValue() * 100);
@@ -61,6 +54,10 @@ public class NCPSpeed extends ModuleMode<SpeedModule> {
                 event.y = mc.thePlayer.motionY = -0.01;
             }
             MovementUtils.strafe(event, moveSpeed = Math.max(moveSpeed, MovementUtils.getBaseMoveSpeed()));
+        } else if (!MovementUtils.isMoving()) {
+            mc.timer.timerSpeed = 1f;
+        } else if (PlayerUtils.inLiquid()) {
+            this.getParent().toggle(false);
         }
     };
 
@@ -70,8 +67,7 @@ public class NCPSpeed extends ModuleMode<SpeedModule> {
         this.registerSettings(
                 this.acceleration,
                 this.deceleration,
-                this.timer,
-                this.timerSpeed
+                this.timer
         );
     }
 
@@ -80,7 +76,6 @@ public class NCPSpeed extends ModuleMode<SpeedModule> {
         this.jumped = false;
         this.moveSpeed = 0;
         this.lastDistance = 0;
-        this.isTimer = false;
         mc.timer.timerSpeed = 1f;
     }
 }

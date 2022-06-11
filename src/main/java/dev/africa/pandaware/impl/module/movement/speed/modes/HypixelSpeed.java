@@ -84,12 +84,12 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                     this.movespeed -= 0.015f;
                 }
             }
-            if (!(mc.thePlayer.fallDistance > 0.6) && !mc.thePlayer.isCollidedHorizontally && PlayerUtils.isBlockUnder()
+            if (!(mc.thePlayer.fallDistance > 0.4) && !mc.thePlayer.isCollidedHorizontally && PlayerUtils.isBlockUnder()
                     && (this.mode.getValue() == Mode.LOWHOP || this.mode.getValue() == Mode.DYNAMIC &&
                             !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()))) {
                 event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
                 if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) this.movespeed -= 0.011f;
-                else this.movespeed -= 0.007f;
+                else this.movespeed -= 0.0035f;
             }
 
             MovementUtils.strafe(event, Math.max(this.movespeed, MovementUtils.getBaseMoveSpeed()));
@@ -121,5 +121,10 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
         DYNAMIC("Dynamic");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

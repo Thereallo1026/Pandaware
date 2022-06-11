@@ -163,7 +163,7 @@ public class MovementUtils implements MinecraftInstance {
         } else if (base == 0.56) {
             return -0.19f;
         } else if (base == 0.42) {
-            return -0.15f;
+            return -0.12;
         }
 
         return motion;
