@@ -24,5 +24,10 @@ public class Event {
         POST("Post");
 
         private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

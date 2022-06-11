@@ -9,7 +9,8 @@ import dev.africa.pandaware.impl.module.movement.jesus.*;
 public class JesusModule extends Module {
     public JesusModule() {
         this.registerModes(
-                new VanillaJesus("Vanilla", this)
+                new VanillaJesus("Vanilla", this),
+                new NCPJesus("NCP", this)
         );
     }
 }

@@ -68,12 +68,11 @@ public class ClientBrandChangerModule extends Module {
         PVPLOUNGE("PVP Lounge"),
         CHEATBREAKER("Cheatbreaker"),
         COLOR_CODES("Color Codes"),
-        FEATHER_FORGE("Feather (Forge - 1.8.9 & 1.12.2)"),
-        FEATHER_FABRIC("Feather (Fabric - 1.17.1 & 1.18.x)"),
+        FEATHER_FORGE("Feather (Forge)"),
+        FEATHER_FABRIC("Feather (Fabric)"),
         PANDAWARE("Pandaware");
 
         private final String label;
-
 
         @Override
         public String toString() {

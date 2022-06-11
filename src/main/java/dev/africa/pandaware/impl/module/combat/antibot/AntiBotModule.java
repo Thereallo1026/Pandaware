@@ -12,7 +12,8 @@ public class AntiBotModule extends Module {
                 new TicksAntiBot("Ticks Existed", this),
                 new HypixelAntiBot("Hypixel", this),
                 new FuncraftAntiBot("Funcraft", this),
-                new MatrixAntiBot("Matrix", this)
+                new MatrixAntiBot("Matrix", this),
+                new TabAntiBot("Tab", this)
         );
     }
 

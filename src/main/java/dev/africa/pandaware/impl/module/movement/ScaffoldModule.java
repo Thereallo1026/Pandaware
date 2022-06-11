@@ -563,8 +563,9 @@ public class ScaffoldModule extends Module {
                                 event.y = mc.thePlayer.motionY = 0.4f;
 
                                 MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() *
-                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.875 : 1.125) *
-                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.85 : 1));
+                                        (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 0.85 : 1.1) *
+                                        (mc.thePlayer.getDiagonalTicks() > 0 ? 0.85 : 1) * (this.useSpeed.getValue() ?
+                                        this.speedModifier.getValue().floatValue() : 1));
                             } else if (!mc.thePlayer.onGround && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())
                                     && MovementUtils.isMoving()) {
                                 MovementUtils.strafe(event, MovementUtils.getSpeed());
