@@ -616,11 +616,7 @@ public class ItemRenderer {
             float f7 = 0.0F - f / 2.0F;
             float f8 = f7 + f;
             float f9 = -0.5F;
-            if (Client.getInstance().isKillSwitch()) {
-                GlStateManager.translate((float) (-(i * 2 - 1)) * 0.24F, -0.3F, 0.0F);
-            } else {
-                GlStateManager.translate((float) (-(i * 2 - 1)) * 0.24F, 5F, 0.0F);
-            }
+            GlStateManager.translate((float) (-(i * 2 - 1)) * 0.24F, 5F, 0.0F);
             GlStateManager.rotate((float) (i * 2 - 1) * 10.0F, 0.0F, 1.0F, 0.0F);
             worldrenderer.begin(7, DefaultVertexFormats.field_181707_g);
             worldrenderer.setSprite(textureatlassprite);

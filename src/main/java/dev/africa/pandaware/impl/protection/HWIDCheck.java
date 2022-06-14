@@ -15,8 +15,8 @@ public class HWIDCheck {
     public HWIDCheck() {
         this.secret = System.getProperty("98aef67c-7cfe-4cb2-afc4-17fe02efdf37");
 
-        //TODO: UNCOMMIT ON RELEASE
-        //Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::check, 0L, 10L, TimeUnit.SECONDS);
+        //TODO: UNCOMMENT ON RELEASE
+        //Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::check, 0L, 10L, TimeUnit.MINUTES);
     }
 
     void check() {

@@ -3,6 +3,7 @@ package dev.africa.pandaware;
 import com.github.javafaker.Faker;
 import dev.africa.pandaware.api.event.manager.EventDispatcher;
 import dev.africa.pandaware.api.interfaces.Initializable;
+import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.manifest.Manifest;
 import dev.africa.pandaware.impl.event.EventListener;
 import dev.africa.pandaware.impl.font.Fonts;
@@ -43,15 +44,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static dev.africa.pandaware.api.interfaces.MinecraftInstance.mc;
-
 @Getter
-public class Client implements Initializable {
+public class Client implements Initializable, MinecraftInstance {
     @Getter
     private static final Client instance = new Client();
 
@@ -101,7 +99,6 @@ public class Client implements Initializable {
     @Getter
     private boolean fdpClient;
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
 
     private final OldServerPinger oldServerPinger = new OldServerPinger();
@@ -133,7 +130,7 @@ public class Client implements Initializable {
             }
         }).start();
 
-        scheduledExecutorService.scheduleAtFixedRate(pingRunnable, 0, 5, TimeUnit.SECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(pingRunnable, 0, 3, TimeUnit.SECONDS);
 
         this.checkFDPClient();
         this.initTitle();
@@ -215,7 +212,7 @@ public class Client implements Initializable {
         }
 
         for (String file : files) {
-            if (file.toLowerCase().contains("fdpclient")) {
+            if (file.toLowerCase().contains("fdp")) {
                 fdpClient = true;
                 break;
             }
@@ -263,14 +260,17 @@ public class Client implements Initializable {
     void checkFDPClient() {
         String userHome = System.getProperty("user.home", ".");
         File fdp;
+        File fdp2 = null;
         switch (OsUtils.getOsType()) {
             case LINUX:
                 fdp = new File(userHome, ".minecraft/mods");
+                fdp2 = new File(userHome, ".feather/user-mods/1.8.9");
                 break;
             case WINDOWS:
                 String applicationData = System.getenv("APPDATA");
                 String folder = applicationData != null ? applicationData : userHome;
                 fdp = new File(folder, ".minecraft/mods");
+                fdp2 = new File(folder, ".minecraft/feather-mods");
                 break;
             case MAC:
                 fdp = new File(userHome, "Library/Application Support/minecraft/mods");
@@ -281,6 +281,9 @@ public class Client implements Initializable {
         }
         if (fdp.exists()) {
             listFilesForFolder(fdp);
+            /*if (fdp2 != null) {
+                listFilesForFolder(fdp2);
+            }*/
         }
     }
 
@@ -288,7 +291,7 @@ public class Client implements Initializable {
         System.out.println("Starting Discord RP...");
         discordRP.start();
     }
-    //TODO: COMMIT ON RELEASE
+    //TODO: COMMENT ON RELEASE
    static {
        System.setProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6", "a");
        System.setProperty("a755e611-6014-4ffa-8ab8-7204b31a840e", "b");

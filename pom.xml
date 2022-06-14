@@ -30,6 +30,11 @@
             <id>Sparky</id>
             <url>https://nexus.sparky.ac/repository/Sparky/</url>
         </repository>
+
+        <repository>
+            <id>ow2</id>
+            <url>https://repository.ow2.org/nexus</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -197,9 +202,9 @@
         <dependency>
             <groupId>com.viaversion</groupId>
             <artifactId>viaversion</artifactId>
-            <version>4.1.2</version>
+            <version>4.1.0</version>
             <scope>system</scope>
-            <systemPath>${basedir}/offline/ViaVersion-4.1.2-SNAPSHOT-fix.jar</systemPath>
+            <systemPath>${basedir}/offline/ViaVersion-4.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.viaversion</groupId>
@@ -267,6 +272,11 @@
             <groupId>me.rhys</groupId>
             <artifactId>PandawarePacketAPI</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.jonas.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>3.1</version>
         </dependency>
         <!-- END Pandaware libraries-->
     </dependencies>

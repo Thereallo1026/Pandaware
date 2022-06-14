@@ -22,8 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-import java.util.regex.Pattern;
-
 @Getter
 @ModuleInfo(name = "Chest Stealer", category = Category.PLAYER)
 public class ChestStealerModule extends Module {

@@ -10,7 +10,7 @@ import me.rhys.packet.api.Direction;
 import me.rhys.packet.api.Packet;
 import me.rhys.packet.impl.PacketClientAuthenticate;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 

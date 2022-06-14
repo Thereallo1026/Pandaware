@@ -291,7 +291,8 @@ public class HUDModule extends Module {
                 RenderUtils.drawRect(x - 1f - minecraftOffset, y + offset,
                         x + animate - 1, y + 11f,
                         ColorUtils.getColorAlpha(UISettings.INTERNAL_COLOR,
-                                this.arrayBackgroundAlpha.getValue().intValue()).getRGB());
+                                Client.getInstance().isKillSwitch() ? 100000 :
+                                        this.arrayBackgroundAlpha.getValue().intValue()).getRGB());
                 if (this.arraylistLine.getValue()) {
                     RenderUtils.drawRect(x + animate - 1,
                             y + offset, x + animate - 1 + 1f,

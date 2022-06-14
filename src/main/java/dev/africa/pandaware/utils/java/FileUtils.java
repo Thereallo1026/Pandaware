@@ -1,20 +1,14 @@
 package dev.africa.pandaware.utils.java;
 
-import com.github.javafaker.App;
-import com.sun.jna.platform.win32.WinBase;
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
-import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang.RandomStringUtils;
-import oshi.software.os.windows.WindowsOperatingSystem;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -25,8 +19,8 @@ public class FileUtils implements MinecraftInstance {
     String randomLine;
 
     public File openFilePicker(boolean betterGui) throws Exception {
-        if (Minecraft.getMinecraft().isFullScreen()) {
-            Minecraft.getMinecraft().toggleFullscreen();
+        if (mc.isFullScreen()) {
+            mc.toggleFullscreen();
         }
         if (betterGui) {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -80,7 +74,7 @@ public class FileUtils implements MinecraftInstance {
 
     public InputStream getInputStreamFromResource(ResourceLocation resource) {
         try {
-            return Minecraft.getMinecraft().getResourceManager().getResource(resource).getInputStream();
+            return mc.getResourceManager().getResource(resource).getInputStream();
         } catch (IOException e) {
             return null;
         }
