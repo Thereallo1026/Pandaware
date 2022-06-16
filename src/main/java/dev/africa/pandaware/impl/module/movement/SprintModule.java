@@ -24,12 +24,11 @@ public class SprintModule extends Module {
     private final BooleanSetting applySpeed = new BooleanSetting("Apply Speed", false);
     private final BooleanSetting cancel = new BooleanSetting("Cancel Sprint", false);
 
-    private boolean canSprint = mc.thePlayer != null && PlayerUtils.isMathGround() &&
-            !mc.thePlayer.isPotionActive(Potion.blindness) && mc.thePlayer.getFoodStats().getFoodLevel() > 6 &&
-            MovementUtils.isMoving() && !mc.thePlayer.isCollidedHorizontally;
-
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
+        boolean canSprint = mc.thePlayer != null && PlayerUtils.isMathGround() &&
+                !mc.thePlayer.isPotionActive(Potion.blindness) && mc.thePlayer.getFoodStats().getFoodLevel() > 6 &&
+                MovementUtils.isMoving() && !mc.thePlayer.isCollidedHorizontally;
         if (event.getEventState() == Event.EventState.PRE) {
             if (Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
             if (omniSprint.getValue() && canSprint) {
@@ -42,6 +41,9 @@ public class SprintModule extends Module {
 
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
+        boolean canSprint = mc.thePlayer != null && PlayerUtils.isMathGround() &&
+                !mc.thePlayer.isPotionActive(Potion.blindness) && mc.thePlayer.getFoodStats().getFoodLevel() > 6 &&
+                MovementUtils.isMoving() && !mc.thePlayer.isCollidedHorizontally;
         if (this.applySpeed.getValue() && canSprint && mc.thePlayer != null) {
             MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed());
         }

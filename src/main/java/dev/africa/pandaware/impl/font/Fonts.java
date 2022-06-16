@@ -90,12 +90,10 @@ public class Fonts implements Initializable, MinecraftInstance {
         boolean classExists = true;
 
         /*try {
-            Class.forName("dev.africa.launcher.bootstrap.EntryPoint");
-            Class.forName("dev.africa.launcher.interfaces.Initializable");
-            Class.forName("dev.africa.launcher.utils.http.proprieties.header.HttpHeader");
+            Class.forName("me.Utility");
         } catch (ClassNotFoundException e) {
             classExists = false;
-        }*/ //uncum on release
+        }*/ //TODO: uncum on release
 
         if (System.getProperty("a755e611-6014-4ffa-8ab8-7204b31a840e") == null || !classExists) {
             return null;

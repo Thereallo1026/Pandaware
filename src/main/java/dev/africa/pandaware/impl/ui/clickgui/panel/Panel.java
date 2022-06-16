@@ -106,7 +106,7 @@ public class Panel implements GUIRenderer, MinecraftInstance {
                 }
             }
 
-            AtomicInteger atomicInteger = new AtomicInteger((int) ((this.position.getY() + 30) - this.scrolling));
+            AtomicInteger atomicInteger = new AtomicInteger((int) ((this.position.getY() + 28) - this.scrolling));
             this.moduleElements.forEach(moduleElement -> {
                 moduleElement.update(new Vec2i(this.position.getX() + 4, atomicInteger.getAndAdd(20)));
 

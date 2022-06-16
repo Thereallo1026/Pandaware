@@ -123,6 +123,10 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                     RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo4.png"), femboyPosition.getX(),
                             femboyPosition.getY(), 210, 297);
                     break;
+                case ASTOLFO5:
+                    RenderUtils.drawImage(new ResourceLocation("pandaware/icons/astolfo5.png"), femboyPosition.getX(),
+                            femboyPosition.getY(), 280, 223);
+                    break;
                 case NSFWASTOLFO:
                     if (clickGUI.getAllowNSFW().getValue()) {
                         RenderUtils.drawImage(new ResourceLocation("pandaware/icons/nsfwastolfo.png"), femboyPosition.getX(),

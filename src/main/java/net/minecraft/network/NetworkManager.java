@@ -12,6 +12,7 @@ import dev.africa.pandaware.switcher.handler.CommonTransformer;
 import dev.africa.pandaware.switcher.handler.MCPDecodeHandler;
 import dev.africa.pandaware.switcher.handler.MCPEncodeHandler;
 import dev.africa.pandaware.switcher.utils.NettyUtil;
+import dev.africa.pandaware.utils.client.PatcherUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
@@ -125,6 +126,8 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
     }
 
     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) throws Exception {
+        if (PatcherUtils.isCrashPacket(p_channelRead0_2_)) return;
+
         var packetEvent = new PacketEvent(p_channelRead0_2_, PacketEvent.State.RECEIVE);
         Client.getInstance().getEventDispatcher().dispatch(packetEvent);
 

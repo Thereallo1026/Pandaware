@@ -8,12 +8,9 @@ import me.rhys.packet.api.Packet;
 import me.rhys.packet.api.Packets;
 import me.rhys.packet.impl.PacketIRCMessage;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.gen.structure.StructureOceanMonumentPieces;
 
 public class PacketHandle {
-
     public void handlePacket(Packet packet, long now) {
-
         switch (packet.getPacketName()) {
             case Packets.SERVER_PING: {
                 Client.getInstance().getSocketHandler().setLastKeepAlive(now);
@@ -22,7 +19,7 @@ public class PacketHandle {
 
             case Packets.IRC_MESSAGE: {
                 HUDModule hudModule = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
-                if (!hudModule.getIrc().getValue() && hudModule.getData().isEnabled()) return;
+                if (!hudModule.getIrc().getValue() || !hudModule.getData().isEnabled()) return;
 
                 PacketIRCMessage wrapped = (PacketIRCMessage) packet;
 

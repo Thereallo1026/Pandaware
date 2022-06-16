@@ -3,6 +3,7 @@ package dev.africa.pandaware.impl.module.movement.flight.modes;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
+import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
@@ -19,15 +20,15 @@ public class PacketFlight extends ModuleMode<FlightModule> {
     private final BooleanSetting freeze = new BooleanSetting("Freeze", true);
     private final BooleanSetting freezeY = new BooleanSetting("Freeze Y", false);
 
-    private final NumberSetting xMultiply = new NumberSetting("X multiply", 500, -500, 100);
-    private final NumberSetting yMultiply = new NumberSetting("Y multiply", 500, -500, 100);
-    private final NumberSetting zMultiply = new NumberSetting("Z multiply", 500, -500, 100);
+    private final NumberSetting xMultiply = new NumberSetting("X multiply", 100, -100, 0, 2);
+    private final NumberSetting yMultiply = new NumberSetting("Y multiply", 100, -100, 0, 2);
+    private final NumberSetting zMultiply = new NumberSetting("Z multiply", 100, -100, 0, 2);
     private final NumberSetting backSpeed = new NumberSetting("Back speed", 10, 0, 0);
-    private final NumberSetting yMotion = new NumberSetting("Y motion", 4, -4, 0);
+    private final NumberSetting yMotion = new NumberSetting("Y motion", 4, -4, 0, 0.1);
     private final NumberSetting speed = new NumberSetting("Speed", 10, 0.1, 1, 0.1);
     private final NumberSetting timer = new NumberSetting("Timer", 10, 0.1, 1, 0.1);
 
-    private final NumberSetting teleportTicks = new NumberSetting("Teleport ticks", 50, 1, 2);
+    private final NumberSetting teleportTicks = new NumberSetting("Teleport ticks", 50, 1, 2, 1);
 
     public PacketFlight(String name, FlightModule parent) {
 
@@ -53,13 +54,17 @@ public class PacketFlight extends ModuleMode<FlightModule> {
     @Override
     public void onEnable() {
         this.laggedBack = false;
-        mc.timer.timerSpeed = this.timer.getValue().floatValue();
     }
 
     @Override
     public void onDisable() {
         mc.timer.timerSpeed = 1f;
     }
+
+    @EventHandler
+    EventCallback<TickEvent> onTick = event -> {
+        mc.timer.timerSpeed = this.timer.getValue().floatValue();
+    };
 
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {

@@ -33,6 +33,7 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.Getter;
 import lombok.Setter;
+import me.rhys.packet.impl.PacketServerPing;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.network.OldServerPinger;
@@ -56,7 +57,7 @@ public class Client implements Initializable, MinecraftInstance {
     public String randomTitleText = FileUtils.getRandomTitleLine();
 
     private final Manifest manifest = new Manifest(
-            "Pandaware", "0.4",
+            "Pandaware", "0.4.1",
             "cummy", "0069", false
     );
 
@@ -99,6 +100,8 @@ public class Client implements Initializable, MinecraftInstance {
     @Getter
     private boolean fdpClient;
 
+    private int id = 1;
+
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
 
     private final OldServerPinger oldServerPinger = new OldServerPinger();
@@ -113,9 +116,18 @@ public class Client implements Initializable, MinecraftInstance {
         }
     };
 
+    private final Runnable pingIRC = () -> {
+        try {
+            this.getSocketHandler().queuePacket(new PacketServerPing(this.id));
+            this.id++;
+        } catch (Throwable ignored) {
+        }
+    };
+
+
     @Override
     public void init() {
-        if (System.getProperty("98aef67c-7cfe-4cb2-afc4-17fe02efdf37") == null) {
+        if (System.getProperty("3a91f2f5-d4a5-4cf1-9288-64ab5801580b") == null) {
             return;
         }
         new Thread(() -> {
@@ -131,6 +143,7 @@ public class Client implements Initializable, MinecraftInstance {
         }).start();
 
         scheduledExecutorService.scheduleAtFixedRate(pingRunnable, 0, 3, TimeUnit.SECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(pingIRC, 0, 10, TimeUnit.SECONDS);
 
         this.checkFDPClient();
         this.initTitle();
@@ -161,7 +174,7 @@ public class Client implements Initializable, MinecraftInstance {
                 System.exit(-2);
             }
 
-            if (result2 == null || !result2.equals(Client.getInstance().getManifest().getClientVersion())) {
+            if (result2 == null || !(result2.equalsIgnoreCase(Client.getInstance().getManifest().getClientVersion()))) {
                 isKillSwitch = true;
             }
         }).start();
@@ -260,7 +273,7 @@ public class Client implements Initializable, MinecraftInstance {
     void checkFDPClient() {
         String userHome = System.getProperty("user.home", ".");
         File fdp;
-        File fdp2 = null;
+        File fdp2;
         switch (OsUtils.getOsType()) {
             case LINUX:
                 fdp = new File(userHome, ".minecraft/mods");
@@ -274,16 +287,18 @@ public class Client implements Initializable, MinecraftInstance {
                 break;
             case MAC:
                 fdp = new File(userHome, "Library/Application Support/minecraft/mods");
+                fdp2 = new File(userHome, "Library/Application Support/minecraft/mods");
                 break;
             default:
                 fdp = new File(userHome, "minecraft/mods");
+                fdp2 = new File(userHome, "minecraft/mods");
                 break;
         }
         if (fdp.exists()) {
             listFilesForFolder(fdp);
-            /*if (fdp2 != null) {
-                listFilesForFolder(fdp2);
-            }*/
+        }
+        if (fdp2.exists()) {
+            listFilesForFolder(fdp2);
         }
     }
 
@@ -295,7 +310,7 @@ public class Client implements Initializable, MinecraftInstance {
    static {
        System.setProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6", "a");
        System.setProperty("a755e611-6014-4ffa-8ab8-7204b31a840e", "b");
-       System.setProperty("98aef67c-7cfe-4cb2-afc4-17fe02efdf37", "c");
+       System.setProperty("3a91f2f5-d4a5-4cf1-9288-64ab5801580b", "c");
        System.setProperty("24c6ba8a-4e4f-4bad-906a-8eff47f36e15", "d");
        System.setProperty("fcb4a890-3d2f-4c50-895a-845b4dde1a12", "e");
    }

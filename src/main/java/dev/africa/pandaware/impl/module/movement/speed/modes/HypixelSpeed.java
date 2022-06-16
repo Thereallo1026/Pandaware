@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.module.movement.speed.modes;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
@@ -9,6 +10,7 @@ import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.module.movement.TargetStrafeModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
 import dev.africa.pandaware.utils.client.ServerUtils;
@@ -16,6 +18,7 @@ import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import lombok.AllArgsConstructor;
+import net.minecraft.network.play.client.CPacketConfirmTeleport;
 import net.minecraft.potion.Potion;
 import org.lwjgl.input.Keyboard;
 
@@ -47,6 +50,13 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
     @EventHandler
     EventCallback<TickEvent> onTick = event -> {
         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !(ServerUtils.compromised)) {
+            HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+            if (hud.getBalanceValue() < -250) {
+                mc.timer.timerSpeed = this.timer.getValue().floatValue();
+            } else {
+                mc.timer.timerSpeed = 1f;
+            }
+        } else {
             mc.timer.timerSpeed = this.timer.getValue().floatValue();
         }
     };
@@ -64,7 +74,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                         !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
                     motion = 0.4F;
                 } else {
-                    motion = 0.41f;
+                    motion = 0.42f;
                 }
                 motion += PlayerUtils.getJumpBoostMotion();
 

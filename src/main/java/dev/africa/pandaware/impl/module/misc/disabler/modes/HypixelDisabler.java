@@ -8,6 +8,7 @@ import dev.africa.pandaware.impl.event.game.ServerJoinEvent;
 import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
@@ -49,17 +50,7 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
                 this.packets = 0;
             }
 
-            /*
-            HYPIXEL TIMER DISABLER GIVEN BY ALAN32. (Up to 1.3 Timer).
-             */
-
-            if (event.getPacket() instanceof C03PacketPlayer && this.timer.getValue()) {
-                var c03 = (C03PacketPlayer) event.getPacket();
-                if (!(c03.isMoving()) && !(mc.thePlayer.isSwingInProgress || mc.thePlayer.isUsingItem())) {
-                    event.cancel();
-                }
-            }
-
+            HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
             if (this.packets <= 97 && (event.getPacket() instanceof C0FPacketConfirmTransaction ||
                     event.getPacket() instanceof C00PacketKeepAlive ||
                     event.getPacket() instanceof C03PacketPlayer ||
@@ -74,14 +65,23 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
                 event.cancel();
 
                 if (event.getPacket() instanceof C03PacketPlayer) {
+                    hud.setBalanceValue(hud.getBalanceValue() - 50);
                     if (this.packets % 8 == 0) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C04PacketPlayerPosition(
                                 mc.thePlayer.posX, mc.thePlayer.posY - (1 + MovementUtils.MODULO_GROUND), mc.thePlayer.posZ,
                                 false
                         ));
+                        hud.setBalanceValue(hud.getBalanceValue() + 50);
                     }
 
                     this.packets++;
+                }
+            }
+            if (event.getPacket() instanceof C03PacketPlayer && this.timer.getValue()) {
+                var c03 = (C03PacketPlayer) event.getPacket();
+                if (!(c03.isMoving()) && (!mc.thePlayer.isSwingInProgress || !mc.thePlayer.isUsingItem()) && !c03.getRotating()) {
+                    event.cancel();
+                    hud.setBalanceValue(hud.getBalanceValue() - 50);
                 }
             }
         } else {

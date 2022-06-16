@@ -40,7 +40,7 @@ public class IRCCommand extends Command {
             if (message.length() <= 0 || message.length() > 128) {
                 Printer.chat(EnumChatFormatting.RED + "Message is too long or short.");
             } else {
-                if ((now - this.lastMessage) > TimeUnit.SECONDS.toMillis(2)) {
+                if ((now - this.lastMessage) > TimeUnit.SECONDS.toSeconds(2)) {
                     Client.getInstance().getSocketHandler().queuePacket(
                             new PacketIRCMessage(Direction.CLIENT, message));
 

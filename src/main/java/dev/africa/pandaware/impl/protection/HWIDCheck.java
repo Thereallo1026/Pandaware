@@ -13,7 +13,7 @@ public class HWIDCheck {
     private final String secret;
 
     public HWIDCheck() {
-        this.secret = System.getProperty("98aef67c-7cfe-4cb2-afc4-17fe02efdf37");
+        this.secret = System.getProperty("3a91f2f5-d4a5-4cf1-9288-64ab5801580b");
 
         //TODO: UNCOMMENT ON RELEASE
         //Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::check, 0L, 10L, TimeUnit.MINUTES);
@@ -28,7 +28,7 @@ public class HWIDCheck {
 
             String headerKey = EncryptionUtil.encrypt(
                     this.secret,
-                    "sorrymen{hava_way_way_way}"
+                    "id328d9823hd{d0923j09dj23d239jd2309fj}"
             );
 
             HttpResponse resp = new RequestBuilder()

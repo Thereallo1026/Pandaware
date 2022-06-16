@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.game.TickEvent;
+import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
@@ -24,10 +25,14 @@ import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.network.play.client.C03PacketPlayer;
+import net.minecraft.network.play.server.S01PacketJoinGame;
+import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -99,6 +104,11 @@ public class HUDModule extends Module {
     private final TimeHelper timer = new TimeHelper();
     private ResourceLocation animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(1).gif");
     private ResourceLocation car = new ResourceLocation("pandaware/icons/capes/car/car1.png");
+
+    @Getter
+    @Setter
+    private long balanceValue = -50;
+    private long lastPacket = -1;
 
     public HUDModule() {
         this.toggle(true);
@@ -206,6 +216,35 @@ public class HUDModule extends Module {
             }
 
             this.lastFullscreen = fullScreenNow;
+        }
+    };
+
+    @EventHandler
+    EventCallback<PacketEvent> onPacket = event -> {
+        if (event.getPacket() instanceof S08PacketPlayerPosLook || event.getPacket() instanceof S01PacketJoinGame) {
+            this.balanceValue -= 50;
+            this.lastPacket = -1;
+        }
+        if (event.getPacket() instanceof S01PacketJoinGame) {
+            this.balanceValue = -50;
+        }
+        if (event.getPacket() instanceof C03PacketPlayer) {
+            long now = System.currentTimeMillis();
+
+            long last = this.lastPacket;
+            long timeDelta = (now - last);
+            long packetDelta = (50 - timeDelta);
+
+            if (last > -1) {
+
+                if (mc.timer.timerSpeed < 1f) {
+                    packetDelta -= 70;
+                }
+
+                this.balanceValue += packetDelta * 50;
+            }
+
+            this.lastPacket = now;
         }
     };
 
@@ -325,11 +364,13 @@ public class HUDModule extends Module {
         double y = event.getResolution().getScaledHeight() - 11;
         String text = "§7BPS: §f" + MathUtils.roundToDecimal(MovementUtils.getBps(), 2);
         String latencyText;
-        if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) && mc.getCurrentServerData().serverIP.contains("hypixel")) {
+        if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) &&
+                mc.getCurrentServerData().serverIP.contains("hypixel")) {
             latencyText = "§7Ping: §f" + mc.getCurrentServerData().pingToServer;
         } else {
             latencyText = "§7Ping: §f" + PlayerUtils.getPing(mc.thePlayer);
         }
+        String balance = "§7Balance: §f" + this.balanceValue;
 
         double informationX;
         if (this.customFont.getValue()) {
@@ -343,6 +384,11 @@ public class HUDModule extends Module {
             Fonts.getInstance().getProductSansMedium()
                     .drawStringWithShadow(latencyText, event.getResolution().getScaledWidth() - 1 -
                             Fonts.getInstance().getProductSansMedium().getStringWidth(latencyText), y - 12, -1);
+            if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) &&
+                    mc.getCurrentServerData().serverIP.contains("hypixel")) {
+                Fonts.getInstance().getProductSansMedium().drawStringWithShadow(balance, event.getResolution().getScaledWidth() - 1 -
+                        Fonts.getInstance().getProductSansMedium().getStringWidth(balance), y - 24, -1);
+            }
             GlStateManager.popMatrix();
 
             text = String.format("FPS: §f%d", Minecraft.getDebugFPS());

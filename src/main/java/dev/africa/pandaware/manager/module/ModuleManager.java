@@ -100,6 +100,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new FastEatModule(),
                     new PluginFinderModule(),
                     new PhaseModule(),
+                    //new EntityDesyncModule(),
 
                     // Misc
                     new DisablerModule(),

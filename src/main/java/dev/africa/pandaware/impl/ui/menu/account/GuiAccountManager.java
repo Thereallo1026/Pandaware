@@ -381,7 +381,7 @@ public class GuiAccountManager extends GuiScreen {
                 this.mc.setSession(new Session(username, "", "", "mojang"));
 
                 this.loggedInAccount = new Account("", mc.getSession().getUsername(), "", "", "", true, true, false);
-                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + mc.getSession().getUsername() + " - offline)", 5);
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Logged in! (" + (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled() ? "Legit Player" : mc.getSession().getUsername()) + " - offline)", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.orb"), 1.0F));
                 return;
             }

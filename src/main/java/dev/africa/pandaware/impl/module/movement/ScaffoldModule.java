@@ -8,10 +8,12 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.event.TaskedEventListener;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
+import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.event.player.*;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
@@ -34,6 +36,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.var;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
@@ -85,7 +88,6 @@ public class ScaffoldModule extends Module {
     private Vec2f currentRotation;
     private final TimeHelper towerTimer = new TimeHelper();
     private final TimeHelper vulcanTimer = new TimeHelper();
-    private boolean jumped;
     private double lastDistance;
     private boolean sloted;
     private int c09slot;
@@ -139,7 +141,6 @@ public class ScaffoldModule extends Module {
         this.sloted = false;
         this.c09slot = mc.thePlayer.inventory.currentItem;
         this.lastSlot = mc.thePlayer.inventory.currentItem;
-        mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
 
         if (this.scaffoldMode.getValue() == ScaffoldMode.VULCAN) {
             if (!mc.thePlayer.onGround) {
@@ -757,6 +758,22 @@ public class ScaffoldModule extends Module {
     @EventHandler
     EventCallback<SafeWalkEvent> onSafeWalk = event -> {
         if (safeWalk.getValue() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) event.cancel();
+    };
+
+    @EventHandler
+    EventCallback<TickEvent> onTick = event -> {
+        if (this.timerSpeed.getValue().floatValue() != 1f){
+            mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
+        }
+        HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+        if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) &&
+                mc.getCurrentServerData().serverIP.contains("hypixel")) {
+            if (this.scaffoldMode.getValue() == ScaffoldMode.HYPIXEL) {
+                if (hud.getBalanceValue() < -250) {
+                    mc.timer.timerSpeed = 1f;
+                }
+            }
+        }
     };
 
     private void place(int slot) {

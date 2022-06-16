@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.socket;
 
+import dev.africa.packetapi.packet.impl.IRCPacket;
 import dev.africa.pandaware.impl.socket.util.SerialUtil;
 import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.client.Printer;
@@ -70,7 +71,6 @@ public class SocketHandler {
 
                         queuePacket(new PacketClientAuthenticate(Base64.getEncoder().encodeToString(
                                 (ircName + ":" + hwid).getBytes(StandardCharsets.UTF_8)), Direction.CLIENT));
-
                     }
 
                     @Override
@@ -112,15 +112,13 @@ public class SocketHandler {
         });
 
         this.executorService.scheduleAtFixedRate(() -> {
-
-            if (!this.connected) return;
+            if (this.connected) return;
 
             long delta = (System.currentTimeMillis() - this.lastKeepAlive);
 
             if (TimeUnit.MILLISECONDS.toSeconds(delta) > 30L) {
                 this.reconnect();
             }
-
         }, 30L, 30L, TimeUnit.SECONDS);
 
         this.executorService.scheduleAtFixedRate(() -> {
