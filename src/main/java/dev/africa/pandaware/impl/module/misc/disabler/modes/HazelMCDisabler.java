@@ -75,11 +75,9 @@ public class HazelMCDisabler extends ModuleMode<DisablerModule> {
         }
 
         if (event.getPacket() instanceof C03PacketPlayer) {
-            if(event.getState() != PacketEvent.State.SEND) return;
-
             C03PacketPlayer packet = event.getPacket();
 
-            if (mc.thePlayer.ticksExisted % 50 == 0) {
+            if (mc.thePlayer.ticksExisted % 20 == 0) {
                 this.expectedTeleport = true;
                 if (!funny) {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Did funny", 1);

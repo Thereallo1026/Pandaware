@@ -69,11 +69,11 @@ public class CollideFlight extends ModuleMode<FlightModule> {
                                 ? ((mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * 0.2) : 0);
 
                         mc.gameSettings.keyBindJump.pressed = false;
-                        double baseSpeed = 0.2873D;
+                        double baseSpeed = MovementUtils.getBaseMoveSpeed() * 0.9;
 
                         if (mc.thePlayer.onGround) {
                             this.stage++;
-                            double sped = 2.2 + speedAmplifier;
+                            double sped = 2 + speedAmplifier;
                             if (this.stage < 2) {
                                 sped -= 0.9;
                             }

@@ -7,6 +7,7 @@ import dev.africa.pandaware.impl.ui.menu.button.CustomButton;
 import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
+import javazoom.jl.player.Player;
 import net.minecraft.client.gui.*;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,6 +17,8 @@ import java.io.IOException;
 public class GuiNewMainMenu extends GuiScreen {
     private final String hwid = HWIDUtils.getHWID();
     private int lol;
+
+    private Player player;
 
     // TODO: Needs Improvement && Re-Add back Languages button.
 
@@ -50,6 +53,43 @@ public class GuiNewMainMenu extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground(); // Incase of failiure to find wallpaper
+
+        if (Client.getInstance().isFirstLoad()) {
+            if (hwid.equals("KS26ncdDLz9Qvxe+Q43YWWXNp8dq+4wx2St+37E4gEYDyULr4Tnbv/nTf32eEkg4VMrIYJPxtPeXYKhAW0OX8Q==")) {
+                System.out.println("SMP Core! Brought to you by: CallumUncensored\n" +
+                        "⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⢉⢉⠉⠉⠻⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣿⣿⣿⣿⠟⠠⡰⣕⣗⣷⣧⣀⣅⠘⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣿⣿⣿⠃⣠⣳⣟⣿⣿⣷⣿⡿⣜⠄⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣿⡿⠁⠄⣳⢷⣿⣿⣿⣿⡿⣝⠖⠄⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣿⠃⠄⢢⡹⣿⢷⣯⢿⢷⡫⣗⠍⢰⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⡏⢀⢄⠤⣁⠋⠿⣗⣟⡯⡏⢎⠁⢸⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⠄⢔⢕⣯⣿⣿⡲⡤⡄⡤⠄⡀⢠⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⠇⠠⡳⣯⣿⣿⣾⢵⣫⢎⢎⠆⢀⣿⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⠄⢨⣫⣿⣿⡿⣿⣻⢎⡗⡕⡅⢸⣿⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⠄⢜⢾⣾⣿⣿⣟⣗⢯⡪⡳⡀⢸⣿⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⠄⢸⢽⣿⣷⣿⣻⡮⡧⡳⡱⡁⢸⣿⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⡄⢨⣻⣽⣿⣟⣿⣞⣗⡽⡸⡐⢸⣿⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⡇⢀⢗⣿⣿⣿⣿⡿⣞⡵⡣⣊⢸⣿⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⡀⡣⣗⣿⣿⣿⣿⣯⡯⡺⣼⠎⣿⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣧⠐⡵⣻⣟⣯⣿⣷⣟⣝⢞⡿⢹⣿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣿⡆⢘⡺⣽⢿⣻⣿⣗⡷⣹⢩⢃⢿⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣿⣷⠄⠪⣯⣟⣿⢯⣿⣻⣜⢎⢆⠜⣿⣿⣿⣿⣿\n" +
+                        "⣿⣿⣿⣿⣿⡆⠄⢣⣻⣽⣿⣿⣟⣾⡮⡺⡸⠸⣿⣿⣿⣿\n" +
+                        "⣿⣿⡿⠛⠉⠁⠄⢕⡳⣽⡾⣿⢽⣯⡿⣮⢚⣅⠹⣿⣿⣿\n" +
+                        "⡿⠋⠄⠄⠄⠄⢀⠒⠝⣞⢿⡿⣿⣽⢿⡽⣧⣳⡅⠌⠻⣿\n" +
+                        "⠁⠄⠄⠄⠄⠄⠐⡐⠱⡱⣻⡻⣝⣮⣟⣿⣻⣟⣻⡺⣊ \n" +
+                        "L");
+            }
+            new Thread(() -> {
+                try {
+                    Client.getInstance().setFirstLoad(false);
+                    player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/startup.mp3"));
+                    player.play();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
 
         switch (hwid) {
             case "otKNwfY+db+hMyGGopK5L1CMrFb6RxQ77sJ0tQD+jkTQfyazn/codGtIAlHsshIk+VMqZ8JzGMTMeq18fZYGHQ==":

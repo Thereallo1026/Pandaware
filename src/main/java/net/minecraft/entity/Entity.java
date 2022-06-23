@@ -5,7 +5,6 @@ import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.impl.event.player.SafeWalkEvent;
 import dev.africa.pandaware.impl.event.player.StepEvent;
 import dev.africa.pandaware.impl.event.player.StrafeEvent;
-import dev.africa.pandaware.impl.module.movement.SprintModule;
 import lombok.var;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;

@@ -15,6 +15,7 @@ import dev.africa.pandaware.impl.event.game.TickEvent;
 import dev.africa.pandaware.impl.module.player.FastPlaceModule;
 import dev.africa.pandaware.impl.protection.Debugger;
 import dev.africa.pandaware.impl.ui.menu.mainmenu.GuiNewMainMenu;
+import dev.africa.pandaware.utils.OsUtils;
 import dev.africa.pandaware.utils.network.ProtocolUtils;
 import lombok.Setter;
 import net.minecraft.block.Block;
@@ -536,7 +537,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     }
 
     private void createDisplay() throws LWJGLException {
-        Display.setResizable(true);
+        if (OsUtils.getOsType() != OsUtils.OS.MAC) {
+            Display.setResizable(true);
+        }
         Display.setTitle("Loading " + Client.getInstance().getManifest().getClientName() + " " + Client.getInstance().getManifest().getClientVersion() + "...");
 
         try {

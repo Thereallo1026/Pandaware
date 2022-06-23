@@ -13,7 +13,7 @@ public class GroundNoFall extends ModuleMode<NoFallModule> {
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
-        if (this.getParent().canFall() && mc.thePlayer.fallDistance > 2.5) {
+        if (this.getParent().canFall() && mc.thePlayer.fallDistance > 2) {
             event.setOnGround(true);
             mc.thePlayer.fallDistance = 0.5f;
         }

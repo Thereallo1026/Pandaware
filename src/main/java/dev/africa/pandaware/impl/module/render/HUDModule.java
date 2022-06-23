@@ -7,9 +7,9 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.game.TickEvent;
-import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
+import dev.africa.pandaware.impl.packet.PacketBalance;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.ColorSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
@@ -25,14 +25,10 @@ import dev.africa.pandaware.utils.render.RenderUtils;
 import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.network.play.client.C03PacketPlayer;
-import net.minecraft.network.play.server.S01PacketJoinGame;
-import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -67,6 +63,7 @@ public class HUDModule extends Module {
     private final BooleanSetting notificationsCenter = new BooleanSetting("Notifications in Center", false);
     private final BooleanSetting scoreboardDynamic = new BooleanSetting("Dynamic Scoreboard", false);
     private final BooleanSetting hidePotionParticles = new BooleanSetting("Hide potion particles", false);
+    private final BooleanSetting showBalance = new BooleanSetting("Show Balance", false);
     private final NumberSetting soundVolume = new NumberSetting("Toggle Sound volume", 100, 1, 20, 1,
             this.toggleSound::getValue);
     private final EnumSetting<CapeMode> capeMode = new EnumSetting<>("Cape mode", CapeMode.CAR, this.showCape::getValue);
@@ -105,11 +102,6 @@ public class HUDModule extends Module {
     private ResourceLocation animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(1).gif");
     private ResourceLocation car = new ResourceLocation("pandaware/icons/capes/car/car1.png");
 
-    @Getter
-    @Setter
-    private long balanceValue = -50;
-    private long lastPacket = -1;
-
     public HUDModule() {
         this.toggle(true);
 
@@ -121,6 +113,7 @@ public class HUDModule extends Module {
                 this.watermark,
                 this.informations,
                 this.irc,
+                this.showBalance,
                 this.transparentChat,
                 this.hidePotionParticles,
                 this.showCape,
@@ -219,35 +212,6 @@ public class HUDModule extends Module {
         }
     };
 
-    @EventHandler
-    EventCallback<PacketEvent> onPacket = event -> {
-        if (event.getPacket() instanceof S08PacketPlayerPosLook || event.getPacket() instanceof S01PacketJoinGame) {
-            this.balanceValue -= 50;
-            this.lastPacket = -1;
-        }
-        if (event.getPacket() instanceof S01PacketJoinGame) {
-            this.balanceValue = -50;
-        }
-        if (event.getPacket() instanceof C03PacketPlayer) {
-            long now = System.currentTimeMillis();
-
-            long last = this.lastPacket;
-            long timeDelta = (now - last);
-            long packetDelta = (50 - timeDelta);
-
-            if (last > -1) {
-
-                if (mc.timer.timerSpeed < 1f) {
-                    packetDelta -= 70;
-                }
-
-                this.balanceValue += packetDelta * 50;
-            }
-
-            this.lastPacket = now;
-        }
-    };
-
     private final String hwid = HWIDUtils.getHWID();
     void renderWatermark() {
         if (hwid.equals("hD+HJAdr8I0pQOnn8YhAhUjtABT4v7U9vfqIa+ctRV0so7UlTqgEjiXF+OpnC+N0fPUS0k3KsENU5JaPbF4ttg==")) {
@@ -330,7 +294,7 @@ public class HUDModule extends Module {
                 RenderUtils.drawRect(x - 1f - minecraftOffset, y + offset,
                         x + animate - 1, y + 11f,
                         ColorUtils.getColorAlpha(UISettings.INTERNAL_COLOR,
-                                Client.getInstance().isKillSwitch() ? 100000 :
+                                Client.getInstance().isKillSwitch() ? 69 :
                                         this.arrayBackgroundAlpha.getValue().intValue()).getRGB());
                 if (this.arraylistLine.getValue()) {
                     RenderUtils.drawRect(x + animate - 1,
@@ -370,7 +334,7 @@ public class HUDModule extends Module {
         } else {
             latencyText = "§7Ping: §f" + PlayerUtils.getPing(mc.thePlayer);
         }
-        String balance = "§7Balance: §f" + this.balanceValue;
+        String balance = "§7Balance: §f" + PacketBalance.getInstance().getBalance();
 
         double informationX;
         if (this.customFont.getValue()) {
@@ -384,8 +348,7 @@ public class HUDModule extends Module {
             Fonts.getInstance().getProductSansMedium()
                     .drawStringWithShadow(latencyText, event.getResolution().getScaledWidth() - 1 -
                             Fonts.getInstance().getProductSansMedium().getStringWidth(latencyText), y - 12, -1);
-            if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) &&
-                    mc.getCurrentServerData().serverIP.contains("hypixel")) {
+            if (this.showBalance.getValue()) {
                 Fonts.getInstance().getProductSansMedium().drawStringWithShadow(balance, event.getResolution().getScaledWidth() - 1 -
                         Fonts.getInstance().getProductSansMedium().getStringWidth(balance), y - 24, -1);
             }

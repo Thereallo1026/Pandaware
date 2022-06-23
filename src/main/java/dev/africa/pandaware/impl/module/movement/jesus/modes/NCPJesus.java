@@ -1,4 +1,4 @@
-package dev.africa.pandaware.impl.module.movement.jesus;
+package dev.africa.pandaware.impl.module.movement.jesus.modes;
 
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
@@ -7,7 +7,7 @@ import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.player.CollisionEvent;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
-import dev.africa.pandaware.impl.module.movement.JesusModule;
+import dev.africa.pandaware.impl.module.movement.jesus.JesusModule;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import net.minecraft.block.BlockLiquid;

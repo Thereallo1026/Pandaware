@@ -12,27 +12,36 @@ import net.minecraft.network.play.client.C03PacketPlayer;
 
 public class VulcanNoFall extends ModuleMode<NoFallModule> {
     private boolean fixed;
+    private int count;
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
         FlightModule fly = Client.getInstance().getModuleManager().getByClass(FlightModule.class);
         if (fly.getData().isEnabled()) return;
         if (event.getEventState() == Event.EventState.PRE) {
+            if (mc.thePlayer.onGround && this.fixed) {
+                this.fixed = false;
+                this.count = 0;
+                mc.timer.timerSpeed = 1f;
+            }
+
             if (mc.thePlayer.fallDistance > 2f) {
-                fixed = false;
+                this.fixed = true;
                 mc.timer.timerSpeed = 0.92f;
             }
-            if (mc.thePlayer.fallDistance > 3.5f) {
+
+            double amount = this.count > 3 ? 3.5f : 2.8f;
+
+            if (mc.thePlayer.fallDistance > amount) {
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));
+
                 mc.thePlayer.motionY = -0.1;
                 mc.thePlayer.fallDistance = 0;
-            }
-            if (mc.thePlayer.fallDistance > 3f) {
                 mc.thePlayer.motionY *= 1.1f;
-            }
-            if (mc.thePlayer.onGround && !fixed) {
-                fixed = true;
-                mc.timer.timerSpeed = 1f;
+
+                if (this.count++ > 5) {
+                    this.count = 0;
+                }
             }
         }
     };

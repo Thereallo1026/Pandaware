@@ -1,11 +1,12 @@
 package net.minecraft.client.network;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.mojang.authlib.GameProfile;
 import dev.africa.pandaware.impl.ui.menu.mainmenu.GuiNewMainMenu;
-import dev.africa.pandaware.utils.client.PatcherUtils;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.network.NetworkUtils;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
@@ -1371,6 +1372,20 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 
             if (itemstack != null && itemstack.getItem() == Items.written_book) {
                 this.gameController.displayGuiScreen(new GuiScreenBook(this.gameController.thePlayer, itemstack, false));
+            }
+        }
+
+        if ("REGISTER".equals(packetIn.getChannelName())) {
+            String channels = packetIn.getBufferData().toString(Charsets.UTF_8);
+            String[] channel = channels.split("\000");
+
+            if (channel.length > 1) {
+                Printer.chat(EnumChatFormatting.YELLOW +
+                        "Found BungeeCord Channels:");
+
+                for (String s : channel) {
+                    Printer.chat(EnumChatFormatting.GREEN + " - " + s);
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import com.viaversion.viaversion.connection.UserConnectionImpl;
 import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
+import dev.africa.pandaware.impl.packet.PacketBalance;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.switcher.handler.CommonTransformer;
 import dev.africa.pandaware.switcher.handler.MCPDecodeHandler;
@@ -210,6 +211,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
      * packet, otherwise it will add a task for the channel eventloop thread to do that.
      */
     private void dispatchPacket(final Packet inPacket, final GenericFutureListener<? extends Future<? super Void>>[] futureListeners) {
+        PacketBalance.getInstance().onGlobalPacket(inPacket);
         final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(inPacket);
         final EnumConnectionState enumconnectionstate1 = this.channel.attr(attrKeyConnectionState).get();
 

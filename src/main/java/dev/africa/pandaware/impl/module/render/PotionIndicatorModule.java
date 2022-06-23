@@ -64,7 +64,7 @@ public class PotionIndicatorModule extends Module {
             for (PotionEffect potion : mc.thePlayer.getActivePotionEffects()) {
                 potions++;
                 Fonts.getInstance().getArialBdNormal().drawCenteredStringWithShadow(potion.getEffectName() + " " +
-                                potion.getAmplifier() + ": " + potion.getDuration() / 20,
+                                potion.getAmplifier() + ": " + (potion.getDuration() / 20),
                         (float) (this.posX.getValue().doubleValue() + (this.width / 2f)),
                         (float) (this.posY.getValue().doubleValue() + 2 + (2 * potions)), -1);
             }

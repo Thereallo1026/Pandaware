@@ -2021,17 +2021,5 @@
         "stream": true
       }
     ]
-  },
-  "sound.pandaware.module.enable": {
-    "category": "master",
-    "sounds": [
-      "../pandaware/sounds/enable"
-    ]
-  },
-  "sound.pandaware.module.disable": {
-    "category": "master",
-    "sounds": [
-      "../pandaware/sounds/disable"
-    ]
   }
 }

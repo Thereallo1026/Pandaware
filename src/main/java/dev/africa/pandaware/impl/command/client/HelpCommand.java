@@ -13,23 +13,25 @@ public class HelpCommand extends Command {
 
         Client.getInstance().getCommandManager().getItems().forEach(command -> {
             StringBuilder builder = new StringBuilder("§7[");
-            builder.append("§f").append(command.getName());
-            if (command.getAliases().length > 0) {
-                builder.append("§7, ");
+            if (!command.getName().equals("sus")) {
+                builder.append("§f").append(command.getName());
+                if (command.getAliases().length > 0) {
+                    builder.append("§7, ");
 
-                for (int i = 0; i < command.getAliases().length; i++) {
-                    builder.append("§f").append(command.getAliases()[i]);
+                    for (int i = 0; i < command.getAliases().length; i++) {
+                        builder.append("§f").append(command.getAliases()[i]);
 
-                    if (i != command.getAliases().length - 1) {
-                        builder.append("§7, ");
+                        if (i != command.getAliases().length - 1) {
+                            builder.append("§7, ");
+                        }
                     }
                 }
-            }
-            builder.append("§7]");
+                builder.append("§7]");
 
-            Printer.chat("§7Name: §d" + command.getName() +
-                    " §7- §b" + builder +
-                    " §7- §d" + command.getDescription());
+                Printer.chat("§7Name: §d" + command.getName() +
+                        " §7- §b" + builder +
+                        " §7- §d" + command.getDescription());
+            }
         });
     }
 }

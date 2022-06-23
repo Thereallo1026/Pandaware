@@ -19,9 +19,11 @@ import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
 import dev.africa.pandaware.impl.module.movement.*;
 import dev.africa.pandaware.impl.module.movement.flight.FlightModule;
 import dev.africa.pandaware.impl.module.movement.highjump.HighJumpModule;
+import dev.africa.pandaware.impl.module.movement.jesus.JesusModule;
 import dev.africa.pandaware.impl.module.movement.longjump.LongJumpModule;
 import dev.africa.pandaware.impl.module.movement.noslow.NoSlowModule;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
+import dev.africa.pandaware.impl.module.movement.spider.SpiderModule;
 import dev.africa.pandaware.impl.module.movement.step.StepModule;
 import dev.africa.pandaware.impl.module.player.*;
 import dev.africa.pandaware.impl.module.player.antivoid.AntiVoidModule;
@@ -68,6 +70,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new TimerModule(),
                     new SafeWalkModule(),
                     new JesusModule(),
+                    new SpiderModule(),
 
                     // Visual
                     new AnimationsModule(),
@@ -100,7 +103,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new FastEatModule(),
                     new PluginFinderModule(),
                     new PhaseModule(),
-                    //new EntityDesyncModule(),
+                    new BreakerModule(),
 
                     // Misc
                     new DisablerModule(),

@@ -21,7 +21,8 @@ public class DisablerModule extends Module {
                 new InvalidPosDisabler("Invalid Position", this),
                 new PlaceDisabler("1.17+ Place", this),
                 new SparkyDisabler("Sparky", this),
-                new GhostlyDisabler("Ghostly", this)
+                new GhostlyDisabler("Ghostly", this),
+                new PingSpoofDisabler("Ping Spoof", this)
         );
     }
 

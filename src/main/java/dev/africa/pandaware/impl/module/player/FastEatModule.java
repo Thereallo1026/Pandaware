@@ -6,10 +6,12 @@ import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
+import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import dev.africa.pandaware.utils.client.Printer;
 import dev.africa.pandaware.utils.math.TimeHelper;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.AllArgsConstructor;
@@ -58,6 +60,21 @@ public class FastEatModule extends Module {
 
                             case TIMER:
                                 mc.timer.timerSpeed = this.timer.getValue().floatValue();
+                                break;
+
+                            case VULCAN:
+                                if (packet != 18) {
+                                    if (mc.thePlayer.ticksExisted % 4 == 0) {
+                                        mc.timer.timerSpeed = 0.18f;
+                                    } else {
+                                        mc.timer.timerSpeed = 1f;
+                                    }
+                                    mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));
+                                    packet++;
+                                } else {
+                                    mc.playerController.onStoppedUsingItem(mc.thePlayer);
+                                    mc.gameSettings.keyBindUseItem.pressed = false;
+                                }
                                 break;
 
                             case NIKOCADO_AVOCADO:
@@ -109,6 +126,7 @@ public class FastEatModule extends Module {
     private enum FastEatMode {
         NCP("NCP"),
         TIMER("Timer"),
+        VULCAN("Vulcan"),
         NIKOCADO_AVOCADO("Nikocado Avocado"),
         DREAM("Dream");
 

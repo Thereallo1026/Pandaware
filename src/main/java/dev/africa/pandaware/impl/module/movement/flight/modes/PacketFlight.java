@@ -110,8 +110,8 @@ public class PacketFlight extends ModuleMode<FlightModule> {
             double zMove = Math.cos(radiansYaw) * speed;
 
             double motion = this.freezeY.getValue() ? 0 : this.yMotion.getValue().doubleValue();
-            double yMove = (mc.gameSettings.keyBindJump.isKeyDown() ? 1.7
-                    : mc.gameSettings.keyBindSneak.isKeyDown() ? -1.7 : motion);
+            double yMove = (mc.gameSettings.keyBindJump.isKeyDown() ? this.speed.getValue().doubleValue()
+                    : mc.gameSettings.keyBindSneak.isKeyDown() ? -this.speed.getValue().doubleValue() : motion);
 
             mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C03PacketPlayer.C04PacketPlayerPosition(
                     mc.thePlayer.posX + xMove,

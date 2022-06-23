@@ -34,6 +34,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemSword;
@@ -735,7 +736,8 @@ public class KillAuraModule extends Module {
     }
 
     private void block() {
-        boolean swordBlock = mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword;
+        boolean swordBlock = mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword &&
+                !Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled();
         if (this.unblockOnAttack.getValue() && attacks <= 1) return;
         if (swordBlock && !mc.thePlayer.isBlockingSword()) {
             switch (this.autoBlockMode.getValue()) {
@@ -749,7 +751,7 @@ public class KillAuraModule extends Module {
                         if (mc.thePlayer.swingProgressInt == -1) {
                             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C07PacketPlayerDigging(
                                     C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-                        } else if (mc.thePlayer.swingProgressInt < 0.7 && mc.thePlayer.swingProgressInt > -0.5) {
+                        } else if (mc.thePlayer.swingProgressInt < 0.7 && mc.thePlayer.swingProgressInt > -0.4) {
                             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement
                                     (new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(),
                                             0.0081284124F, 0.00004921712F, 0.0081248912F));
@@ -964,8 +966,7 @@ public class KillAuraModule extends Module {
                 valid = false;
             }
 
-            if ((entity instanceof EntityMob || entity instanceof EntityVillager || entity instanceof EntityBat)
-                    && !this.mobs.getValue()) {
+            if (!(entity instanceof EntityPlayer) && !this.mobs.getValue()) {
                 valid = false;
             }
 

@@ -3,10 +3,8 @@ package dev.africa.pandaware.impl.ui.clickgui;
 import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.interfaces.Initializable;
 import dev.africa.pandaware.api.module.interfaces.Category;
-import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.api.screen.ScreenGUI;
 import dev.africa.pandaware.impl.module.render.ClickGUIModule;
-import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.ui.circle.ClickCircle;
 import dev.africa.pandaware.impl.ui.clickgui.panel.Panel;
 import dev.africa.pandaware.impl.ui.clickgui.setting.SettingPanel;
@@ -180,41 +178,37 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                         this.height);
             } else if (clickGUI.getShowCummyMen().getValue()) {
                 Printer.chat("STOP TRYING TO REPLACE NIK YOU FUCKING FAGGOT");
-                if (this.player == null) {
-                    new Thread(() -> {
-                        try {
-                            player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/virus.mp3"));
-                            player.play();
-                            System.exit(69);
-                        } catch (JavaLayerException e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-                }
+                new Thread(() -> {
+                    try {
+                        player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/virus.mp3"));
+                        player.play();
+                        System.exit(69);
+                    } catch (JavaLayerException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
                 mc.displayGuiScreen(null);
             }
         }
         if (this.easterEgg.toString().toLowerCase().contains("idclap")) {
             if (clickGUI.getCummyMode().getValue() == ClickGUIModule.FemboyMode.NSFWASTOLFO) {
-                if (this.player == null) {
-                    new Thread(() -> {
-                        try {
-                            player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/cock.mp3"));
-                            player.play();
-                        } catch (JavaLayerException e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-                    Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "You love it that much?");
-                    Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "I'mma open some more of that material onto your computer.");
-                    Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "Clear your search history kiddo.");
-                    Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "HORNY DETECTED", 15);
-
+                new Thread(() -> {
                     try {
-                        Desktop.getDesktop().browse(new URI("https://rule34.xxx/index.php?page=post&s=list&tags=Astolfo_(fate)&pid=0"));
-                    } catch (IOException | URISyntaxException e) {
+                        player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/cock.mp3"));
+                        player.play();
+                    } catch (JavaLayerException e) {
                         e.printStackTrace();
                     }
+                }).start();
+                Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "You love it that much?");
+                Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "I'mma open some more of that material onto your computer.");
+                Printer.chat(EnumChatFormatting.LIGHT_PURPLE + "Clear your search history kiddo.");
+                Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "HORNY DETECTED", 15);
+
+                try {
+                    Desktop.getDesktop().browse(new URI("https://rule34.xxx/index.php?page=post&s=list&tags=Astolfo_(fate)&pid=0"));
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -230,7 +224,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
             mc.displayGuiScreen(null);
         }
 
-        if (this.easterEgg.toString().toLowerCase().contains("banana") && this.player == null) {
+        if (this.easterEgg.toString().toLowerCase().contains("banana")) {
             new Thread(() -> {
                 try {
                     player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/banana.mp3"));

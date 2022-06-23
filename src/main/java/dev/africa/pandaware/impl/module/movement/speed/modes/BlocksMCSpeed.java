@@ -40,6 +40,9 @@ public class BlocksMCSpeed extends ModuleMode<SpeedModule> {
                 jumpered = false;
             } else {
                 moveSpeed = lastDistance - lastDistance / 190;
+                if (mc.thePlayer.moveStrafing != 0) {
+                    moveSpeed -= 0.02;
+                }
             }
             MovementUtils.strafe(event, moveSpeed);
         }

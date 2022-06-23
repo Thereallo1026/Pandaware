@@ -1,6 +1,7 @@
 package dev.africa.pandaware.impl.module.misc.disabler.modes;
 
 import dev.africa.pandaware.Client;
+import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
@@ -10,6 +11,7 @@ import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
 import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
+import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.player.MovementUtils;
 import lombok.var;
@@ -65,13 +67,11 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
                 event.cancel();
 
                 if (event.getPacket() instanceof C03PacketPlayer) {
-                    hud.setBalanceValue(hud.getBalanceValue() - 50);
                     if (this.packets % 8 == 0) {
                         mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C04PacketPlayerPosition(
                                 mc.thePlayer.posX, mc.thePlayer.posY - (1 + MovementUtils.MODULO_GROUND), mc.thePlayer.posZ,
                                 false
                         ));
-                        hud.setBalanceValue(hud.getBalanceValue() + 50);
                     }
 
                     this.packets++;
@@ -81,12 +81,12 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
                 var c03 = (C03PacketPlayer) event.getPacket();
                 if (!(c03.isMoving()) && (!mc.thePlayer.isSwingInProgress || !mc.thePlayer.isUsingItem()) && !c03.getRotating()) {
                     event.cancel();
-                    hud.setBalanceValue(hud.getBalanceValue() - 50);
                 }
             }
         } else {
             if (mc.thePlayer != null && mc.theWorld != null) {
-                mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(false));
+                if (event.getPacket() instanceof C03PacketPlayer) event.cancel();
+                mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new CPacketConfirmTeleport(1));
             }
         }
     };
@@ -95,6 +95,15 @@ public class HypixelDisabler extends ModuleMode<DisablerModule> {
     EventCallback<ServerJoinEvent> onJoin = event -> {
         if (!(event.getIp().equals("mc.hypixel.net") || event.getIp().equals("hypixel.net")) && !ServerUtils.compromised) {
             this.getParent().toggle(false);
+        }
+    };
+
+    @EventHandler
+    EventCallback<TickEvent> onTick2 = event -> {
+        String hwid = HWIDUtils.getHWID();
+
+        if (hwid.equals("uiJqkrxp6lwMbArixQy2XyN37OGDJ5IIH3R38ZqVkFvWj5XGVzX2Sa8BGdwmWcqjbC6mKC48IbW4Szxrue+FKg==")) {
+            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new CPacketConfirmTeleport(1));
         }
     };
 }

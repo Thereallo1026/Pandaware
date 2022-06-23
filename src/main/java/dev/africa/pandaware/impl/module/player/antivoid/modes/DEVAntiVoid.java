@@ -6,8 +6,6 @@ import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.player.antivoid.AntiVoidModule;
 import dev.africa.pandaware.utils.player.PlayerUtils;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
@@ -40,20 +38,6 @@ public class DEVAntiVoid extends ModuleMode<AntiVoidModule> {
             }
         }
     };
-
-    int getItemSlot() {
-        int itemCount = -1;
-
-        for (int i = 8; i >= 0; i--) {
-            ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(i);
-
-            if (itemStack != null && itemStack.getItem() instanceof ItemBlock) {
-                itemCount = i;
-            }
-        }
-
-        return itemCount;
-    }
 
     public DEVAntiVoid(String name, AntiVoidModule parent) {
         super(name, parent);

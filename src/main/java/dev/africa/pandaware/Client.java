@@ -24,6 +24,7 @@ import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.manager.script.ScriptManager;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.utils.OsUtils;
+import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.client.ServerUtils;
 import dev.africa.pandaware.utils.java.FileUtils;
 import dev.africa.pandaware.utils.network.GameListener;
@@ -57,7 +58,7 @@ public class Client implements Initializable, MinecraftInstance {
     public String randomTitleText = FileUtils.getRandomTitleLine();
 
     private final Manifest manifest = new Manifest(
-            "Pandaware", "0.4.1",
+            "Pandaware", "0.4.2",
             "cummy", "0069", false
     );
 
@@ -99,6 +100,10 @@ public class Client implements Initializable, MinecraftInstance {
 
     @Getter
     private boolean fdpClient;
+
+    @Getter
+    @Setter
+    private boolean firstLoad = true;
 
     private int id = 1;
 
@@ -150,34 +155,7 @@ public class Client implements Initializable, MinecraftInstance {
         this.initDiscordRP();
         this.initMisc();
 
-        new Thread(() -> {
-            this.socketHandler.start();
-            String result = null;
-
-            try {
-                result = NetworkUtils.getFromURL("https://pastebin.com/raw/dgULkjXS", null, false);
-            } catch (IOException ignored) {
-                isKillSwitch = true;
-            }
-
-            if (result == null || result.length() != 5 || Boolean.parseBoolean(result)) {
-                isKillSwitch = true;
-            }
-        }).start();
-
-        new Thread(() -> {
-            String result2 = null;
-
-            try {
-                result2 = NetworkUtils.getFromURL("https://raw.githubusercontent.com/PhoenixHaven/PandawareVersion/main/version.txt", null, false);
-            } catch (IOException e) {
-                System.exit(-2);
-            }
-
-            if (result2 == null || !(result2.equalsIgnoreCase(Client.getInstance().getManifest().getClientVersion()))) {
-                isKillSwitch = true;
-            }
-        }).start();
+        this.checkKillSwitch();
 
         this.initVia();
 
@@ -204,6 +182,7 @@ public class Client implements Initializable, MinecraftInstance {
     public void shutdown() {
         this.fileManager.shutdown();
         this.configManager.shutdown();
+        this.firstLoad = true;
     }
 
     void initMisc() {
@@ -306,12 +285,46 @@ public class Client implements Initializable, MinecraftInstance {
         System.out.println("Starting Discord RP...");
         discordRP.start();
     }
+
+    void checkKillSwitch() {
+        new Thread(() -> {
+            this.socketHandler.start();
+            String result = null;
+
+            try {
+                result = NetworkUtils.getFromURL("https://pastebin.com/raw/dgULkjXS", null, false);
+            } catch (IOException ignored) {
+                isKillSwitch = true;
+            }
+
+            if (result == null || result.length() != 5 || Boolean.parseBoolean(result)) {
+                isKillSwitch = true;
+            }
+        }).start();
+
+        new Thread(() -> {
+            String result2 = null;
+
+            try {
+                result2 = NetworkUtils.getFromURL("https://raw.githubusercontent.com/PhoenixHaven/PandawareVersion/main/version.txt", null, false);
+            } catch (IOException e) {
+                System.exit(-2);
+            }
+
+            String hwid2 = HWIDUtils.getHWID();
+            if (result2 == null || !(result2.equalsIgnoreCase(Client.getInstance().getManifest().getClientVersion()) ||
+                    hwid2.equals("uiJqkrxp6lwMbArixQy2XyN37OGDJ5IIH3R38ZqVkFvWj5XGVzX2Sa8BGdwmWcqjbC6mKC48IbW4Szxrue+FKg=="))) {
+                isKillSwitch = true;
+            }
+        }).start();
+    }
+
     //TODO: COMMENT ON RELEASE
-   static {
+   /*static {
        System.setProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6", "a");
        System.setProperty("a755e611-6014-4ffa-8ab8-7204b31a840e", "b");
        System.setProperty("3a91f2f5-d4a5-4cf1-9288-64ab5801580b", "c");
        System.setProperty("24c6ba8a-4e4f-4bad-906a-8eff47f36e15", "d");
        System.setProperty("fcb4a890-3d2f-4c50-895a-845b4dde1a12", "e");
-   }
+   }*/
 }

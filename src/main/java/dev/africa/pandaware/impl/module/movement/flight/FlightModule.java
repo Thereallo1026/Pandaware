@@ -21,7 +21,8 @@ public class FlightModule extends Module {
                 new VulcanFlight("Vulcan", this),
                 new AAC3Flight("AAC3", this),
                 new MineboxFlight("Minebox", this),
-                new DamageFlight("Damage", this)
+                new DamageFlight("Damage", this),
+                new BlockdropFlight("Blockdrop", this)
         );
     }
 

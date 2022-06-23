@@ -1,19 +1,13 @@
-package dev.africa.pandaware.impl.module.movement.jesus;
+package dev.africa.pandaware.impl.module.movement.jesus.modes;
 
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
-import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.player.CollisionEvent;
-import dev.africa.pandaware.impl.event.player.MotionEvent;
-import dev.africa.pandaware.impl.event.player.PacketEvent;
-import dev.africa.pandaware.impl.module.movement.JesusModule;
-import dev.africa.pandaware.utils.player.MovementUtils;
+import dev.africa.pandaware.impl.module.movement.jesus.JesusModule;
 import dev.africa.pandaware.utils.player.PlayerUtils;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.AxisAlignedBB;
-import org.lwjgl.input.Keyboard;
 
 public class VanillaJesus extends ModuleMode<JesusModule> {
     public VanillaJesus(String name, JesusModule parent) {

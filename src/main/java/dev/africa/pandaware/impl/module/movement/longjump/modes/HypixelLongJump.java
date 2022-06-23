@@ -29,14 +29,14 @@ public class HypixelLongJump extends ModuleMode<LongJumpModule> {
         if ((ServerUtils.isOnServer("mc.hypixel.net") || ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised) {
             if (MovementUtils.isMoving()) {
                 if (mc.thePlayer.onGround) {
-                    this.movespeed = MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 2.15 : 2.23);
+                    this.movespeed = MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 2.1 : 2.2);
                     mc.thePlayer.jump();
                     event.y = mc.thePlayer.motionY = 0.42f + (mc.thePlayer.isPotionActive(Potion.jump)
                             ? PlayerUtils.getJumpBoostMotion() * 1.1 : 0);
                 }
 
                 if (!mc.thePlayer.onGround) {
-                    this.movespeed = this.lastDistance * 0.915f;
+                    this.movespeed = this.lastDistance * 0.91f;
                 }
 
                 if (mc.thePlayer.fallDistance > 0 && mc.thePlayer.fallDistance < 0.3 && !mc.thePlayer.isPotionActive(Potion.jump)) {

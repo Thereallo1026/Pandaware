@@ -28,17 +28,18 @@ public class DEVDisabler extends ModuleMode<DisablerModule> {
     @EventHandler
     EventCallback<MotionEvent> onPacket = event -> {
         if (event.getEventState() == Event.EventState.PRE) {
-            if(Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
+            if (Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
             KillAuraModule killAuraModule = Client.getInstance().getModuleManager().getByClass(KillAuraModule.class);
-            if(killAuraModule.getData().isEnabled() && killAuraModule.target != null) return;
-            if(mc.thePlayer.isUsingItem()) return;
+            if (killAuraModule.getData().isEnabled() && killAuraModule.target != null) return;
+            if (mc.thePlayer.isUsingItem()) return;
             if (System.currentTimeMillis() - lastTime > 1200L) {
-                if(getBlockStack() == -1) {
+                if (getBlockStack() == -1) {
                     Client.getInstance().getNotificationManager().addNotification(Notification.Type.WARNING, "You need to have blocks in your hotbar!", 1);
                     lastTime = System.currentTimeMillis();
                     newSlot = getBlockStack();
                     oldSlot = mc.thePlayer.inventory.currentItem;
                     tick = 0;
+                    this.toggle(false);
                     return;
                 }
 
@@ -46,7 +47,8 @@ public class DEVDisabler extends ModuleMode<DisablerModule> {
                     case 0:
                         newSlot = getBlockStack();
                         oldSlot = mc.thePlayer.inventory.currentItem;
-                        if(newSlot != oldSlot) mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C09PacketHeldItemChange(newSlot));
+                        if (newSlot != oldSlot)
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C09PacketHeldItemChange(newSlot));
                         event.setPitch(90);
 
                         tick++;
@@ -58,7 +60,8 @@ public class DEVDisabler extends ModuleMode<DisablerModule> {
                         tick++;
                         break;
                     case 2:
-                        if(newSlot != oldSlot) mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C09PacketHeldItemChange(oldSlot));
+                        if (newSlot != oldSlot)
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C09PacketHeldItemChange(oldSlot));
                         lastTime = System.currentTimeMillis();
                         tick = 0;
                         Client.getInstance().getNotificationManager().addNotification(Notification.Type.SUCCESS, "Did funny", 1);

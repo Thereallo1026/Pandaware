@@ -28,7 +28,9 @@ public class CommandManager extends Container<Command> implements Initializable 
 
                 new VClipCommand(),
                 new IRCCommand(),
-                new SetIRCNameCommand()
+                new SetIRCNameCommand(),
+                new SusCommand(),
+                new IRCReconnectCommand()
         );
     }
 

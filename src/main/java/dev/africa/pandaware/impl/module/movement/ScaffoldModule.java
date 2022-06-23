@@ -13,7 +13,7 @@ import dev.africa.pandaware.impl.event.player.*;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
-import dev.africa.pandaware.impl.module.render.HUDModule;
+import dev.africa.pandaware.impl.packet.PacketBalance;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
@@ -34,7 +34,6 @@ import dev.africa.pandaware.utils.render.animator.Easing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -42,7 +41,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.*;
-import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -77,7 +75,7 @@ public class ScaffoldModule extends Module {
     private final NumberSetting expand = new NumberSetting("Expand", 6, 0, 0, 0.1);
     private final NumberSetting timerSpeed = new NumberSetting("Timer", 5, 1, 1, 0.1);
 
-    final EnumFacing[] invert = {EnumFacing.UP, EnumFacing.DOWN, EnumFacing.SOUTH, EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.WEST};
+    private final EnumFacing[] invert = {EnumFacing.UP, EnumFacing.DOWN, EnumFacing.SOUTH, EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.WEST};
 
     private BlockEntry blockEntry;
     private BlockEntry aimBlockEntry;
@@ -97,13 +95,6 @@ public class ScaffoldModule extends Module {
     float smoothness;
     float smoothnessValue;
     Vec2f smoothed;
-
-    private BlockPos position;
-    private int placedBlockDirection;
-    private ItemStack stack;
-    private float facingX;
-    private float facingY;
-    private float facingZ;
 
     public ScaffoldModule() {
         this.registerSettings(
@@ -239,7 +230,23 @@ public class ScaffoldModule extends Module {
     };
 
     @EventHandler
-    EventCallback<UpdateEvent> onUpdate = event -> {
+    EventCallback<PacketEvent> onPacket = event -> {
+        if (this.spoofMode.getValue() == SpoofMode.SPOOF) {
+            if (event.getPacket() instanceof C09PacketHeldItemChange) {
+                C09PacketHeldItemChange packet = event.getPacket();
+
+                int slotId = this.getItemSlot(false);
+
+                if (mc.thePlayer.inventory.currentItem == packet.getSlotId()) {
+                    event.cancel();
+                }
+            }
+        }
+    };
+
+    @EventHandler
+    EventCallback<MotionEvent> onMotion = event -> {
+        mc.thePlayer.setSprinting(this.sprint.getValue());
         if (startY > mc.thePlayer.posY) this.startY = ApacheMath.floor(mc.thePlayer.posY);
         this.blockEntry = null;
         int slot = this.getItemSlot(false);
@@ -318,53 +325,22 @@ public class ScaffoldModule extends Module {
             this.aimBlockEntry = this.blockEntry;
         }
 
-        if (this.blockEntry == null) return;
-        if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air) {
-            this.place(slot);
-        }
-    };
-
-    @EventHandler
-    EventCallback<PacketEvent> onPacket = event -> {
-        if (this.spoofMode.getValue() == SpoofMode.SPOOF) {
-            if (event.getPacket() instanceof C09PacketHeldItemChange) {
-                C09PacketHeldItemChange packet = event.getPacket();
-
-                int slotId = this.getItemSlot(false);
-
-                if (mc.thePlayer.inventory.currentItem == packet.getSlotId()) {
-                    event.cancel();
+        if (event.getEventState() == Event.EventState.PRE) {
+            if (this.blockEntry != null) {
+                if (this.towerMode.getValue() == TowerMode.HYPIXEL && Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
+                    if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air) {
+                        this.place(slot);
+                    }
                 }
             }
         }
-        if (this.towerMode.getValue() == TowerMode.HYPIXEL && Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())
-                && MovementUtils.isMoving() && ((ServerUtils.isOnServer("mc.hypixel.net") ||
-                ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised)) {
-            if (event.getPacket() instanceof C08PacketPlayerBlockPlacement) {
-                if (position != null) event.cancel();
-                var c08 = (C08PacketPlayerBlockPlacement) event.getPacket();
-                position = c08.getPosition();
-                placedBlockDirection = c08.getPlacedBlockDirection();
-                stack = c08.getStack();
-                facingX = c08.getPlacedBlockOffsetX();
-                facingY = c08.getPlacedBlockOffsetY();
-                facingZ = c08.getPlacedBlockOffsetZ();
-            }
-        }
-        if (event.getPacket() instanceof S01PacketJoinGame) {
-            position = null;
-        }
-    };
 
-    @EventHandler
-    EventCallback<MotionEvent> onMotion = event -> {
         if (event.getEventState() == Event.EventState.POST) return;
 
-        if (this.towerMode.getValue() == TowerMode.HYPIXEL && mc.gameSettings.keyBindJump.isKeyDown() &&
-                MovementUtils.isMoving() && position != null) {
-            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
-                    position, placedBlockDirection, stack, facingX, facingY, facingZ
-            ));
+        if (this.blockEntry != null && !(this.towerMode.getValue() == TowerMode.HYPIXEL && Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()))) {
+            if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air || mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.grass) {
+                this.place(slot);
+            }
         }
 
         lastDistance = MovementUtils.getLastDistance();
@@ -550,7 +526,7 @@ public class ScaffoldModule extends Module {
                 switch (this.hypixelMode.getValue()) {
                     case NORMAL:
                         if (PlayerUtils.isMathGround() && !mc.gameSettings.keyBindSneak.isKeyDown()) {
-                            MovementUtils.strafe(event, 0.2525 *
+                            MovementUtils.strafe(event, 0.25056 *
                                     (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                         } else if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                             mc.thePlayer.motionX *= 0.25;
@@ -593,10 +569,10 @@ public class ScaffoldModule extends Module {
             case VULCAN:
                 if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
                     int slot = spoofMode.getValue() == SpoofMode.SPOOF ? c09slot : mc.thePlayer.inventory.currentItem;
-                    if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize > 0) {
+                    if (mc.thePlayer.inventory.getStackInSlot(slot) != null) {
                         if (mc.thePlayer.inventory.getStackInSlot(slot).stackSize >= 7) {
                             event.y = mc.thePlayer.motionY = 0.42f;
-                            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.9 : 2.1));
+                            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.85 : 2.1));
                         } else {
                             MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.7);
                         }
@@ -610,10 +586,6 @@ public class ScaffoldModule extends Module {
                     }
                 }
                 break;
-        }
-
-        if (MovementUtils.isMoving()) {
-            mc.thePlayer.setSprinting(this.sprint.getValue());
         }
 
         if (this.tower.getValue() && mc.gameSettings.keyBindJump.isKeyDown()
@@ -633,7 +605,7 @@ public class ScaffoldModule extends Module {
                         break;
 
                     case VULCAN:
-                        if (!MovementUtils.isMoving()) {
+                        /*if (!MovementUtils.isMoving()) {
                             MovementUtils.strafe(event, 0);
                         }
                         if (this.blockEntry != null) {
@@ -641,6 +613,24 @@ public class ScaffoldModule extends Module {
                                 event.y = mc.thePlayer.motionY = 0.42f;
                             } else if (mc.thePlayer.getAirTicks() == 4 && !MovementUtils.isMoving()) {
                                 event.y = mc.thePlayer.motionY = -0.15f;
+                            }
+                        }*/
+                        ItemStack itemStack = mc.thePlayer.inventory.mainInventory[this.spoofMode.getValue() == SpoofMode.SWITCH ? mc.thePlayer.inventory.currentItem : this.c09slot];
+                        boolean canJump = itemStack == null || (itemStack.stackSize > 2);
+                        if (canJump) {
+                            // disables vulcan tower checks?? LOOL
+                            for (int i = 0; i < 2; i++) {
+                                mc.thePlayer.sendQueue.addToSendQueue(new C08PacketPlayerBlockPlacement(
+                                        new BlockPos(-1, -1, -1),
+                                        255, mc.thePlayer.getCurrentEquippedItem(),
+                                        0F, 0F, 0F));
+                            }
+
+                            if (mc.thePlayer.movementInput.jump && !mc.thePlayer.isPotionActive(Potion.jump) && !MovementUtils.isMoving()) {
+                                event.y = mc.thePlayer.motionY = 0.42f;
+                                mc.timer.timerSpeed = 0.9f;
+                            } else {
+                                mc.timer.timerSpeed = 1;
                             }
                         }
                         break;
@@ -695,26 +685,13 @@ public class ScaffoldModule extends Module {
                             boolean onHypixel = (ServerUtils.isOnServer("mc.hypixel.net") ||
                                     ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised;
 
-                            if (!MovementUtils.isMoving()) {
+                            if (MovementUtils.isMoving() || !onHypixel) {
                                 if (mc.thePlayer.onGround) {
                                     mc.thePlayer.jump();
-                                    event.y = mc.thePlayer.motionY = 0.419f;
                                 }
                             } else {
-                                mc.thePlayer.motionX *= 0.7f;
-                                mc.thePlayer.motionZ *= 0.7f;
-                                double offset = onHypixel ? 0.42 : 0.15;
-                                boolean towerMove = PlayerUtils.isOnGround(offset) && MovementUtils.isMoving();
-                                boolean shouldRun = (MovementUtils.isMoving() || towerMove) && mc.thePlayer.ticksExisted % 3 == 0;
-
-                                if (this.blockEntry != null && shouldRun) {
-                                    event.y = mc.thePlayer.motionY = onHypixel ? 0.419f : 0.38f;
-                                    long stopTime = towerMove ? 1600L : 250L;
-                                    if (this.towerTimer.reach(stopTime)) {
-                                        event.y = mc.thePlayer.motionY = 0;
-
-                                        this.towerTimer.reset();
-                                    }
+                                if (this.blockEntry != null) {
+                                    mc.thePlayer.jump();
                                 }
                             }
 
@@ -762,14 +739,13 @@ public class ScaffoldModule extends Module {
 
     @EventHandler
     EventCallback<TickEvent> onTick = event -> {
-        if (this.timerSpeed.getValue().floatValue() != 1f){
+        if (this.timerSpeed.getValue().floatValue() != 1f) {
             mc.timer.timerSpeed = this.timerSpeed.getValue().floatValue();
         }
-        HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
         if (!(mc.currentScreen instanceof GuiMultiplayer) && !(mc.getCurrentServerData() == null) &&
                 mc.getCurrentServerData().serverIP.contains("hypixel")) {
             if (this.scaffoldMode.getValue() == ScaffoldMode.HYPIXEL) {
-                if (hud.getBalanceValue() < -250) {
+                if (PacketBalance.getInstance().getBalance() > 0) {
                     mc.timer.timerSpeed = 1f;
                 }
             }
@@ -784,7 +760,7 @@ public class ScaffoldModule extends Module {
                 double dZ = Math.cos(Math.toRadians(MovementUtils.getDirection())) * i;
 
                 boolean canGoDown = this.downwards.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
-                        && mc.currentScreen == null;
+                        && mc.currentScreen == null && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode());
 
                 double blockBelowY = !canGoDown && MovementUtils.isMoving() ? startY : mc.thePlayer.posY;
 

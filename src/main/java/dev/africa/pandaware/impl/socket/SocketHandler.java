@@ -1,6 +1,5 @@
 package dev.africa.pandaware.impl.socket;
 
-import dev.africa.packetapi.packet.impl.IRCPacket;
 import dev.africa.pandaware.impl.socket.util.SerialUtil;
 import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.client.Printer;

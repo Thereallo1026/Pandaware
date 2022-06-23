@@ -419,7 +419,7 @@ public class GuiAccountManager extends GuiScreen {
             }
             Client.getInstance().getNotificationManager().addNotification(Notification.Type.INFO, "Logging in...", 5);
 
-            Session auth = microsoft ? createMicrosoftSession(username, uuid, getTokenMicrosoft(refreshToken)) : createSession(username, password);
+            Session auth = microsoft ? createMicrosoftSession(username, uuid, getTokenMicrosoft(refreshToken)) : this.createSession(username, password);
 
             if (auth == null) {
                 Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Login failed!", 5);

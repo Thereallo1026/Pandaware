@@ -352,7 +352,8 @@ public class TTFFontRenderer {
     }
 
     public float getStringWidth(String text) {
-        if (this.widthCache.asMap().containsKey(text)) {
+        if (this.widthCache.asMap().containsKey(text) && this.widthCache.asMap() != null &&
+                this.widthCache.asMap().get(text) != null) {
             return this.widthCache.asMap().get(text);
         }
         float width = 0.0f;
