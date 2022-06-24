@@ -1,11 +1,13 @@
 package dev.africa.pandaware.impl.ui.clickgui.setting;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.api.screen.GUIRenderer;
 import dev.africa.pandaware.api.setting.Setting;
 import dev.africa.pandaware.impl.font.Fonts;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.setting.*;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.impl.ui.clickgui.module.ModuleElement;
@@ -108,17 +110,23 @@ public class SettingPanel implements GUIRenderer, MinecraftInstance {
             GlStateManager.translate(0, -offset, 0);
         }
 
-        RenderUtils.drawRoundedRect(
-                this.position.getX(), this.position.getY(),
-                this.size.getX(), this.size.getY(),
-                7, new Color(80, 80, 80, 120)
-        );
+        HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+        if (hud.getHudMode().getValue() == HUDModule.HUDMode.ROUNDED) {
+            RenderUtils.drawRoundedRect(
+                    this.position.getX(), this.position.getY(),
+                    this.size.getX(), this.size.getY(),
+                    7, new Color(80, 80, 80, 120)
+            );
 
-        RenderUtils.drawRoundedRectOutline(
-                this.position.getX(), this.position.getY(),
-                this.size.getX(), this.size.getY(),
-                7, UISettings.CURRENT_COLOR
-        );
+            RenderUtils.drawRoundedRectOutline(
+                    this.position.getX(), this.position.getY(),
+                    this.size.getX(), this.size.getY(),
+                    7, UISettings.CURRENT_COLOR
+            );
+        } else {
+            RenderUtils.drawVerticalGradientRect(this.position.getX(), this.position.getY(), this.size.getX(),
+                    this.size.getY(), new Color(0, 0, 0, 150), new Color(0, 0, 0, 255));
+        }
 
         RenderUtils.drawRect(
                 this.position.getX() + 4,

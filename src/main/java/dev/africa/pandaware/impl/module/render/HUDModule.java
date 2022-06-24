@@ -7,6 +7,7 @@ import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.game.TickEvent;
+import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.event.render.RenderEvent;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.packet.PacketBalance;
@@ -29,6 +30,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.network.play.server.S01PacketJoinGame;
+import net.minecraft.network.play.server.S45PacketTitle;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -43,9 +47,9 @@ import java.util.stream.Collectors;
 @ModuleInfo(name = "HUD", category = Category.VISUAL)
 public class HUDModule extends Module {
     private final EnumSetting<ColorMode> colorMode = new EnumSetting<>("Color mode", ColorMode.PANDAWARE);
+    private final EnumSetting<HUDMode> hudMode = new EnumSetting<>("HUD Style", HUDMode.ROUNDED);
 
     private final BooleanSetting arraylist = new BooleanSetting("Arraylist", true);
-    //private final BooleanSetting showRenderModules = new BooleanSetting("Show Render Modules", true); idk how to do lol
     private final BooleanSetting watermark = new BooleanSetting("Watermark", true);
     public final BooleanSetting transparentChat = new BooleanSetting("Transparent Chat", false);
     private final BooleanSetting label = new BooleanSetting("Show Labels", true, this.arraylist::getValue);
@@ -107,6 +111,7 @@ public class HUDModule extends Module {
 
         this.registerSettings(
                 this.colorMode,
+                this.hudMode,
                 this.capeMode,
                 this.arraylist,
                 this.label,
@@ -183,6 +188,14 @@ public class HUDModule extends Module {
                 this.animatedCape = new ResourceLocation("pandaware/icons/capes/animated/animated(" + animated + ").gif");
                 this.car = new ResourceLocation("pandaware/icons/capes/car/car" + caranimated + ".png");
                 break;
+        }
+    };
+
+    @EventHandler
+    EventCallback<PacketEvent> onPacket = event -> {
+        if (event.getPacket() instanceof S01PacketJoinGame) {
+            mc.ingameGUI.displayTitle("", "", -1, -1, -1);
+            mc.ingameGUI.func_175177_a();
         }
     };
 
@@ -469,16 +482,28 @@ public class HUDModule extends Module {
         MINECON2013("Minecon 2013", new ResourceLocation("pandaware/icons/capes/2013.png")),
         MINECON2015("Minecon 2015", new ResourceLocation("pandaware/icons/capes/2015.png")),
         MINECON2016("Minecon 2016", new ResourceLocation("pandaware/icons/capes/2016.png")),
-        MOJANG_OLD("Old Mojang (2010 - 2015)", new ResourceLocation("pandaware/icons/capes/old_mojang.png")),
-        MOJANG("Mojang (2015 - 2021)", new ResourceLocation("pandaware/icons/capes/mojang.png")),
-        MOJANG_NEW("New Mojang (2021 - Now)", new ResourceLocation("pandaware/icons/capes/mojang_studios.png")),
+        MOJANG_OLD("Old Mojang", new ResourceLocation("pandaware/icons/capes/old_mojang.png")),
+        MOJANG("Mojang", new ResourceLocation("pandaware/icons/capes/mojang.png")),
+        MOJANG_NEW("New Mojang", new ResourceLocation("pandaware/icons/capes/mojang_studios.png")),
         NO_PANDAWARE("No Pandaware?", new ResourceLocation("pandaware/icons/capes/nopandaware.png")),
-
         YES("yes", new ResourceLocation("pandaware/icons/capes/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png")),
         CAR("Car", new ResourceLocation("pandaware/icons/capes/car.png"));
 
         private final String label;
         private final ResourceLocation resource;
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    @AllArgsConstructor
+    public enum HUDMode {
+        ROUNDED("Rounded"),
+        NULL("Null");
+
+        private final String label;
 
         @Override
         public String toString() {

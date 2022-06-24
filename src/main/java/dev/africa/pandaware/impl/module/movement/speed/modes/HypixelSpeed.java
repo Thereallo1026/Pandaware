@@ -96,7 +96,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                     && lowhop) {
                 event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
                 if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) this.movespeed -= 0.011f;
-                else this.movespeed -= 0.0035f;
+                else this.movespeed -= 0.0039f;
             }
 
             MovementUtils.strafe(event, Math.max(this.movespeed, MovementUtils.getBaseMoveSpeed()));

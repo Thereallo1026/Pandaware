@@ -53,7 +53,7 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
                         case 0:
                             newSlot = getBlockStack();
                             oldSlot = mc.thePlayer.inventory.currentItem;
-                            if (newSlot != oldSlot)
+                            if (oldSlot != newSlot)
                                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C09PacketHeldItemChange(newSlot));
                             event.setPitch(90);
 
@@ -91,7 +91,7 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
                         MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.9 : 2.1));
                     } else if (mc.thePlayer.getAirTicks() == 5) {
                         if (this.timerSpeed.getValue() && mc.thePlayer.fallDistance < 1) {
-                            mc.timer.timerSpeed = 1.35f;
+                            mc.timer.timerSpeed = 1.25f;
                         }
                         event.y = mc.thePlayer.motionY = -0.42f;
                     } else {
@@ -109,16 +109,18 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
                 if (MovementUtils.isMoving() && this.getBlockStack() != -1) {
                     if (PlayerUtils.isMathGround()) {
                         if (this.timerSpeed.getValue()) {
-                            mc.timer.timerSpeed = 0.9f;
+                            mc.timer.timerSpeed = 1.8f;
                         }
                         event.y = mc.thePlayer.motionY = 0.42f;
                         MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * (mc.thePlayer.isPotionActive(Potion.moveSpeed) ? 1.9 : 2.1));
                     } else if (mc.thePlayer.getAirTicks() == 1) {
                         if (this.timerSpeed.getValue()) {
-                            mc.timer.timerSpeed = 1.05f;
+                            mc.timer.timerSpeed = 0.9f;
                         }
                         MovementUtils.strafe(event, MovementUtils.getSpeed());
                         mc.thePlayer.motionY = -0.0784000015258789;
+                    } else if (mc.thePlayer.fallDistance > 0.5) {
+                        mc.timer.timerSpeed = 1f;
                     }
                 }
         }
@@ -127,6 +129,7 @@ public class VulcanSpeed extends ModuleMode<SpeedModule> {
     @Override
     public void onDisable() {
         mc.gameSettings.keyBindJump.pressed = false;
+        tick = 0;
     }
 
     public VulcanSpeed(String name, SpeedModule parent) {

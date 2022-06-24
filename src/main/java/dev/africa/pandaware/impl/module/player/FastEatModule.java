@@ -8,6 +8,7 @@ import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.impl.event.game.KeyEvent;
 import dev.africa.pandaware.impl.event.player.MotionEvent;
+import dev.africa.pandaware.impl.packet.PacketBalance;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
 import dev.africa.pandaware.impl.setting.EnumSetting;
 import dev.africa.pandaware.impl.setting.NumberSetting;
@@ -63,9 +64,9 @@ public class FastEatModule extends Module {
                                 break;
 
                             case VULCAN:
-                                if (packet != 18) {
-                                    if (mc.thePlayer.ticksExisted % 4 == 0) {
-                                        mc.timer.timerSpeed = 0.18f;
+                                if (packet != 16) {
+                                    if (mc.thePlayer.ticksExisted % 2 == 0) {
+                                        mc.timer.timerSpeed = 0.33f;
                                     } else {
                                         mc.timer.timerSpeed = 1f;
                                     }

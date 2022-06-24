@@ -18,8 +18,8 @@ public class DebuggerModule extends Module {
     private final BooleanSetting transaction = new BooleanSetting("Transactions", true);
     private final BooleanSetting payloads = new BooleanSetting("Custom Payloads", false);
     private final BooleanSetting everyPacket = new BooleanSetting("Debug every packet", false);
-    private final BooleanSetting everyPacketSent = new BooleanSetting("Debug only sent packets", false, this.everyPacket::getValue);
-    private final BooleanSetting everyPacketReceived = new BooleanSetting("Debug only received packets", false, this.everyPacket::getValue);
+    private final BooleanSetting everyPacketSent = new BooleanSetting("Debug only sent packets", false);
+    private final BooleanSetting everyPacketReceived = new BooleanSetting("Debug only received packets", false);
     private long lastKeepAlive;
     private long lastTransaction;
 
@@ -36,20 +36,33 @@ public class DebuggerModule extends Module {
 
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
-        if (this.everyPacket.getValue()) Printer.chat(event.getPacket());
-        if ((event.getPacket() instanceof C0FPacketConfirmTransaction) && transaction.getValue()) {
-            long lastPacket = System.currentTimeMillis() - lastTransaction;
-            Printer.chat("sent tranny packet " + ((C0FPacketConfirmTransaction) event.getPacket()).getWindowId()
-                    + " " + ((C0FPacketConfirmTransaction) event.getPacket()).getUid() + " " + lastPacket + "ms");
-            this.lastTransaction = System.currentTimeMillis();
-        }
-        if (event.getPacket() instanceof C00PacketKeepAlive && keepAlive.getValue()) {
-            long lastPacket = System.currentTimeMillis() - lastKeepAlive;
-            Printer.chat("sent african packet " + ((C00PacketKeepAlive) event.getPacket()).getKey() + " " + lastPacket + "ms");
-            this.lastKeepAlive = System.currentTimeMillis();
-        }
-        if (event.getPacket() instanceof S3FPacketCustomPayload && payloads.getValue()) {
-            Printer.chat("Server: DROPPING PAYLOAD ON HIROSHIMA " + ((S3FPacketCustomPayload) event.getPacket()).getChannelName());
+        if (mc.theWorld != null && mc.thePlayer != null) {
+            if (this.everyPacket.getValue() && (!this.everyPacketSent.getValue() && !this.everyPacketReceived.getValue()))
+                Printer.chat(event.getPacket());
+            if (this.everyPacketSent.getValue() && !this.everyPacketReceived.getValue()) {
+                if (event.getState() == PacketEvent.State.SEND) {
+                    Printer.chat(event.getPacket());
+                }
+            }
+            if (this.everyPacketReceived.getValue() && !this.everyPacketSent.getValue()) {
+                if (event.getState() == PacketEvent.State.RECEIVE) {
+                    Printer.chat(event.getPacket());
+                }
+            }
+            if ((event.getPacket() instanceof C0FPacketConfirmTransaction) && transaction.getValue()) {
+                long lastPacket = System.currentTimeMillis() - lastTransaction;
+                Printer.chat("sent tranny packet " + ((C0FPacketConfirmTransaction) event.getPacket()).getWindowId()
+                        + " " + ((C0FPacketConfirmTransaction) event.getPacket()).getUid() + " " + lastPacket + "ms");
+                this.lastTransaction = System.currentTimeMillis();
+            }
+            if (event.getPacket() instanceof C00PacketKeepAlive && keepAlive.getValue()) {
+                long lastPacket = System.currentTimeMillis() - lastKeepAlive;
+                Printer.chat("sent african packet " + ((C00PacketKeepAlive) event.getPacket()).getKey() + " " + lastPacket + "ms");
+                this.lastKeepAlive = System.currentTimeMillis();
+            }
+            if (event.getPacket() instanceof S3FPacketCustomPayload && payloads.getValue()) {
+                Printer.chat("Server: DROPPING PAYLOAD ON HIROSHIMA " + ((S3FPacketCustomPayload) event.getPacket()).getChannelName());
+            }
         }
     };
 }

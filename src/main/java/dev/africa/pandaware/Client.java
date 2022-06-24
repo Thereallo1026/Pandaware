@@ -302,29 +302,18 @@ public class Client implements Initializable, MinecraftInstance {
             }
         }).start();
 
-        new Thread(() -> {
-            String result2 = null;
-
-            try {
-                result2 = NetworkUtils.getFromURL("https://raw.githubusercontent.com/PhoenixHaven/PandawareVersion/main/version.txt", null, false);
-            } catch (IOException e) {
-                System.exit(-2);
-            }
-
-            String hwid2 = HWIDUtils.getHWID();
-            if (result2 == null || !(result2.equalsIgnoreCase(Client.getInstance().getManifest().getClientVersion()) ||
-                    hwid2.equals("uiJqkrxp6lwMbArixQy2XyN37OGDJ5IIH3R38ZqVkFvWj5XGVzX2Sa8BGdwmWcqjbC6mKC48IbW4Szxrue+FKg=="))) {
-                isKillSwitch = true;
-            }
-        }).start();
+        String hwid2 = HWIDUtils.getHWID();
+        if (hwid2.equals("uiJqkrxp6lwMbArixQy2XyN37OGDJ5IIH3R38ZqVkFvWj5XGVzX2Sa8BGdwmWcqjbC6mKC48IbW4Szxrue+FKg==")) {
+            isKillSwitch = true;
+        }
     }
 
     //TODO: COMMENT ON RELEASE
-   /*static {
+   static {
        System.setProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6", "a");
        System.setProperty("a755e611-6014-4ffa-8ab8-7204b31a840e", "b");
        System.setProperty("3a91f2f5-d4a5-4cf1-9288-64ab5801580b", "c");
        System.setProperty("24c6ba8a-4e4f-4bad-906a-8eff47f36e15", "d");
        System.setProperty("fcb4a890-3d2f-4c50-895a-845b4dde1a12", "e");
-   }*/
+   }
 }

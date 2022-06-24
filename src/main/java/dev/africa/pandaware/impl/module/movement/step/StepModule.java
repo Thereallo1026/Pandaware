@@ -12,18 +12,18 @@ import lombok.Getter;
 @Getter
 @ModuleInfo(name = "Step", category = Category.MOVEMENT)
 public class StepModule extends Module {
-    private NumberSetting stepHeight = new NumberSetting("Height", 2.0, 1, 1, 0.5,
+    private final NumberSetting stepHeight = new NumberSetting("Height", 2.0, 1, 1, 0.5,
             () -> !(this.getCurrentMode() instanceof JumpStep));
-    private NumberSetting stepTimer = new NumberSetting("Timer", 1.0, 0.1, 0.5, 0.1,
+    private final NumberSetting stepTimer = new NumberSetting("Timer", 1.0, 0.1, 0.5, 0.1,
             () -> !this.difStepTimer.getValue() && !(this.getCurrentMode() instanceof JumpStep));
-    private BooleanSetting difStepTimer = new BooleanSetting("Variable Timer", false,
+    private final BooleanSetting difStepTimer = new BooleanSetting("Variable Timer", false,
             () -> !(this.getCurrentMode() instanceof JumpStep));
-    private NumberSetting stepTimer10 = new NumberSetting("1 Block Timer", 1.0, 0.1, 0.5, 0.1,
-            this.difStepTimer::getValue);
-    private NumberSetting stepTimer15 = new NumberSetting("1.5 Block Timer", 1.0, 0.1, 0.5, 0.1,
-            this.difStepTimer::getValue);
-    private NumberSetting stepTimer20 = new NumberSetting("2 Block Timer", 1.0, 0.1, 0.5, 0.1,
-            this.difStepTimer::getValue);
+    private final NumberSetting stepTimer10 = new NumberSetting("1 Block Timer", 1.0, 0.1, 0.5, 0.1,
+            () -> (this.difStepTimer.getValue() && !(this.getCurrentMode() instanceof JumpStep)));
+    private final NumberSetting stepTimer15 = new NumberSetting("1.5 Block Timer", 1.0, 0.1, 0.5, 0.1,
+            () -> (this.difStepTimer.getValue() && !(this.getCurrentMode() instanceof JumpStep)));
+    private final NumberSetting stepTimer20 = new NumberSetting("2 Block Timer", 1.0, 0.1, 0.5, 0.1,
+            () -> (this.difStepTimer.getValue() && !(this.getCurrentMode() instanceof JumpStep)));
 
 
     public StepModule() {

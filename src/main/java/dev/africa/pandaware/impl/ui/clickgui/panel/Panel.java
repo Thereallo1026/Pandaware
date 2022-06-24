@@ -5,6 +5,7 @@ import dev.africa.pandaware.api.interfaces.MinecraftInstance;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.screen.GUIRenderer;
 import dev.africa.pandaware.impl.font.Fonts;
+import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.ui.UISettings;
 import dev.africa.pandaware.impl.ui.clickgui.ClickGUI;
 import dev.africa.pandaware.impl.ui.clickgui.module.ModuleElement;
@@ -12,6 +13,7 @@ import dev.africa.pandaware.utils.client.MouseUtils;
 import dev.africa.pandaware.utils.math.vector.Vec2i;
 import dev.africa.pandaware.utils.render.RenderUtils;
 import lombok.Getter;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;
 
@@ -60,11 +62,19 @@ public class Panel implements GUIRenderer, MinecraftInstance {
 
         double animate = this.parent.height * this.parent.getAnimator().getValue();
 
-        RenderUtils.drawRoundedRect(this.position.getX(), this.position.getY(), this.size.getX(),
-                this.extended ? this.size.getY() : 23, 9f, new Color(31, 31, 31, 140));
-        RenderUtils.drawRoundedRectOutline(this.position.getX(), this.position.getY(),
-                this.size.getX(), this.extended ? this.size.getY() : 23, 9f,
-                UISettings.CURRENT_COLOR);
+        HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+        if (hud.getHudMode().getValue() == HUDModule.HUDMode.ROUNDED) {
+            RenderUtils.drawRoundedRect(this.position.getX(), this.position.getY(), this.size.getX(),
+                    this.extended ? this.size.getY() : 23, 9f, new Color(31, 31, 31, 140));
+            RenderUtils.drawRoundedRectOutline(this.position.getX(), this.position.getY(),
+                    this.size.getX(), this.extended ? this.size.getY() : 23, 9f,
+                    UISettings.CURRENT_COLOR);
+        } else {
+            RenderUtils.drawVerticalGradientRect(this.position.getX(), this.position.getY(), this.size.getX(),
+                    this.extended ? this.size.getY() : 23, UISettings.INTERNAL_COLOR, UISettings.INTERNAL_COLOR);
+            RenderUtils.drawVerticalGradientRect(this.position.getX(), this.position.getY(), this.size.getX(),
+                    this.extended ? this.size.getY() : 23, UISettings.INTERNAL_COLOR, UISettings.INTERNAL_COLOR);
+        }
 
         int add = this.category == Category.COMBAT ? 4 : 0;
         Fonts.getInstance().getIconsVeryBig().drawString(this.getCategoryIcon(),

@@ -37,7 +37,7 @@ public class PluginFinderModule extends Module {
     @EventHandler
     EventCallback<PacketEvent> onPacket = e -> {
         if (e.getPacket() instanceof S3APacketTabComplete) {
-            S3APacketTabComplete s3APacketTabComplete = (S3APacketTabComplete) e.getPacket();
+            S3APacketTabComplete s3APacketTabComplete = e.getPacket();
             String[] commands = s3APacketTabComplete.func_149630_c();
             String message = "";
             int size = 0;

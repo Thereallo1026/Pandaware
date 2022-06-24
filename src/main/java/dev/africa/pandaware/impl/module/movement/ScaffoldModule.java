@@ -246,7 +246,6 @@ public class ScaffoldModule extends Module {
 
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
-        mc.thePlayer.setSprinting(this.sprint.getValue());
         if (startY > mc.thePlayer.posY) this.startY = ApacheMath.floor(mc.thePlayer.posY);
         this.blockEntry = null;
         int slot = this.getItemSlot(false);
@@ -511,7 +510,7 @@ public class ScaffoldModule extends Module {
                         && (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) &&
                         !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) && PlayerUtils.isMathGround() &&
                         mc.thePlayer.ticksExisted % 2 == 0) {
-                    event.setY(event.getY() + 0.05);
+                    event.setY(event.getY() + 0.1);
                     event.setOnGround(false);
                 }
             }
@@ -521,12 +520,13 @@ public class ScaffoldModule extends Module {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if (getItemSlot(true) == -1) return;
+        mc.thePlayer.setSprinting(this.sprint.getValue());
         switch (scaffoldMode.getValue()) {
             case HYPIXEL:
                 switch (this.hypixelMode.getValue()) {
                     case NORMAL:
                         if (PlayerUtils.isMathGround() && !mc.gameSettings.keyBindSneak.isKeyDown()) {
-                            MovementUtils.strafe(event, 0.25056 *
+                            MovementUtils.strafe(event, 0.25 *
                                     (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                         } else if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                             mc.thePlayer.motionX *= 0.25;
@@ -546,7 +546,6 @@ public class ScaffoldModule extends Module {
                             } else if (!mc.thePlayer.onGround && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())
                                     && MovementUtils.isMoving()) {
                                 MovementUtils.strafe(event, MovementUtils.getSpeed());
-                                event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
                             }
                         } else {
                             event.y = mc.thePlayer.motionY = Math.random() - (MovementUtils.getBaseMoveSpeed() / 6);

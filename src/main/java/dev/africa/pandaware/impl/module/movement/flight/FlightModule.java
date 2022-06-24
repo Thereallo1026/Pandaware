@@ -22,7 +22,8 @@ public class FlightModule extends Module {
                 new AAC3Flight("AAC3", this),
                 new MineboxFlight("Minebox", this),
                 new DamageFlight("Damage", this),
-                new BlockdropFlight("Blockdrop", this)
+                new BlockdropFlight("Blockdrop", this),
+                new ZonecraftFlight("Zonecraft", this)
         );
     }
 

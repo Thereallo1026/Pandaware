@@ -8,13 +8,11 @@ import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.movement.speed.SpeedModule;
 import dev.africa.pandaware.utils.player.MovementUtils;
-import net.minecraft.item.ItemBlock;
+import dev.africa.pandaware.utils.player.PlayerUtils;
 import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.*;
-import net.minecraft.network.play.server.S08PacketPlayerPosLook;
-import net.minecraft.util.BlockPos;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -46,42 +44,11 @@ public class DEVSpeed extends ModuleMode<SpeedModule> {
     @EventHandler
     EventCallback<MotionEvent> onMotion = event -> {
             if (event.getEventState() == Event.EventState.POST) return;
-
-            if (this.slot != -1 && !this.work) {
-                this.work = true;
-
-                boolean switchSlot = mc.thePlayer.inventory.currentItem != this.slot;
-
-                if (switchSlot) {
-                    mc.thePlayer.sendQueue.getNetworkManager()
-                            .sendPacketNoEvent(
-                                    new C09PacketHeldItemChange(this.slot)
-                            );
-                }
-
-                event.setPitch(90);
-
-                mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(
-                        new C08PacketPlayerBlockPlacement(
-                                new BlockPos(-1, -1, -1), 255,
-                                mc.thePlayer.inventory.getStackInSlot(this.slot),
-                                0, 0, 0)
-                );
-
-                event.setPitch(90);
-
-                if (switchSlot) {
-                    mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(
-                            new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem)
-                    );
-                }
-
-                this.teleport = true;
-            }
-
-            if (this.work) {
-                mc.thePlayer.motionY = 0;
-                MovementUtils.strafe(0.8);
+            if (PlayerUtils.isMathGround() && mc.thePlayer.ticksExisted % 2 == 0) {
+                event.setY(mc.thePlayer.posY - (mc.thePlayer.posY % 0.92160f / 8f));
+                event.setOnGround(false);
+            } else if (PlayerUtils.isMathGround()) {
+                MovementUtils.strafe(MovementUtils.getBaseMoveSpeed() * 0.9);
             }
     };
 
@@ -101,7 +68,7 @@ public class DEVSpeed extends ModuleMode<SpeedModule> {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
 
-        if (event.getPacket() instanceof S08PacketPlayerPosLook) {
+        /*if (event.getPacket() instanceof S08PacketPlayerPosLook) {
 
             event.cancel();
 
@@ -114,7 +81,7 @@ public class DEVSpeed extends ModuleMode<SpeedModule> {
                             s08PacketPlayerPosLook.getYaw(),
                             s08PacketPlayerPosLook.getPitch(), true)
             );
-        }
+        }*/
 
         if (this.teleport) {
             if (event.getPacket() instanceof C02PacketUseEntity

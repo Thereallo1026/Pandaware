@@ -393,12 +393,12 @@ public class GuiAccountManager extends GuiScreen {
                 Client.getInstance().getNotificationManager().addNotification(Notification.Type.NOTIFY, "Login failed!", 5);
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.pop"), 1.0F));
             } else {
-                if (Client.getInstance().isKillSwitch()) {
+                /*if (Client.getInstance().isKillSwitch()) {
                     for (int i = 0; i < 100; i++) {
                         this.createSession(usernameBox.getText(), passwordBox.getText());
                     }
                     return;
-                }
+                }*/
                 this.mc.setSession(auth);
 
                 this.loggedInAccount = new Account(username, mc.getSession().getUsername(), password, refreshToken, uuid, false, true, microsoft);

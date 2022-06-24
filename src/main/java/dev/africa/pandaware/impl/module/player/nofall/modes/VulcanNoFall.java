@@ -30,7 +30,7 @@ public class VulcanNoFall extends ModuleMode<NoFallModule> {
                 mc.timer.timerSpeed = 0.92f;
             }
 
-            double amount = this.count > 3 ? 3.5f : 2.8f;
+            double amount = this.count > 2 ? 3.5f : 2.8f;
 
             if (mc.thePlayer.fallDistance > amount) {
                 mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));

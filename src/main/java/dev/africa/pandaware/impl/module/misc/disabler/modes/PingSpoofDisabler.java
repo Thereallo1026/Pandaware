@@ -3,6 +3,7 @@ package dev.africa.pandaware.impl.module.misc.disabler.modes;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
+import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.module.misc.disabler.DisablerModule;
 import dev.africa.pandaware.impl.setting.NumberRangeSetting;
@@ -28,13 +29,17 @@ public class PingSpoofDisabler extends ModuleMode<DisablerModule> {
 
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
-        if (event.getPacket() instanceof C00PacketKeepAlive || event.getPacket() instanceof C0FPacketConfirmTransaction) {
+        if ((event.getPacket() instanceof C00PacketKeepAlive || event.getPacket() instanceof C0FPacketConfirmTransaction) && mc.thePlayer != null && mc.theWorld != null) {
             this.packetList.add(event.getPacket());
             event.cancel();
         }
+    };
 
-        if (timer.hasReached(RandomUtils.nextInt((int) pingSpoof.getFirstValue(), (int) pingSpoof.getSecondValue())) && mc.thePlayer != null && mc.theWorld != null) {
+    @EventHandler
+    EventCallback<MotionEvent> onMotion = event -> {
+        if (timer.hasReached(RandomUtils.nextInt(pingSpoof.getFirstValue().intValue(), pingSpoof.getSecondValue().intValue())) && mc.thePlayer != null && mc.theWorld != null) {
             packetList.forEach(packet1 -> mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(this.packetList.poll()));
+            this.packetList.clear();
             this.timer.reset();
         }
     };
@@ -42,6 +47,11 @@ public class PingSpoofDisabler extends ModuleMode<DisablerModule> {
     @Override
     public void onDisable() {
         packetList.forEach(packet1 -> mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(this.packetList.poll()));
+        this.packetList.clear();
+    }
+
+    @Override
+    public void onEnable() {
         this.timer.reset();
     }
 }

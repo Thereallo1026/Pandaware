@@ -107,6 +107,11 @@ public class TargetHudModule extends Module {
                 }
             }
 
+            this.posX.setValue(Math.min(this.posX.getValue().doubleValue(), event.getResolution().getScaledWidth() - this.width - 1));
+            this.posY.setValue(Math.min(this.posY.getValue().doubleValue(), event.getResolution().getScaledHeight() - this.height - 1));
+            this.posX.setValue(Math.max(this.posX.getValue().doubleValue(), 1));
+            this.posY.setValue(Math.max(this.posY.getValue().doubleValue(), 0.5));
+
             this.animator.setMin(0).setMax(1).setSpeed(3.3f);
 
             if (this.entity != null && this.animator.getValue() <= 1F) {
@@ -144,8 +149,14 @@ public class TargetHudModule extends Module {
                         this.width = (int) (55 + nameLength);
                     }
 
-                    RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3,
-                            UISettings.INTERNAL_COLOR);
+                    HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+                    if (hud.getHudMode().getValue() == HUDModule.HUDMode.ROUNDED) {
+                        RenderUtils.drawRoundedRect(0, 0, this.width, this.height, 3,
+                                UISettings.INTERNAL_COLOR);
+                    } else {
+                        RenderUtils.drawVerticalGradientRect(0, 0, this.width, this.height, UISettings.INTERNAL_COLOR,
+                                UISettings.INTERNAL_COLOR);
+                    }
 
                     if (Client.getInstance().getModuleManager().getByClass(StreamerModule.class).getData().isEnabled()) {
                         if (this.cachedEntity.getName() == mc.thePlayer.getName())
@@ -178,9 +189,15 @@ public class TargetHudModule extends Module {
                     HUDModule hudModule = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
 
                     StencilUtils.stencilStage(StencilUtils.StencilStage.ENABLE_MASK);
-                    RenderUtils.drawRoundedRect(3, this.height - 9,
-                            (this.width - 6) * MathHelper.clamp_double(this.healthAnimation, 0.02, 1),
-                            5, 2, Color.WHITE);
+                    if (hud.getHudMode().getValue() == HUDModule.HUDMode.ROUNDED) {
+                        RenderUtils.drawRoundedRect(3, this.height - 9,
+                                (this.width - 6) * MathHelper.clamp_double(this.healthAnimation, 0.02, 1),
+                                5, 2, Color.WHITE);
+                    } else {
+                        RenderUtils.drawVerticalGradientRect(3, this.height - 9, (this.width - 6) *
+                                MathHelper.clamp_double(this.healthAnimation, 0.02, 1), 5,
+                                UISettings.INTERNAL_COLOR, UISettings.INTERNAL_COLOR);
+                    }
                     StencilUtils.stencilStage(StencilUtils.StencilStage.ENABLE_DRAW);
                     for (int i = 3; i < (this.width - 3); i++) {
                         RenderUtils.drawRect(i, this.height - 9, i + 1, this.height - 4,

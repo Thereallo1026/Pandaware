@@ -1,8 +1,6 @@
 package dev.africa.pandaware.utils.client;
 
-import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.interfaces.MinecraftInstance;
-import dev.africa.pandaware.impl.ui.notification.Notification;
 import lombok.experimental.UtilityClass;
 import lombok.var;
 import net.minecraft.client.renderer.BlockModelShapes;

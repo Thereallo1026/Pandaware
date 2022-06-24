@@ -1,5 +1,6 @@
 package dev.africa.pandaware.impl.module.render;
 
+import dev.africa.pandaware.Client;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.Module;
@@ -65,19 +66,28 @@ public class OnlineInfoModule extends Module {
                 }
             }
 
-            this.posX.setValue(Math.min(this.posX.getValue().doubleValue(), event.getResolution().getScaledWidth() - this.width - 1));
-            this.posY.setValue(Math.min(this.posY.getValue().doubleValue(), event.getResolution().getScaledHeight() - this.height - 1));
+            this.posX.setValue(Math.min(this.posX.getValue().doubleValue(), event.getResolution().getScaledWidth() - this.width));
+            this.posY.setValue(Math.min(this.posY.getValue().doubleValue(), event.getResolution().getScaledHeight() - this.height));
             this.posX.setValue(Math.max(this.posX.getValue().doubleValue(), 1));
             this.posY.setValue(Math.max(this.posY.getValue().doubleValue(), 0.5));
 
             GlStateManager.pushAttribAndMatrix();
 
-            RenderUtils.drawRoundedRect(this.posX.getValue().doubleValue(), this.posY.getValue().doubleValue(),
-                    this.width, this.height, 10.5, UISettings.INTERNAL_COLOR);
+            HUDModule hud = Client.getInstance().getModuleManager().getByClass(HUDModule.class);
+            if (hud.getHudMode().getValue() == HUDModule.HUDMode.ROUNDED) {
+                RenderUtils.drawRoundedRect(this.posX.getValue().doubleValue(), this.posY.getValue().doubleValue(),
+                        this.width, this.height, 10.5, UISettings.INTERNAL_COLOR);
 
-            RenderUtils.drawRoundedRectOutline(this.posX.getValue().doubleValue(), this.posY.getValue().doubleValue(),
-                    this.width, this.height, 10.5, UISettings.CURRENT_COLOR);
+                RenderUtils.drawRoundedRectOutline(this.posX.getValue().doubleValue(), this.posY.getValue().doubleValue(),
+                        this.width, this.height, 10.5, UISettings.CURRENT_COLOR);
+            } else {
+                RenderUtils.drawVerticalGradientRect(this.posX.getValue().doubleValue(), this.posY.getValue().doubleValue(),
+                        this.width, this.height, UISettings.INTERNAL_COLOR, UISettings.INTERNAL_COLOR);
 
+                RenderUtils.drawBorderedRect(this.posX.getValue().doubleValue(), this.posY.getValue().doubleValue(),
+                        this.posX.getValue().doubleValue() + this.width, this.posY.getValue().doubleValue() + this.height,
+                        1, new Color(0, 0, 0, 0).getRGB(), UISettings.CURRENT_COLOR.getRGB());
+            }
             Fonts.getInstance().getArialBdBig().drawCenteredStringWithShadow("Online info",
                     (float) (this.posX.getValue().doubleValue() + (this.width / 2f)),
                     (float) (this.posY.getValue().doubleValue() + 2), -1
@@ -137,7 +147,7 @@ public class OnlineInfoModule extends Module {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (event.getPacket() instanceof S02PacketChat && mc.theWorld != null && mc.thePlayer != null) {
-            S02PacketChat packet = (S02PacketChat) event.getPacket();
+            S02PacketChat packet = event.getPacket();
             String message = packet.getChatComponent().getUnformattedText();
 
             if (message.toLowerCase().contains(mc.thePlayer.getName().toLowerCase())) {

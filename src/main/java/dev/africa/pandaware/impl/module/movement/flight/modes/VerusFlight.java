@@ -83,6 +83,9 @@ public class VerusFlight extends ModuleMode<FlightModule> {
             this.ticks = 0;
             mc.thePlayer.fallDistance = 0;
             this.shouldFly = true;
+        } else if (!mc.gameSettings.keyBindForward.pressed || mc.gameSettings.keyBindForward.pressed &&
+                (mc.gameSettings.keyBindRight.pressed || mc.gameSettings.keyBindLeft.pressed)) {
+            mc.thePlayer.setSprinting(false);
         }
 
         if (!mc.thePlayer.movementInput.jump) {

@@ -19,7 +19,7 @@ public class Debugger {
             for (String flag : this.flags) {
                 if (argument.toLowerCase().contains(flag.toLowerCase())) {
                     //TODO: UNCOMMENT ON RELEASE
-                    System.exit(3);
+                    //System.exit(3);
                 }
             }
             if (argument.equals(StringUtils.getDisableAttach())) {
@@ -27,7 +27,7 @@ public class Debugger {
             }
 
             //TODO: UNCOMMENT ON RELEASE
-            System.exit(9);
+            //System.exit(9);
         }
     }
 }
