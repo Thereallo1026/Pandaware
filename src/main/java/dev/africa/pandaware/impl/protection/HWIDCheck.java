@@ -20,7 +20,7 @@ public class HWIDCheck {
         try {
             String hwid = EncryptionUtil.encrypt(
                     HWIDUtils.getHWID(),
-                    "literally_kill_yourself_lol"
+                    "literally_kill_yourself"
             );
 
             HttpResponse resp = new RequestBuilder()
@@ -29,7 +29,7 @@ public class HWIDCheck {
                     .build()
                     .post();
 
-            String selfDecrypt = EncryptionUtil.decrypt(hwid, "literally_kill_yourself_lol");
+            String selfDecrypt = EncryptionUtil.decrypt(hwid, "literally_kill_yourself");
             String decrypt = resp.getBody();
 
             if (selfDecrypt.equals(decrypt)) {
