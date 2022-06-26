@@ -10,7 +10,6 @@ import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.microshit.MicrosoftProvider;
 import dev.africa.pandaware.impl.protection.Debugger;
 import dev.africa.pandaware.impl.protection.HWIDCheck;
-import dev.africa.pandaware.impl.socket.SocketHandler;
 import dev.africa.pandaware.impl.ui.clickgui.ClickGUI;
 import dev.africa.pandaware.impl.ui.menu.account.GuiAccountManager;
 import dev.africa.pandaware.manager.account.AccountManager;
@@ -22,6 +21,8 @@ import dev.africa.pandaware.manager.ignore.IgnoreManager;
 import dev.africa.pandaware.manager.module.ModuleManager;
 import dev.africa.pandaware.manager.notification.NotificationManager;
 import dev.africa.pandaware.manager.script.ScriptManager;
+import dev.africa.pandaware.manager.socket.SocketManager;
+import dev.africa.pandaware.manager.user.UserManager;
 import dev.africa.pandaware.switcher.ViaMCP;
 import dev.africa.pandaware.utils.OsUtils;
 import dev.africa.pandaware.utils.client.HWIDUtils;
@@ -34,7 +35,6 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import lombok.Getter;
 import lombok.Setter;
-import me.rhys.packet.impl.PacketServerPing;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.network.OldServerPinger;
@@ -54,8 +54,6 @@ import java.util.concurrent.TimeUnit;
 public class Client implements Initializable, MinecraftInstance {
     @Getter
     private static final Client instance = new Client();
-
-    public String randomTitleText = FileUtils.getRandomTitleLine();
 
     private final Manifest manifest = new Manifest(
             "Pandaware", "0.4.2",
@@ -82,7 +80,8 @@ public class Client implements Initializable, MinecraftInstance {
     private final NotificationManager notificationManager = new NotificationManager();
     private final IgnoreManager ignoreManager = new IgnoreManager();
     private final MicrosoftProvider microsoftProvider = new MicrosoftProvider();
-    private final SocketHandler socketHandler = new SocketHandler();
+    private final UserManager userManager = new UserManager();
+    private final SocketManager socketManager = new SocketManager();
     private final GameListener gameListener = new GameListener();
     private final ScriptManager scriptManager = new ScriptManager();
     private final DiscordRP discordRP = new DiscordRP();
@@ -98,12 +97,12 @@ public class Client implements Initializable, MinecraftInstance {
     @Setter
     private float renderDeltaTime;
 
-    @Getter
     private boolean fdpClient;
 
-    @Getter
     @Setter
     private boolean firstLoad = true;
+
+    private String randomTitleText = FileUtils.getRandomTitleLine();
 
     private int id = 1;
 
@@ -120,15 +119,6 @@ public class Client implements Initializable, MinecraftInstance {
         } catch (Throwable ignored) {
         }
     };
-
-    private final Runnable pingIRC = () -> {
-        try {
-            this.getSocketHandler().queuePacket(new PacketServerPing(this.id));
-            this.id++;
-        } catch (Throwable ignored) {
-        }
-    };
-
 
     @Override
     public void init() {
@@ -148,7 +138,6 @@ public class Client implements Initializable, MinecraftInstance {
         }).start();
 
         scheduledExecutorService.scheduleAtFixedRate(pingRunnable, 0, 3, TimeUnit.SECONDS);
-        scheduledExecutorService.scheduleAtFixedRate(pingIRC, 0, 10, TimeUnit.SECONDS);
 
         this.checkFDPClient();
         this.initTitle();
@@ -167,6 +156,7 @@ public class Client implements Initializable, MinecraftInstance {
         this.commandManager.init();
         this.clickGUI.init();
         this.configManager.init();
+
         try {
             this.microsoftProvider.getAuthManagerWebServer().start();
         } catch (IOException e) {
@@ -283,12 +273,11 @@ public class Client implements Initializable, MinecraftInstance {
 
     void initDiscordRP() {
         System.out.println("Starting Discord RP...");
-        discordRP.start();
+        discordRP.init();
     }
 
     void checkKillSwitch() {
         new Thread(() -> {
-            this.socketHandler.start();
             String result = null;
 
             try {

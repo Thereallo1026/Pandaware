@@ -27,8 +27,8 @@ public class SettingsFile extends FileObject {
 
         jsonObject.addProperty("Is 18+", Client.getInstance().getModuleManager().getByClass(ClickGUIModule.class).getAllowNSFW().getValue());
 
-        if (Client.getInstance().getSocketHandler().getIrcName() != null) {
-            jsonObject.addProperty("ircName", Client.getInstance().getSocketHandler().getIrcName());
+        if (Client.getInstance().getSocketManager().getUsername() != null) {
+            jsonObject.addProperty("ircName", Client.getInstance().getSocketManager().getUsername());
         }
 
         FileUtils.writeToFile(this.getGson().toJson(jsonObject), this.getFile());
@@ -44,7 +44,8 @@ public class SettingsFile extends FileObject {
         Client.getInstance().getClickGUI().getFemboyPosition().setY(jsonParser.get("femboyPositionYYY").getAsInt());
 
         if (jsonParser.has("ircName")) {
-            Client.getInstance().getSocketHandler().setIrcNameAndStart(jsonParser.get("ircName").getAsString());
+            Client.getInstance().getSocketManager().setUsername(jsonParser.get("ircName").getAsString());
+            Client.getInstance().getSocketManager().init();
         }
     }
 }

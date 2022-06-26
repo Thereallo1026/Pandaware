@@ -23,8 +23,10 @@ public class SetIRCNameCommand extends Command {
                 name = name.replace(" ", "")
                         .replaceAll("[^\\p{ASCII}]", "");
 
-                boolean isConnected = Client.getInstance().getSocketHandler().isConnected();
-                Client.getInstance().getSocketHandler().setIrcNameAndStart(name);
+                boolean isConnected = Client.getInstance().getSocketManager().isWasConnected();
+
+                Client.getInstance().getSocketManager().setUsername(name);
+                Client.getInstance().getSocketManager().init();
 
                 if (!isConnected) {
                     Printer.chat(EnumChatFormatting.GREEN + "IRC is now ready to use!");

@@ -30,7 +30,7 @@ public class CommandManager extends Container<Command> implements Initializable 
                 new IRCCommand(),
                 new SetIRCNameCommand(),
                 new SusCommand(),
-                new IRCReconnectCommand()
+                new OnlineCommand()
         );
     }
 

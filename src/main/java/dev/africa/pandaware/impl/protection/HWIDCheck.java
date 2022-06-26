@@ -6,9 +6,6 @@ import dev.africa.pandaware.utils.java.http.proprieties.header.HttpHeader;
 import dev.africa.pandaware.utils.java.http.request.RequestBuilder;
 import dev.africa.pandaware.utils.java.http.response.HttpResponse;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public class HWIDCheck {
     private final String secret;
 
@@ -23,22 +20,17 @@ public class HWIDCheck {
         try {
             String hwid = EncryptionUtil.encrypt(
                     HWIDUtils.getHWID(),
-                    this.secret
-            );
-
-            String headerKey = EncryptionUtil.encrypt(
-                    this.secret,
-                    "id328d9823hd{d0923j09dj23d239jd2309fj}"
+                    "literally_kill_yourself_lol"
             );
 
             HttpResponse resp = new RequestBuilder()
                     .url("http://157.245.91.112:42342/daa")
-                            .header(new HttpHeader("d", hwid))
-                            .body(headerKey)
-                            .build()
-                            .post();
+                    .header(new HttpHeader("d", hwid))
+                    .body("literally_kill_yourself_lol")
+                    .build()
+                    .post();
 
-            String selfDecrypt = EncryptionUtil.decrypt(hwid, this.secret);
+            String selfDecrypt = EncryptionUtil.decrypt(hwid, "literally_kill_yourself_lol");
             String decrypt = resp.getBody();
 
             if (selfDecrypt.equals(decrypt)) {
