@@ -26,7 +26,6 @@ public class HWIDCheck {
             HttpResponse resp = new RequestBuilder()
                     .url("http://157.245.91.112:42342/daa")
                     .header(new HttpHeader("d", hwid))
-                    .body("literally_kill_yourself_lol")
                     .build()
                     .post();
 
