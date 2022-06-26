@@ -55,7 +55,7 @@ public class HUDModule extends Module {
     private final BooleanSetting label = new BooleanSetting("Show Labels", true, this.arraylist::getValue);
     private final BooleanSetting informations = new BooleanSetting("Information", true);
     private final BooleanSetting customFont = new BooleanSetting("Custom font", true);
-    private final BooleanSetting irc = new BooleanSetting("IRC", false);
+    private final BooleanSetting irc = new BooleanSetting("IRC", true);
     private final BooleanSetting arraylistLine = new BooleanSetting("Arraylist line", true,
             this.arraylist::getValue);
     private final BooleanSetting arraylistHideVisual = new BooleanSetting("Arraylist Hide Visuals", true,

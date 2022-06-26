@@ -27,7 +27,6 @@ public class CommandManager extends Container<Command> implements Initializable 
                 new ScriptCommand(),
 
                 new VClipCommand(),
-                new IRCCommand(),
                 new SetIRCNameCommand(),
                 new SusCommand(),
                 new OnlineCommand()

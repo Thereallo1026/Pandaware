@@ -56,12 +56,19 @@ public class SocketManager implements Initializable, MinecraftInstance {
         this.start();
     }
 
+    @Override
+    public void shutdown() {
+        Client.getInstance().getEventDispatcher().unsubscribe(this.packetListener);
+        wasConnected = false;
+    }
+
     void start() {
         if (System.getProperty("142d97db-2d4e-45a4-94a0-a976cd34cce6") == null) {
             return;
         }
 
-        this.username = this.username.replace(" ", "").replaceAll("[^\\p{ASCII}]", "");
+        this.username = this.username.replace(" ", "")
+                .replaceAll("[^\\p{ASCII}]", "");
 
         this.packetQueue.clear();
         this.executorService = Executors.newSingleThreadScheduledExecutor();
@@ -139,7 +146,7 @@ public class SocketManager implements Initializable, MinecraftInstance {
         }
     }
 
-    private void reconnect() {
+    public void reconnect() {
         this.executorService.shutdownNow();
         this.reconnectService.shutdownNow();
         this.reconnectService = Executors.newSingleThreadScheduledExecutor();

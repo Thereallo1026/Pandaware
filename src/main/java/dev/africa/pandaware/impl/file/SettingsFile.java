@@ -44,6 +44,8 @@ public class SettingsFile extends FileObject {
         Client.getInstance().getClickGUI().getFemboyPosition().setY(jsonParser.get("femboyPositionYYY").getAsInt());
 
         if (jsonParser.has("ircName")) {
+            Client.getInstance().getSocketManager().shutdown();
+
             Client.getInstance().getSocketManager().setUsername(jsonParser.get("ircName").getAsString());
             Client.getInstance().getSocketManager().init();
         }

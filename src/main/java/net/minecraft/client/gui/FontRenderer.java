@@ -395,6 +395,8 @@ public class FontRenderer implements IResourceManagerReloadListener {
      * Draws the specified string.
      */
     public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+        text = Client.getInstance().getUserManager().replaceString(text);
+
         this.enableAlpha();
 
         if (this.blend) {
@@ -646,10 +648,18 @@ public class FontRenderer implements IResourceManagerReloadListener {
         }
     }
 
+    public int getStringWidth(String text) {
+        return this.getStringWidth(text, true);
+    }
+
     /**
      * Returns the width of this string. Equivalent of FontMetrics.stringWidth(String s).
      */
-    public int getStringWidth(String text) {
+    public int getStringWidth(String text, boolean ircReplacing) {
+        if (ircReplacing) {
+            text = Client.getInstance().getUserManager().replaceString(text);
+        }
+
         if (text == null) {
             return 0;
         } else {

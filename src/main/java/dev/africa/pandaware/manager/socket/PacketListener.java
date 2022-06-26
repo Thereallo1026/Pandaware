@@ -125,7 +125,7 @@ public class PacketListener implements MinecraftInstance, EventListenable {
 
                 component.getChatStyle()
                         .setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new ChatComponentText("§5IRC §7Message:\n\n" +
+                                new ChatComponentText("§l§6IRC §7Message:\n\n" +
                                         "§7User: §7" + user + "\n" +
                                         "§7Message: §7" + message)));
 
@@ -157,10 +157,10 @@ public class PacketListener implements MinecraftInstance, EventListenable {
 
                     this.lastIrcMessage = System.currentTimeMillis();
                 } else {
-                    Printer.chatSilent("§7[§5IRC§7] §cPlease wait before sending another message");
+                    Printer.chatSilent("§7[§l§6IRC§7] §cPlease wait before sending another message");
                 }
             } else {
-                Printer.chatSilent("§7[§5IRC§7] §7Please type a message");
+                Printer.chatSilent("§7[§l§6IRC§7] §7Please type a message");
             }
         }
     };

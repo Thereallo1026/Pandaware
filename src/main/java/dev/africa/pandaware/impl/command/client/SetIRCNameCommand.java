@@ -23,18 +23,13 @@ public class SetIRCNameCommand extends Command {
                 name = name.replace(" ", "")
                         .replaceAll("[^\\p{ASCII}]", "");
 
-                boolean isConnected = Client.getInstance().getSocketManager().isWasConnected();
+                String finalName = name;
 
-                Client.getInstance().getSocketManager().setUsername(name);
-                Client.getInstance().getSocketManager().init();
-
-                if (!isConnected) {
-                    Printer.chat(EnumChatFormatting.GREEN + "IRC is now ready to use!");
-                } else {
-                    Printer.chat(EnumChatFormatting.GREEN + "IRC Username has been set to " +
-                            EnumChatFormatting.GRAY + name + EnumChatFormatting.GREEN
-                            + " this will take effect next time you connect!");
-                }
+                String finalName1 = name;
+                new Thread(() -> {
+                    Printer.chat("§aIRC Username has been set to §7" + finalName1);
+                    Printer.chat("§aNew IRC name will be set at the next reconnection");
+                }).start();
 
                 Client.getInstance().getExecutor().execute(() -> Client.getInstance().getFileManager().saveAll());
             }

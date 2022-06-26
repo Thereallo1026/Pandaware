@@ -224,6 +224,8 @@ public class TTFFontRenderer {
     }
 
     private void renderString(String text, double x, double y, int color, boolean shadow) {
+        text = Client.getInstance().getUserManager().replaceString(text);
+
         if (text.length() <= 0) {
             return;
         }
@@ -352,6 +354,8 @@ public class TTFFontRenderer {
     }
 
     public float getStringWidth(String text) {
+        text = Client.getInstance().getUserManager().replaceString(text);
+
         if (this.widthCache.asMap().containsKey(text) && this.widthCache.asMap() != null &&
                 this.widthCache.asMap().get(text) != null) {
             return this.widthCache.asMap().get(text);
