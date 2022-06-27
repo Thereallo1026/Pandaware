@@ -6,7 +6,6 @@ import dev.africa.pandaware.utils.math.MathUtils;
 import dev.africa.pandaware.utils.math.apache.ApacheMath;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.Minecraft;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 
@@ -178,4 +177,10 @@ public class MovementUtils implements MinecraftInstance {
     }
 
     public final double MODULO_GROUND = 1 / 64D;
+
+    public boolean canSprint() {
+        return mc.thePlayer != null && PlayerUtils.isMathGround() && !mc.thePlayer.isPotionActive(Potion.blindness) &&
+                mc.thePlayer.getFoodStats().getFoodLevel() > 6 && isMoving() &&
+                !mc.thePlayer.isCollidedHorizontally && !mc.thePlayer.isSneaking();
+    }
 }

@@ -1,13 +1,11 @@
 package dev.africa.pandaware.impl.module.movement;
 
 import dev.africa.pandaware.Client;
-import dev.africa.pandaware.api.event.Event;
 import dev.africa.pandaware.api.event.interfaces.EventCallback;
 import dev.africa.pandaware.api.event.interfaces.EventHandler;
 import dev.africa.pandaware.api.module.Module;
 import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
-import dev.africa.pandaware.impl.event.player.MotionEvent;
 import dev.africa.pandaware.impl.event.player.MoveEvent;
 import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.setting.BooleanSetting;
@@ -25,27 +23,18 @@ public class SprintModule extends Module {
     private final BooleanSetting cancel = new BooleanSetting("Cancel Sprint", false);
 
     @EventHandler
-    EventCallback<MotionEvent> onMotion = event -> {
-        boolean canSprint = mc.thePlayer != null && PlayerUtils.isMathGround() &&
-                !mc.thePlayer.isPotionActive(Potion.blindness) && mc.thePlayer.getFoodStats().getFoodLevel() > 6 &&
-                MovementUtils.isMoving() && !mc.thePlayer.isCollidedHorizontally;
-        if (event.getEventState() == Event.EventState.PRE) {
-            if (Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
-            if (omniSprint.getValue() && canSprint) {
-                mc.thePlayer.setSprinting(true);
-            } else if (mc.thePlayer.moveForward > 0 && canSprint) {
-                mc.thePlayer.setSprinting(true);
-            }
-        }
-    };
-
-    @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         boolean canSprint = mc.thePlayer != null && PlayerUtils.isMathGround() &&
                 !mc.thePlayer.isPotionActive(Potion.blindness) && mc.thePlayer.getFoodStats().getFoodLevel() > 6 &&
-                MovementUtils.isMoving() && !mc.thePlayer.isCollidedHorizontally;
-        if (this.applySpeed.getValue() && canSprint && mc.thePlayer != null) {
-            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed());
+                MovementUtils.isMoving() && !mc.thePlayer.isCollidedHorizontally && !mc.gameSettings.keyBindSneak.pressed;
+        if (this.applySpeed.getValue() && MovementUtils.canSprint() && mc.thePlayer != null) {
+            MovementUtils.strafe(event, MovementUtils.getBaseMoveSpeed() * 0.97575f);
+        }
+        if (Client.getInstance().getModuleManager().getByClass(ScaffoldModule.class).getData().isEnabled()) return;
+        if (omniSprint.getValue() && MovementUtils.canSprint()) {
+            mc.thePlayer.setSprinting(true);
+        } else if (mc.thePlayer.moveForward > 0 && MovementUtils.canSprint()) {
+            mc.thePlayer.setSprinting(true);
         }
     };
 

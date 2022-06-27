@@ -26,6 +26,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private double movespeed;
 
     private final EnumSetting<Mode> mode = new EnumSetting<>("Mode", Mode.LOWHOP);
+    private final NumberSetting speedMultiplier = new NumberSetting("Speed Multiplier", 1, 0.1, 1, 0.1);
     private final NumberSetting timer = new NumberSetting("Timer", 1.3, 1.0, 1, 0.1);
 
     public HypixelSpeed(String name, SpeedModule parent) {
@@ -33,7 +34,8 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
 
         this.registerSettings(
                 this.mode,
-                this.timer
+                this.timer,
+                this.speedMultiplier
         );
     }
 
@@ -96,10 +98,10 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                     && lowhop) {
                 event.y = mc.thePlayer.motionY = MovementUtils.getLowHopMotion(mc.thePlayer.motionY);
                 if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) this.movespeed -= 0.011f;
-                else this.movespeed -= 0.0039f;
+                else this.movespeed -= 0.004f;
             }
 
-            MovementUtils.strafe(event, Math.max(this.movespeed, MovementUtils.getBaseMoveSpeed()));
+            MovementUtils.strafe(event, Math.max(this.movespeed * this.speedMultiplier.getValue().floatValue(), MovementUtils.getBaseMoveSpeed()));
         }
     };
 

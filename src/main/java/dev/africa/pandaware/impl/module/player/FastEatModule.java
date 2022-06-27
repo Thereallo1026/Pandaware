@@ -58,7 +58,6 @@ public class FastEatModule extends Module {
                                     mc.playerController.onStoppedUsingItem(mc.thePlayer);
                                 }
                                 break;
-
                             case TIMER:
                                 mc.timer.timerSpeed = this.timer.getValue().floatValue();
                                 break;
@@ -100,6 +99,15 @@ public class FastEatModule extends Module {
                                 mc.thePlayer.motionX = 0;
                                 mc.thePlayer.motionZ = 0;
                                 break;
+                            case HYPIXEL:
+                                if (packet != 20) {
+                                    mc.timer.timerSpeed = 0.5f;
+                                    mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));
+                                    packet++;
+                                } else {
+                                    mc.playerController.onStoppedUsingItem(mc.thePlayer);
+                                }
+                            break;
                         }
                     }
                 }
@@ -127,6 +135,7 @@ public class FastEatModule extends Module {
     private enum FastEatMode {
         NCP("NCP"),
         TIMER("Timer"),
+        HYPIXEL("Hypixel"),
         VULCAN("Vulcan"),
         NIKOCADO_AVOCADO("Nikocado Avocado"),
         DREAM("Dream");

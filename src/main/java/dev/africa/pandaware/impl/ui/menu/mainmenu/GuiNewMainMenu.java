@@ -4,6 +4,7 @@ import dev.africa.pandaware.Client;
 import dev.africa.pandaware.impl.font.Fonts;
 import dev.africa.pandaware.impl.font.renderer.TTFFontRenderer;
 import dev.africa.pandaware.impl.ui.menu.button.CustomButton;
+import dev.africa.pandaware.utils.OsUtils;
 import dev.africa.pandaware.utils.client.HWIDUtils;
 import dev.africa.pandaware.utils.math.random.RandomUtils;
 import dev.africa.pandaware.utils.render.RenderUtils;
@@ -83,8 +84,20 @@ public class GuiNewMainMenu extends GuiScreen {
             new Thread(() -> {
                 try {
                     Client.getInstance().setFirstLoad(false);
-                    player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/startup.mp3"));
-                    player.play();
+                    switch (OsUtils.getOsType()) {
+                        case WINDOWS:
+                            player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/startup.mp3"));
+                            player.play();
+                            break;
+                        case LINUX:
+                            player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/startuplinux.mp3"));
+                            player.play();
+                            break;
+                        case MAC:
+                            player = new Player(this.getClass().getResourceAsStream("/assets/minecraft/pandaware/startupmac.mp3"));
+                            player.play();
+                            break;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

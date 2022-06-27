@@ -751,7 +751,12 @@ public class KillAuraModule extends Module {
                         if (mc.thePlayer.swingProgressInt == -1) {
                             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C07PacketPlayerDigging(
                                     C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-                        } else if (mc.thePlayer.swingProgressInt < 0.7 && mc.thePlayer.swingProgressInt > -0.4) {
+                        } else if (mc.thePlayer.swingProgressInt == -0.8) {
+                            mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
+                                    new BlockPos(-1, -1, -1), 1, mc.thePlayer.inventory.getCurrentItem(),
+                                    0.1f, 0.1f, 0.1f
+                            ));
+                        } else if (mc.thePlayer.swingProgressInt < 0.5 && mc.thePlayer.swingProgressInt > -0.8) {
                             mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement
                                     (new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(),
                                             0.0081284124F, 0.00004921712F, 0.0081248912F));

@@ -219,8 +219,9 @@ public class ScaffoldModule extends Module {
     EventCallback<RenderEvent> onRender = event -> {
         if (event.getType() == RenderEvent.Type.FRAME) {
             if (this.rotate.getValue()) {
-                if (this.aimBlockEntry != null && (this.blockEntry != null
-                        || this.rotationMode.getValue() == RotationMode.NEW)) {
+                if (this.aimBlockEntry != null && ((this.blockEntry != null
+                        || this.rotationMode.getValue() == RotationMode.NEW) ||
+                        this.rotationMode.getValue() == RotationMode.HYPIXEL && mc.thePlayer.getDiagonalTicks() > 0)) {
                     this.rotations = this.keepRotation.getValue() ?
                             RotationUtils.getBlockRotations(this.aimBlockEntry.getVector()) :
                             RotationUtils.getBlockRotations(this.aimBlockEntry.getPosition());
@@ -349,6 +350,7 @@ public class ScaffoldModule extends Module {
                 case SNAP:
                 case NEW:
                 case OLD:
+                case HYPIXEL:
                     if (this.blockEntry != null || this.rotationMode.getValue() != RotationMode.SNAP) {
                         event.setYaw(this.rotations.getX());
                         event.setPitch(this.rotations.getY());
@@ -520,13 +522,18 @@ public class ScaffoldModule extends Module {
     @EventHandler
     EventCallback<MoveEvent> onMove = event -> {
         if (getItemSlot(true) == -1) return;
-        mc.thePlayer.setSprinting(this.sprint.getValue());
+        boolean canSprint = mc.thePlayer != null && PlayerUtils.isMathGround() &&
+                !mc.thePlayer.isPotionActive(Potion.blindness) && mc.thePlayer.getFoodStats().getFoodLevel() > 6 &&
+                MovementUtils.isMoving() && !mc.thePlayer.isCollidedHorizontally && mc.thePlayer.getAirTicks() == 0;
+        if (MovementUtils.canSprint()) {
+            mc.thePlayer.setSprinting(this.sprint.getValue());
+        }
         switch (scaffoldMode.getValue()) {
             case HYPIXEL:
                 switch (this.hypixelMode.getValue()) {
                     case NORMAL:
                         if (PlayerUtils.isMathGround() && !mc.gameSettings.keyBindSneak.isKeyDown()) {
-                            MovementUtils.strafe(event, 0.25 *
+                            MovementUtils.strafe(event, 0.265 * (mc.thePlayer.getDiagonalTicks() > 0 ? 0.85 : 1) *
                                     (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                         } else if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                             mc.thePlayer.motionX *= 0.25;
@@ -688,7 +695,7 @@ public class ScaffoldModule extends Module {
                                 if (mc.thePlayer.onGround) {
                                     mc.thePlayer.jump();
                                 }
-                            } else {
+                            } else if (!MovementUtils.isMoving()) {
                                 if (this.blockEntry != null) {
                                     mc.thePlayer.jump();
                                 }
@@ -909,6 +916,7 @@ public class ScaffoldModule extends Module {
         SNAP("Snap"),
         OLD("Old"),
         NEW("New"),
+        HYPIXEL("Hypixel"),
         FACING("Facing"),
         MMC("MMC"),
         STATIC("Static"),

@@ -210,6 +210,7 @@ public class ClickGUI extends ScreenGUI implements Initializable {
                 } catch (IOException | URISyntaxException e) {
                     e.printStackTrace();
                 }
+                mc.displayGuiScreen(null);
             }
         }
         if (this.easterEgg.toString().toLowerCase().contains("alts.top")) {
