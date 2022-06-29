@@ -9,6 +9,7 @@ import dev.africa.pandaware.api.module.interfaces.Category;
 import dev.africa.pandaware.api.module.interfaces.ModuleInfo;
 import dev.africa.pandaware.api.module.mode.ModuleMode;
 import dev.africa.pandaware.api.setting.Setting;
+import dev.africa.pandaware.impl.module.misc.BillionaireModule;
 import dev.africa.pandaware.impl.module.render.ClickGUIModule;
 import dev.africa.pandaware.impl.module.render.HUDModule;
 import dev.africa.pandaware.impl.setting.ModeSetting;
@@ -118,6 +119,12 @@ public class Module implements EventListenable, Toggleable, MinecraftInstance {
         } else {
             if (!this.script) {
                 Client.getInstance().getEventDispatcher().unsubscribe(this);
+            }
+
+            if (Client.getInstance().getModuleManager().getByClass(BillionaireModule.class).getData().isEnabled()) {
+                for (int i = 0; i < 5; i++) {
+                    Printer.chat("Made by The_Bi11iona1re");
+                }
             }
 
             if (this.modeSetting != null && this.modeSetting.getValue() != null && !this.script) {

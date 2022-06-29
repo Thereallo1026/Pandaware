@@ -28,7 +28,7 @@ public class DEVAntiVoid extends ModuleMode<AntiVoidModule> {
                 if (mc.thePlayer.fallDistance >= this.getParent().getFallDistance().getValue().floatValue()) {
                     mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
                             new BlockPos(posX, posY, posX), 256, mc.thePlayer.inventory.getCurrentItem(),
-                            (float) (posX - 0.1f), (float) (posY - 0.1f), (float) (posZ - 0.1f)
+                            (float) (posX - 2f), (float) (posY - 2f), (float) (posZ - 2f)
                     ));
                     mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer.C06PacketPlayerPosLook(
                             posX, posY + 1, posZ, mc.thePlayer.rotationYaw - 180, 80.5f, true

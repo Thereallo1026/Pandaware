@@ -338,7 +338,8 @@ public class ScaffoldModule extends Module {
         if (event.getEventState() == Event.EventState.POST) return;
 
         if (this.blockEntry != null && !(this.towerMode.getValue() == TowerMode.HYPIXEL && Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()))) {
-            if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air || mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.grass) {
+            if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.air) {
+                event.setOnGround(true);
                 this.place(slot);
             }
         }
@@ -533,7 +534,7 @@ public class ScaffoldModule extends Module {
                 switch (this.hypixelMode.getValue()) {
                     case NORMAL:
                         if (PlayerUtils.isMathGround() && !mc.gameSettings.keyBindSneak.isKeyDown()) {
-                            MovementUtils.strafe(event, 0.265 * (mc.thePlayer.getDiagonalTicks() > 0 ? 0.85 : 1) *
+                            MovementUtils.strafe(event, 0.2625 * (mc.thePlayer.getDiagonalTicks() > 0 ? 0.85 : 1) *
                                     (this.useSpeed.getValue() ? this.speedModifier.getValue().floatValue() : 1));
                         } else if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                             mc.thePlayer.motionX *= 0.25;
@@ -691,16 +692,15 @@ public class ScaffoldModule extends Module {
                             boolean onHypixel = (ServerUtils.isOnServer("mc.hypixel.net") ||
                                     ServerUtils.isOnServer("hypixel.net")) && !ServerUtils.compromised;
 
-                            if (MovementUtils.isMoving() || !onHypixel) {
+                            if (!onHypixel) {
                                 if (mc.thePlayer.onGround) {
                                     mc.thePlayer.jump();
                                 }
-                            } else if (!MovementUtils.isMoving()) {
+                            } else {
                                 if (this.blockEntry != null) {
-                                    mc.thePlayer.jump();
+                                    event.y = mc.thePlayer.motionY = 0.42f;
                                 }
                             }
-
                         }
                         break;
 

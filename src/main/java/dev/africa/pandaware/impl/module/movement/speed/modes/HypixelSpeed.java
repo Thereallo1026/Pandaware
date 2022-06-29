@@ -26,7 +26,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
     private double movespeed;
 
     private final EnumSetting<Mode> mode = new EnumSetting<>("Mode", Mode.LOWHOP);
-    private final NumberSetting speedMultiplier = new NumberSetting("Speed Multiplier", 1, 0.1, 1, 0.1);
+    private final NumberSetting speedMultiplier = new NumberSetting("Speed Multiplier", 1, 0.1, 1, 0.01);
     private final NumberSetting timer = new NumberSetting("Timer", 1.3, 1.0, 1, 0.1);
 
     public HypixelSpeed(String name, SpeedModule parent) {
@@ -101,7 +101,7 @@ public class HypixelSpeed extends ModuleMode<SpeedModule> {
                 else this.movespeed -= 0.004f;
             }
 
-            MovementUtils.strafe(event, Math.max(this.movespeed * this.speedMultiplier.getValue().floatValue(), MovementUtils.getBaseMoveSpeed()));
+            MovementUtils.strafe(event, Math.max(this.movespeed * this.speedMultiplier.getValue().doubleValue(), MovementUtils.getBaseMoveSpeed()));
         }
     };
 

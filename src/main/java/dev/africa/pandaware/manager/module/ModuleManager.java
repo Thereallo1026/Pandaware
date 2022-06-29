@@ -89,6 +89,7 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new WaveyCapesModule(),
                     new CameraNoClipModule(),
                     new FullbrightModule(),
+                    new ChinaHatModule(),
 
                     // Player
                     new NoFallModule(),
@@ -117,7 +118,8 @@ public class ModuleManager extends MapContainer<Class<? extends Module>, Module>
                     new No003Module(),
                     new AntiBanModule(),
                     new AutoDisableModule(),
-                    new VLResetModule()
+                    new VLResetModule(),
+                    new BillionaireModule()
             );
 
             Client.getInstance().getEventDispatcher().subscribe(this);

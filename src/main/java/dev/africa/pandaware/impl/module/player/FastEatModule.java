@@ -102,7 +102,7 @@ public class FastEatModule extends Module {
                             case HYPIXEL:
                                 if (packet != 20) {
                                     mc.timer.timerSpeed = 0.5f;
-                                    mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C03PacketPlayer(true));
+                                    mc.thePlayer.sendQueue.getNetworkManager().sendPacket(new C03PacketPlayer(true));
                                     packet++;
                                 } else {
                                     mc.playerController.onStoppedUsingItem(mc.thePlayer);

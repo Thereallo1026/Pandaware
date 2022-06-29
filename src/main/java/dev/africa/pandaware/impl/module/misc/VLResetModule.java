@@ -43,8 +43,8 @@ public class VLResetModule extends Module {
             if (mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
                 if (this.timer.getMs() % 250 == 0) {
                     mc.thePlayer.sendQueue.getNetworkManager().sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
-                            new BlockPos(-1, -1, -1), 1, mc.thePlayer.inventory.getCurrentItem(),
-                            0.1f, 0.1f, 0.1f
+                            new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(),
+                            0.0f, 0.0f, 0.0f
                     ));
                 }
             }

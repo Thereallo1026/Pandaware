@@ -7,6 +7,7 @@ import dev.africa.pandaware.impl.event.player.PacketEvent;
 import dev.africa.pandaware.impl.event.player.UpdateEvent;
 import dev.africa.pandaware.impl.module.combat.velocity.VelocityModule;
 import dev.africa.pandaware.impl.setting.NumberSetting;
+import lombok.var;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 
 public class TickVelocity extends ModuleMode<VelocityModule> {
@@ -49,9 +50,11 @@ public class TickVelocity extends ModuleMode<VelocityModule> {
     @EventHandler
     EventCallback<PacketEvent> onPacket = event -> {
         if (mc.thePlayer != null) {
-            if (event.getPacket() instanceof S12PacketEntityVelocity && ((S12PacketEntityVelocity) event.getPacket())
-                    .getEntityID() == mc.thePlayer.getEntityId()) {
-                this.ticks = 0;
+            if (event.getPacket() instanceof S12PacketEntityVelocity) {
+                var velocity = (S12PacketEntityVelocity) event.getPacket();
+                if (velocity.getEntityID() == mc.thePlayer.getEntityId() && (velocity.getMotionX() > 0.1 || velocity.getMotionZ() > 0.1)) {
+                    this.ticks = 0;
+                }
             }
         }
     };
